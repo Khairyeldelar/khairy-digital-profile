@@ -148,3 +148,15 @@
 - [x] Prove that the exact app_session_id emitted by callback authenticates a subsequent admin request.
 
 - [x] Verify the callback-issued cookie through an actual protected admin procedure, not only token decoding.
+
+## Mobile OAuth Session Follow-up
+
+- [ ] Reproduce the mobile post-login loop and inspect callback/session behavior for the current browser.
+- [x] Add a mobile-compatible authenticated handoff or session transport without weakening owner protection.
+- [x] Add regression tests for the mobile session handoff and protected admin loading.
+- [ ] Publish and ask the owner to verify the mobile flow again.
+
+- [x] Add a client-side test for consuming #session into sessionStorage and cleaning the URL.
+- [x] Add an integration-style assertion that the stored handoff token is forwarded as Authorization.
+
+- [x] Exercise the real tRPC HTTP header builder and verify stored mobile session is sent as Authorization.

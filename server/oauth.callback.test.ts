@@ -56,7 +56,7 @@ describe("OAuth callback session persistence", () => {
       expect.objectContaining({ httpOnly: true, sameSite: "none", secure: true, path: "/" })
     );
     expect(res.clearCookie).toHaveBeenCalledWith("__Host-oauth_state", expect.any(Object));
-    expect(res.redirect).toHaveBeenCalledWith(302, "/admin");
+    expect(res.redirect).toHaveBeenCalledWith(302, expect.stringMatching(/^\/admin#session=.+/));
     expect(res.status).not.toHaveBeenCalled();
   });
 

@@ -61,7 +61,12 @@ export function registerOAuthRoutes(app: Express) {
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
-      res.redirect(302, getSafeReturnPath(returnPath));
+      // Some mobile browsers reject the session cookie after an external auth
+      // hop. The fragment is not sent to the server; the client consumes it
+      // into sessionStorage and removes it from the address bar immediately.
+      const redirectPath = getSafeReturnPath(returnPath);
+      const separator = redirectPath.includes("#") ? "&" : "#";
+      res.redirect(302, `${redirectPath}${separator}session=${encodeURIComponent(sessionToken)}`);
     } catch (error) {
       console.error("[OAuth] Callback failed", error);
       res.status(500).json({ error: "OAuth callback failed" });
