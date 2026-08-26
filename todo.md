@@ -342,3 +342,13 @@
 - [x] Make the standalone build load the latest approved content snapshot after GitHub sync.
 - [x] Verify profile, projects, articles, social links, and image fallbacks on the public GitHub Pages URL.
 - [x] Add regression tests, update documentation, and publish the corrected Pages build.
+
+## Rich Content Dashboard, Video Pages, and Profiles Card
+
+- [x] Add structured rich article content with inline image/video blocks, cover image, bilingual title, and full article body rendering.
+- [x] Add public article comments with commenter name and text, including validation and a compact comment form below each tutorial.
+- [x] Redesign application management so cards use a cover/title and the details dialog has image, description, and store/download action.
+- [x] Create dedicated video pages with title, embedded YouTube player, and supporting content instead of a details dialog.
+- [x] Reorganize the admin dashboard into clear article, application, video, and social-profile workflows with managed media upload controls.
+- [x] Redesign My Profiles as a horizontal card containing four social accounts per row with owner add/edit/delete controls.
+- [x] Preserve automatic/manual GitHub sync, expand the exported snapshot, add tests, verify mobile/desktop, and publish the updated site.

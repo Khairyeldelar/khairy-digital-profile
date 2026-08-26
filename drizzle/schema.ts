@@ -58,6 +58,27 @@ export const projects = mysqlTable("projects", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const projectMedia = mysqlTable("project_media", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  kind: varchar("kind", { length: 24 }).notNull().default("image"),
+  source: text("source").notNull(),
+  placement: varchar("placement", { length: 24 }).notNull().default("middle"),
+  captionEn: varchar("captionEn", { length: 240 }).notNull().default(""),
+  captionAr: varchar("captionAr", { length: 240 }).notNull().default(""),
+  sortOrder: int("sortOrder").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const articleComments = mysqlTable("article_comments", {
+  id: int("id").autoincrement().primaryKey(),
+  projectId: int("projectId").notNull(),
+  authorName: varchar("authorName", { length: 120 }).notNull(),
+  body: text("body").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
 export const socialLinks = mysqlTable("social_links", {
   id: int("id").autoincrement().primaryKey(),
   platform: varchar("platform", { length: 40 }).notNull().unique(),
@@ -82,5 +103,9 @@ export type InsertSiteProfile = typeof siteProfile.$inferInsert;
 export type SiteSettings = typeof siteSettings.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type InsertProject = typeof projects.$inferInsert;
+export type ProjectMedia = typeof projectMedia.$inferSelect;
+export type InsertProjectMedia = typeof projectMedia.$inferInsert;
+export type ArticleComment = typeof articleComments.$inferSelect;
+export type InsertArticleComment = typeof articleComments.$inferInsert;
 export type SocialLink = typeof socialLinks.$inferSelect;
 export type InsertSocialLink = typeof socialLinks.$inferInsert;

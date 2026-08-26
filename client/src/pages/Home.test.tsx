@@ -77,7 +77,7 @@ describe("WorkShowcase category interaction", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
-  it("keeps the selected category card connected to the details dialog", async () => {
+  it("routes the selected video card to its dedicated video page", async () => {
     const user = userEvent.setup();
     render(<WorkShowcase projects={projects} language="en" copy={copy} />);
 
@@ -85,12 +85,7 @@ describe("WorkShowcase category interaction", () => {
     expect(screen.getByRole("img", { name: "Video Project project preview" }).getAttribute("src")).toBe("https://cdn.example/video-uploaded.png");
     await user.click(screen.getByRole("button", { name: /View: Video Project/ }));
 
-    const dialog = await screen.findByRole("dialog");
-    expect(dialog).toBeTruthy();
-    expect(within(dialog).getByText("Video Project")).toBeTruthy();
-    expect(within(dialog).getByRole("img").getAttribute("src")).toBe("https://cdn.example/video-uploaded.png");
-
-    await user.keyboard("{Escape}");
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(window.location.pathname).toContain("/video/Video%20Project");
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 });

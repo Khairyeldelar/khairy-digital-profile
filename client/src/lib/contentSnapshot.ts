@@ -26,6 +26,16 @@ export type ContentSnapshot = {
     href: string;
     sortOrder: number;
     isPublished: boolean;
+    media?: Array<{
+      id: number;
+      kind: string;
+      source: string;
+      placement: string;
+      captionEn: string;
+      captionAr: string;
+      sortOrder: number;
+    }>;
+    comments?: Array<{ id: number; authorName: string; body: string; createdAt: string }>;
   }>;
   socialLinks: Array<{
     id: number;

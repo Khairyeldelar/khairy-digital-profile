@@ -2,8 +2,14 @@ import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
 import {
   createProject,
+  createProjectMedia,
   createSocialLink,
+  createArticleComment,
   deleteProject,
+  deleteProjectMedia,
+  deleteSocialLink,
+  getArticleComments,
+  getProjectMedia,
   getProjects,
   getSiteProfile,
   getSocialLinks,
@@ -58,6 +64,16 @@ export const socialInput = z.object({
   isPublished: z.boolean(),
 });
 
+const projectMediaInput = z.object({
+  projectId: z.number().int(),
+  kind: z.enum(["image", "youtube"]),
+  source: z.string().min(1).max(2_000),
+  placement: z.enum(["start", "middle", "end"]).default("middle"),
+  captionEn: z.string().max(240).default(""),
+  captionAr: z.string().max(240).default(""),
+  sortOrder: z.number().int().min(0).default(0),
+});
+
 async function runAutoGithubSync<T>(result: T) {
   const attach = (metadata: Record<string, unknown>) => {
     if (result && typeof result === "object" && !Array.isArray(result)) {
@@ -83,10 +99,18 @@ async function runAutoGithubSync<T>(result: T) {
 
 async function projectsWithImageUrls(publishedOnly: boolean) {
   const rows = await getProjects(publishedOnly);
-  return Promise.all(rows.map(async (project) => ({
-    ...project,
-    imageUrl: project.imageKey ? await storageGetSignedUrl(project.imageKey).catch(() => null) : null,
-  })));
+  return Promise.all(rows.map(async (project) => {
+    const media = await getProjectMedia(project.id);
+    return {
+      ...project,
+      imageUrl: project.imageKey ? await storageGetSignedUrl(project.imageKey).catch(() => null) : null,
+      comments: await getArticleComments(project.id),
+      media: await Promise.all(media.map(async (item) => ({
+        ...item,
+        sourceUrl: item.kind === "image" ? await storageGetSignedUrl(item.source).catch(() => null) : item.source,
+      }))),
+    };
+  }));
 }
 
 export const appRouter = router({
@@ -105,6 +129,10 @@ export const appRouter = router({
     projects: await projectsWithImageUrls(true),
     socialLinks: await getSocialLinks(true),
   })),
+  article: router({
+    comments: publicProcedure.input(z.object({ projectId: z.number().int().positive() })).query(({ input }) => getArticleComments(input.projectId)),
+    addComment: publicProcedure.input(z.object({ projectId: z.number().int().positive(), authorName: z.string().trim().min(2).max(120), body: z.string().trim().min(2).max(2_000) })).mutation(({ input }) => createArticleComment(input)),
+  }),
     admin: router({
     content: adminProcedure.query(async () => ({
       profile: await getSiteProfile(),
@@ -113,7 +141,7 @@ export const appRouter = router({
       autoGithubSync: await getAutoGithubSync(),
     })),
     updateProfile: adminProcedure.input(profileInput).mutation(async ({ input }) => runAutoGithubSync(await upsertSiteProfile(input))),
-    uploadAsset: adminProcedure.input(z.object({ fileName: z.string().min(1).max(180), mimeType: z.string().min(1).max(120), data: z.string().min(1).max(12_000_000), target: z.enum(["portrait", "cover", "project"]), projectId: z.number().int().optional() })).mutation(async ({ ctx, input }) => {
+    uploadAsset: adminProcedure.input(z.object({ fileName: z.string().min(1).max(180), mimeType: z.string().min(1).max(120), data: z.string().min(1).max(12_000_000), target: z.enum(["portrait", "cover", "project", "article"]), projectId: z.number().int().optional() })).mutation(async ({ ctx, input }) => {
       const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
       return storagePut(`admin/${ctx.user.openId}/${input.target}/${safeName}`, Buffer.from(input.data, "base64"), input.mimeType);
     }),
@@ -121,8 +149,11 @@ export const appRouter = router({
     createProject: adminProcedure.input(projectInput).mutation(async ({ input }) => runAutoGithubSync(await createProject(input))),
     updateProject: adminProcedure.input(z.object({ id: z.number().int(), data: projectInput.partial() })).mutation(async ({ input }) => runAutoGithubSync(await updateProject(input.id, input.data))),
     deleteProject: adminProcedure.input(z.object({ id: z.number().int() })).mutation(async ({ input }) => runAutoGithubSync(await deleteProject(input.id))),
+    createProjectMedia: adminProcedure.input(projectMediaInput).mutation(async ({ input }) => runAutoGithubSync(await createProjectMedia(input))),
+    deleteProjectMedia: adminProcedure.input(z.object({ id: z.number().int() })).mutation(async ({ input }) => runAutoGithubSync(await deleteProjectMedia(input.id))),
     createSocialLink: adminProcedure.input(socialInput.omit({ platform: true })).mutation(async ({ input }) => runAutoGithubSync(await createSocialLink({ ...input, platform: `custom-${Date.now()}` }))),
     updateSocialLink: adminProcedure.input(z.object({ id: z.number().int(), data: socialInput.partial() })).mutation(async ({ input }) => runAutoGithubSync(await updateSocialLink(input.id, input.data))),
+    deleteSocialLink: adminProcedure.input(z.object({ id: z.number().int() })).mutation(async ({ input }) => runAutoGithubSync(await deleteSocialLink(input.id))),
     syncGithub: adminProcedure.mutation(() => syncGithubContent()),
   }),
 });

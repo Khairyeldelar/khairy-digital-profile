@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertProject, InsertSiteProfile, InsertSocialLink, InsertUser, Project, SiteProfile, SocialLink, projects, siteProfile, siteSettings, socialLinks, users } from "../drizzle/schema";
+import { ArticleComment, InsertProject, InsertProjectMedia, InsertSiteProfile, InsertSocialLink, InsertUser, Project, ProjectMedia, SiteProfile, SocialLink, articleComments, projectMedia, projects, siteProfile, siteSettings, socialLinks, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -103,6 +103,41 @@ export async function getProjects(publishedOnly = true): Promise<Project[]> {
   return publishedOnly ? query.where(eq(projects.isPublished, true)) : query;
 }
 
+export async function getProjectMedia(projectId: number): Promise<ProjectMedia[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(projectMedia).where(eq(projectMedia.projectId, projectId)).orderBy(asc(projectMedia.sortOrder), asc(projectMedia.id));
+}
+
+export async function createProjectMedia(input: InsertProjectMedia) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(projectMedia).values(input);
+  const rows = await getProjectMedia(input.projectId);
+  return rows.find((item) => item.id === result[0].insertId);
+}
+
+export async function deleteProjectMedia(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(projectMedia).where(eq(projectMedia.id, id));
+  return { success: true } as const;
+}
+
+export async function getArticleComments(projectId: number): Promise<ArticleComment[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(articleComments).where(eq(articleComments.projectId, projectId)).orderBy(asc(articleComments.createdAt), asc(articleComments.id));
+}
+
+export async function createArticleComment(input: { projectId: number; authorName: string; body: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(articleComments).values(input);
+  const rows = await getArticleComments(input.projectId);
+  return rows.find((item) => item.id === result[0].insertId);
+}
+
 export async function getSocialLinks(publishedOnly = true): Promise<SocialLink[]> {
   const db = await getDb();
   if (!db) return [];
@@ -165,4 +200,11 @@ export async function updateSocialLink(id: number, input: Partial<InsertSocialLi
   if (!db) throw new Error("Database is not available");
   await db.update(socialLinks).set(input).where(eq(socialLinks.id, id));
   return getSocialLinks(false).then(rows => rows.find(row => row.id === id));
+}
+
+export async function deleteSocialLink(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(socialLinks).where(eq(socialLinks.id, id));
+  return { success: true } as const;
 }

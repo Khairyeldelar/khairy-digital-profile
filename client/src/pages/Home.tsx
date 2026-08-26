@@ -43,6 +43,7 @@ type ProfileItem = {
 };
 
 export type Project = {
+  id?: number;
   title: string;
   titleAr: string;
   description: string;
@@ -55,6 +56,16 @@ export type Project = {
   imageFallback?: string;
   href: string;
   category: WorkCategory;
+  media?: Array<{
+    id: number;
+    kind: string;
+    source: string;
+    placement: string;
+    captionEn: string;
+    captionAr: string;
+    sortOrder: number;
+  }>;
+  comments?: Array<{ id: number; authorName: string; body: string; createdAt: Date | string }>;
 };
 
 export const projects: Project[] = [
@@ -241,6 +252,10 @@ export function WorkShowcase({ projects, language, copy, category, sectionId = "
                     setLocation(`/article/${encodeURIComponent(project.title)}`);
                     return;
                   }
+                  if (project.category === "videos") {
+                    setLocation(`/video/${encodeURIComponent(project.title)}`);
+                    return;
+                  }
                   projectTriggerRef.current = button;
                   setSelectedProject(project);
                 }}
@@ -317,6 +332,7 @@ export default function Home() {
         const imageKey = "imageKey" in project ? project.imageKey : null;
         const imageUrl = "imageUrl" in project ? project.imageUrl : null;
         return {
+        id: project.id,
         title: project.titleEn,
         titleAr: project.titleAr,
         description: project.descriptionEn,
@@ -327,6 +343,19 @@ export default function Home() {
         image: resolveProjectImage(imageKey, imageUrl),
         imageFallback: resolveProjectImage(imageKey),
         href: project.href,
+        media: (project.media ?? []).map((item) => {
+          const sourceUrl = "sourceUrl" in item && typeof item.sourceUrl === "string" ? item.sourceUrl : null;
+          return {
+            id: item.id,
+            kind: item.kind,
+            source: sourceUrl ?? resolveProjectImage(item.source),
+            placement: item.placement,
+            captionEn: item.captionEn,
+            captionAr: item.captionAr,
+            sortOrder: item.sortOrder,
+          };
+        }),
+        comments: project.comments,
       };
       })
     : projects;
@@ -471,11 +500,11 @@ export default function Home() {
             </div>
             <span className="section-symbol">↘</span>
           </div>
-          <div className="profiles-card">
+          <div className="profiles-card profiles-grid-card">
             {displayedProfiles.map((profile, index) => {
               const Icon = profile.icon;
               return (
-                <a className="profile-row" key={profile.name} href={profile.name === "Email" ? emailHref : profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
+                <a className="profile-row profile-tile" key={profile.name} href={profile.name === "Email" ? emailHref : profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
                   <span className="profile-row-index">0{index + 1}</span>
                   <span className="profile-row-icon"><Icon size={18} strokeWidth={1.8} /></span>
                   <span className="profile-row-copy"><strong>{language === "ar" ? (profile.nameAr || profile.name) : profile.name}</strong><small>{language === "ar" ? profile.handleAr : profile.handle}</small></span>

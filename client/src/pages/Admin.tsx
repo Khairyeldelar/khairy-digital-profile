@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getAdminNotice } from "@/lib/adminNotifications";
 import { bindUploadedProjectImage } from "@/lib/projectUploadSync";
 import { trpc } from "@/lib/trpc";
-import { Github, Loader2, Save, Trash2, Upload } from "lucide-react";
+import { Github, ImagePlus, Loader2, Save, Trash2, Upload, Youtube } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -69,6 +69,8 @@ export default function Admin() {
   const [newProject, setNewProject] = useState<ProjectDraft>(emptyProject);
   const [newSocial, setNewSocial] = useState<SocialDraft>(emptySocial);
   const [autoGithubSync, setAutoGithubSync] = useState(false);
+  const [activeContentType, setActiveContentType] = useState<"all" | "applications" | "tutorials" | "videos">("all");
+  const [mediaDrafts, setMediaDrafts] = useState<Record<number, { source: string; placement: "start" | "middle" | "end" }>>({});
   const [notice, setNotice] = useState<{ message: string; kind: "success" | "error" } | null>(null);
   const showNotice = (message: string, kind: "success" | "error" = "success") => {
     setNotice({ message, kind });
@@ -170,6 +172,39 @@ export default function Admin() {
     reader.readAsDataURL(file);
   };
 
+  const createProjectMedia = trpc.admin.createProjectMedia.useMutation({
+    onSuccess: (result) => {
+      showSaveNotice("projectUpdate", result);
+      void Promise.all([utils.admin.content.invalidate(), utils.content.invalidate()]);
+    },
+    onError: () => showNotice("Could not add the article media. Please try again.", "error"),
+  });
+  const deleteProjectMedia = trpc.admin.deleteProjectMedia.useMutation({
+    onSuccess: (result) => {
+      showSaveNotice("projectUpdate", result);
+      void Promise.all([utils.admin.content.invalidate(), utils.content.invalidate()]);
+    },
+    onError: () => showNotice("Could not remove the article media. Please try again.", "error"),
+  });
+  const uploadArticleAsset = trpc.admin.uploadAsset.useMutation({
+    onSuccess: async (result, variables) => {
+      if (!variables.projectId) return;
+      const draft = mediaDrafts[variables.projectId] ?? { source: "", placement: "middle" as const };
+      await createProjectMedia.mutateAsync({ projectId: variables.projectId, kind: "image", source: result.key, placement: draft.placement, captionEn: "", captionAr: "", sortOrder: 0 });
+    },
+    onError: () => showNotice("The article image could not be uploaded.", "error"),
+  });
+  const handleArticleMediaUpload = (file: File, projectId: number) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const encoded = String(reader.result).split(",")[1];
+      if (encoded) uploadArticleAsset.mutate({ fileName: file.name, mimeType: file.type || "application/octet-stream", data: encoded, target: "article", projectId });
+      else showNotice("The selected image could not be read.", "error");
+    };
+    reader.onerror = () => showNotice("The selected image could not be read.", "error");
+    reader.readAsDataURL(file);
+  };
+
   const deleteProject = trpc.admin.deleteProject.useMutation({
     onSuccess: (result) => {
       showSaveNotice("projectDelete", result);
@@ -191,6 +226,13 @@ export default function Admin() {
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("socialUpdate", "error"), "error"),
+  });
+  const deleteSocialLink = trpc.admin.deleteSocialLink.useMutation({
+    onSuccess: (result) => {
+      showSaveNotice("socialUpdate", result);
+      void utils.admin.content.invalidate();
+    },
+    onError: () => showNotice("Could not remove the social link. Please try again.", "error"),
   });
   const syncGithub = trpc.admin.syncGithub.useMutation({
     onSuccess: () => showNotice(getAdminNotice("githubSync", "success")),
@@ -301,11 +343,11 @@ export default function Admin() {
         </Card>
 
         <section className="space-y-3">
-          <div><p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Selected work</p><h2 className="mt-1 text-2xl font-semibold">Projects</h2></div>
+          <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Content studio</p><h2 className="mt-1 text-2xl font-semibold">Articles, applications, and videos</h2><p className="mt-1 text-sm text-muted-foreground">Choose a workflow, then update its cover, title, details, destination, and published state.</p></div><div className="flex flex-wrap gap-2">{([{ value: "all", label: "All" }, ...workCategoryOptions] as const).map((option) => <Button type="button" key={option.value} size="sm" variant={activeContentType === option.value ? "default" : "outline"} onClick={() => setActiveContentType(option.value)}>{option.label}</Button>)}</div></div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {data.projects.map((project) => (
+            {data.projects.filter((project) => activeContentType === "all" || project.category === activeContentType).map((project) => (
               <Card key={project.id}>
-                <CardHeader><CardTitle className="flex items-center justify-between text-base"><span>{project.titleEn}</span><span className="text-xs text-muted-foreground">#{project.sortOrder}</span></CardTitle></CardHeader>
+                <CardHeader><CardTitle className="flex items-center justify-between text-base"><span>{workCategoryOptions.find((option) => option.value === project.category)?.label} · {project.titleEn}</span><span className="text-xs text-muted-foreground">#{project.sortOrder}</span></CardTitle></CardHeader>
                 <CardContent className="space-y-3">
                   <Input defaultValue={project.titleEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { titleEn: e.target.value } })} placeholder="Title · English" />
                   <Input dir="rtl" defaultValue={project.titleAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { titleAr: e.target.value } })} placeholder="العنوان · العربية" />
@@ -316,15 +358,21 @@ export default function Admin() {
                   </label>
                   <Textarea defaultValue={project.descriptionEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { descriptionEn: e.target.value } })} placeholder="Description · English" />
                   <Textarea dir="rtl" defaultValue={project.descriptionAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { descriptionAr: e.target.value } })} placeholder="الوصف · العربية" />
-                  {project.category === "tutorials" && (
-                    <>
-                      <Textarea defaultValue={project.articleBodyEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { articleBodyEn: e.target.value } })} placeholder="Article body · English" rows={6} />
-                      <Textarea dir="rtl" defaultValue={project.articleBodyAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { articleBodyAr: e.target.value } })} placeholder="نص المقال · العربية" rows={6} />
-                    </>
-                  )}
-                  <Input defaultValue={project.href} onBlur={(e) => updateProject.mutate({ id: project.id, data: { href: e.target.value } })} placeholder="Project URL" />
+                  {project.category === "tutorials" && <div className="space-y-3 rounded-lg border bg-muted/30 p-3">
+                    <div><p className="text-sm font-semibold">Article editor / محرر المقال</p><p className="text-xs text-muted-foreground">The title and cover appear first, then the body and your selected inline media.</p></div>
+                    <Textarea defaultValue={project.articleBodyEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { articleBodyEn: e.target.value } })} placeholder="Article body · English" rows={8} />
+                    <Textarea dir="rtl" defaultValue={project.articleBodyAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { articleBodyAr: e.target.value } })} placeholder="نص المقال · العربية" rows={8} />
+                    <div className="space-y-2 rounded-md border bg-background p-3"><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Inline media / صور وفيديو داخل المقال</p>
+                      {(project.media ?? []).map((media) => <div key={media.id} className="flex items-center justify-between gap-2 rounded border p-2 text-xs"><span>{media.kind} · {media.placement}</span><Button type="button" variant="ghost" size="sm" className="text-destructive" onClick={() => deleteProjectMedia.mutate({ id: media.id })}><Trash2 className="mr-1 h-3.5 w-3.5" />Remove</Button></div>)}
+                      <div className="grid gap-2 sm:grid-cols-[1fr_auto]"><Input value={mediaDrafts[project.id]?.source ?? ""} onChange={(event) => setMediaDrafts((current) => ({ ...current, [project.id]: { source: event.target.value, placement: current[project.id]?.placement ?? "middle" } }))} placeholder="YouTube URL for an inline video" /><Button type="button" variant="outline" size="sm" disabled={!mediaDrafts[project.id]?.source} onClick={() => createProjectMedia.mutate({ projectId: project.id, kind: "youtube", source: mediaDrafts[project.id]?.source ?? "", placement: mediaDrafts[project.id]?.placement ?? "middle", captionEn: "", captionAr: "", sortOrder: 0 })}><Youtube className="mr-1 h-3.5 w-3.5" />Add video</Button></div>
+                      <div className="flex flex-wrap items-center gap-2"><select className="h-9 rounded-md border bg-background px-2 text-xs" value={mediaDrafts[project.id]?.placement ?? "middle"} onChange={(event) => setMediaDrafts((current) => ({ ...current, [project.id]: { source: current[project.id]?.source ?? "", placement: event.target.value as "start" | "middle" | "end" } }))}><option value="start">Start / بداية</option><option value="middle">Middle / وسط</option><option value="end">End / نهاية</option></select><label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground"><ImagePlus className="h-3.5 w-3.5" />Upload inline image<input className="sr-only" type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) handleArticleMediaUpload(file, project.id); }} /></label></div>
+                    </div>
+                  </div>}
+                  {project.category === "applications" && <p className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">Application card: cover image and title on the grid. The public details dialog uses the description below and this link as the download or store action.</p>}
+                  {project.category === "videos" && <p className="rounded-md border border-dashed p-3 text-xs text-muted-foreground">Video card: cover image and title on the grid. Paste a YouTube link below; opening the card goes to a dedicated video page.</p>}
+                  <Input defaultValue={project.href} onBlur={(e) => updateProject.mutate({ id: project.id, data: { href: e.target.value } })} placeholder={project.category === "videos" ? "YouTube video URL" : project.category === "applications" ? "Store or download URL" : "Source URL"} />
                   <Input defaultValue={project.imageKey ?? ""} onBlur={(e) => updateProject.mutate({ id: project.id, data: { imageKey: e.target.value || null } })} placeholder="Managed image key (optional)" />
-                  <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground"><Upload className="h-3.5 w-3.5" />Upload project image<input className="sr-only" type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleProjectUpload(file, project.id); }} /></label>
+                  <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground"><Upload className="h-3.5 w-3.5" />Upload {project.category === "tutorials" ? "article cover" : project.category === "videos" ? "video cover" : "application cover"}<input className="sr-only" type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleProjectUpload(file, project.id); }} /></label>
                   <label className="flex items-center gap-2 text-sm text-muted-foreground"><input type="checkbox" defaultChecked={project.isPublished} onChange={(e) => updateProject.mutate({ id: project.id, data: { isPublished: e.target.checked } })} /> Show on public card</label>
                   <div className="flex justify-end"><Button variant="ghost" size="sm" className="text-destructive" onClick={() => deleteProject.mutate({ id: project.id })}><Trash2 className="mr-2 h-4 w-4" />Delete</Button></div>
                 </CardContent>
@@ -376,13 +424,14 @@ export default function Admin() {
               </Button>
             </div>
             {data.socialLinks.map((link) => (
-              <div key={link.id} className="grid gap-2 rounded-lg border p-3 md:grid-cols-[1fr_1fr_1fr_1fr_2fr_auto] md:items-center">
+              <div key={link.id} className="grid gap-2 rounded-lg border p-3 md:grid-cols-[1fr_1fr_1fr_1fr_2fr_auto_auto] md:items-center">
                 <Input defaultValue={link.platformEn || link.platform} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: e.target.value, platformAr: link.platformAr || link.platform, handleEn: link.handleEn, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="Platform name · English" />
                 <Input dir="rtl" defaultValue={link.platformAr || link.platformEn || link.platform} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: e.target.value, handleEn: link.handleEn, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="اسم المنصة · العربية" />
                 <Input defaultValue={link.handleEn} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: link.platformAr || link.platform, handleEn: e.target.value, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="Short description · English" />
                 <Input dir="rtl" defaultValue={link.handleAr} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: link.platformAr || link.platform, handleEn: link.handleEn, handleAr: e.target.value, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="نبذة قصيرة · العربية" />
                 <Input defaultValue={link.href} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: link.platformAr || link.platform, handleEn: link.handleEn, handleAr: link.handleAr, href: e.target.value, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="URL" />
                 <span className="text-xs text-muted-foreground">{link.isPublished ? "Published" : "Hidden"}</span>
+                <Button type="button" variant="ghost" size="icon" className="text-destructive" onClick={() => deleteSocialLink.mutate({ id: link.id })} aria-label={`Delete ${link.platformEn || link.platform}`}><Trash2 className="h-4 w-4" /></Button>
               </div>
             ))}
           </CardContent>

@@ -1,4 +1,4 @@
-import { getProjects, getSiteProfile, getSocialLinks } from "./db";
+import { getArticleComments, getProjectMedia, getProjects, getSiteProfile, getSocialLinks } from "./db";
 
 const GITHUB_API = "https://api.github.com";
 const DEFAULT_REPOSITORY = "Khairyeldelar/khairy-digital-profile";
@@ -32,7 +32,12 @@ function repositoryName() {
   return process.env.GITHUB_REPOSITORY || DEFAULT_REPOSITORY;
 }
 
-export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteProfile>>, projects: Awaited<ReturnType<typeof getProjects>>, socialLinks: Awaited<ReturnType<typeof getSocialLinks>>) {
+type SnapshotProject = Awaited<ReturnType<typeof getProjects>>[number] & {
+  media?: Awaited<ReturnType<typeof getProjectMedia>>;
+  comments?: Awaited<ReturnType<typeof getArticleComments>>;
+};
+
+export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteProfile>>, projects: SnapshotProject[], socialLinks: Awaited<ReturnType<typeof getSocialLinks>>) {
   return `${JSON.stringify({
     version: 1,
     generatedAt: new Date().toISOString(),
@@ -59,6 +64,21 @@ export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteP
       href: project.href,
       sortOrder: project.sortOrder,
       isPublished: project.isPublished,
+      media: (project.media ?? []).map((item) => ({
+        id: item.id,
+        kind: item.kind,
+        source: item.source,
+        placement: item.placement,
+        captionEn: item.captionEn,
+        captionAr: item.captionAr,
+        sortOrder: item.sortOrder,
+      })),
+      comments: (project.comments ?? []).map((comment) => ({
+        id: comment.id,
+        authorName: comment.authorName,
+        body: comment.body,
+        createdAt: comment.createdAt,
+      })),
     })),
     socialLinks: socialLinks.map((link) => ({
       id: link.id,
@@ -95,7 +115,12 @@ export async function syncGithubContent() {
     getProjects(false),
     getSocialLinks(false),
   ]);
-  const snapshot = buildContentSnapshot(profile, projects, socialLinks);
+  const snapshotProjects = await Promise.all(projects.map(async (project) => ({
+    ...project,
+    media: await getProjectMedia(project.id),
+    comments: await getArticleComments(project.id),
+  })));
+  const snapshot = buildContentSnapshot(profile, snapshotProjects, socialLinks);
   const existing = await readExistingFile(token, repository);
   const response = await fetch(`${GITHUB_API}/repos/${repository}/contents/${SYNC_PATH}`, {
     method: "PUT",

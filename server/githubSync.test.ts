@@ -4,6 +4,8 @@ const dbMocks = vi.hoisted(() => ({
   getSiteProfile: vi.fn(),
   getProjects: vi.fn(),
   getSocialLinks: vi.fn(),
+  getProjectMedia: vi.fn(),
+  getArticleComments: vi.fn(),
   getAutoGithubSync: vi.fn(),
 }));
 
@@ -46,6 +48,8 @@ describe("GitHub content sync", () => {
       isPublished: true,
     }]);
     dbMocks.getSocialLinks.mockResolvedValue([]);
+    dbMocks.getProjectMedia.mockResolvedValue([]);
+    dbMocks.getArticleComments.mockResolvedValue([]);
   });
 
   afterEach(() => {
@@ -76,6 +80,18 @@ describe("GitHub content sync", () => {
     const putRequest = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[1][1];
     expect(putRequest.method).toBe("PUT");
     expect(String(putRequest.body)).toContain("Sync site content from admin dashboard");
+  });
+
+  it("includes article media and comments in the published content snapshot", async () => {
+    const snapshot = buildContentSnapshot(
+      await dbMocks.getSiteProfile(),
+      [{ ...(await dbMocks.getProjects(false))[0], media: [{ id: 3, kind: "youtube", source: "https://youtu.be/example", placement: "middle", captionEn: "Demo", captionAr: "عرض", sortOrder: 0 }], comments: [{ id: 9, authorName: "Mona", body: "Helpful guide", createdAt: new Date() }] }],
+      await dbMocks.getSocialLinks(false),
+    );
+
+    expect(snapshot).toContain("https://youtu.be/example");
+    expect(snapshot).toContain("Helpful guide");
+    expect(snapshot).not.toContain("portraitKey");
   });
 
   it("fails clearly when the server token is missing", async () => {
