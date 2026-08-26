@@ -42,3 +42,11 @@
 - [x] Upload or re-upload the portrait and cover through the managed File Storage flow.
 - [x] Replace large repository-local media references with managed storage paths.
 - [x] Verify the profile image and cover in the Full-Stack preview, then save a checkpoint.
+
+## External Full-Stack Hosting
+
+- [ ] Add Render-compatible service configuration for the Express Full-Stack app.
+- [ ] Commit and push the latest Full-Stack/storage version to the public GitHub repository.
+- [ ] Configure required production environment variables and storage/database dependencies.
+- [ ] Deploy the service on Render or pause for account authorization if required.
+- [ ] Verify the external URL and confirm the app loads without the Manus preview badge.
