@@ -166,6 +166,11 @@ export default function Home() {
   });
   const [activeSection, setActiveSection] = useState("home");
   const t = copy[language];
+  const emailSubject = language === "ar" ? "تواصل بخصوص مشروع رقمي" : "Hello Khairy — Digital Project";
+  const emailBody = language === "ar"
+    ? "مرحبًا خيري،\n\nأرغب في مناقشة مشروع رقمي معك.\n\nالاسم:\nفكرة المشروع:\nالميزانية أو الإطار الزمني:\n\nشكرًا لك."
+    : "Hi Khairy,\n\nI’d like to discuss a digital project with you.\n\nName:\nProject idea:\nBudget or timeline:\n\nThank you.";
+  const emailHref = `mailto:khairy.eldelar5@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -329,7 +334,7 @@ export default function Home() {
             {profiles.map((profile, index) => {
               const Icon = profile.icon;
               return (
-                <a className="profile-row" key={profile.name} href={profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
+                <a className="profile-row" key={profile.name} href={profile.name === "Email" ? emailHref : profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
                   <span className="profile-row-index">0{index + 1}</span>
                   <span className="profile-row-icon"><Icon size={18} strokeWidth={1.8} /></span>
                   <span className="profile-row-copy"><strong>{profile.name}</strong><small>{language === "ar" ? profile.handleAr : profile.handle}</small></span>
@@ -352,7 +357,7 @@ export default function Home() {
             <div className="contact-icon"><Mail size={20} strokeWidth={1.7} /></div>
             <p className="section-kicker">{t.contactKicker}</p>
             <h2 id="contact-title">{t.contactTitle}<br /><em>{t.contactTitleEm}</em></h2>
-            <a className="contact-link" href="mailto:khairy.eldelar5@gmail.com">khairy.eldelar5@gmail.com <ArrowUpRight size={16} /></a>
+            <a className="contact-link" href={emailHref}>khairy.eldelar5@gmail.com <ArrowUpRight size={16} /></a>
           </section>
         </div>
       </main>
