@@ -236,10 +236,10 @@
 
 ## Project Image Binding Investigation
 
-- [ ] Inspect actual project imageKey values and upload mutation response without exposing private file URLs.
-- [ ] Ensure project uploads persist against the selected project id and invalidate public content queries.
-- [ ] Add regression coverage for upload-to-project binding and cache refresh.
-- [ ] Verify the uploaded project image appears in the public card and modal after a fresh load.
+- [x] Inspect actual project imageKey values and upload mutation response without exposing private file URLs.
+- [x] Ensure project uploads persist against the selected project id and invalidate public content queries.
+- [x] Add regression coverage for upload-to-project binding and cache refresh.
+- [x] Verify the uploaded project image appears in the public card and modal after a fresh load.
 
 ## Simplify Work Section Heading
 
@@ -271,3 +271,5 @@
 - [x] Add focused tests for category selection and verify Arabic/English responsive rendering before checkpoint.
 - [x] Add a focused UI test that switches work categories and asserts only the selected category cards are visible.
 - [x] Add an interaction test confirming a selected-category card still opens the project details dialog after switching categories.
+- [x] Invalidate both admin and public content caches after project-image binding.
+- [x] Add regression coverage for upload binding and public-card/modal rendering after a fresh load.

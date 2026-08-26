@@ -35,7 +35,7 @@ const projects: Project[] = [
     descriptionAr: "مشروع فيديو.",
     type: "Video",
     typeAr: "فيديو",
-    image: "",
+    image: "https://cdn.example/video-uploaded.png",
     href: "https://example.com/video",
     category: "videos",
   },
@@ -72,11 +72,13 @@ describe("WorkShowcase category interaction", () => {
     render(<WorkShowcase projects={projects} language="en" copy={copy} />);
 
     await user.click(screen.getByRole("tab", { name: /Videos/ }));
+    expect(screen.getByRole("img", { name: "Video Project project preview" }).getAttribute("src")).toBe("https://cdn.example/video-uploaded.png");
     await user.click(screen.getByRole("button", { name: /View: Video Project/ }));
 
     const dialog = await screen.findByRole("dialog");
     expect(dialog).toBeTruthy();
     expect(within(dialog).getByText("Video Project")).toBeTruthy();
+    expect(within(dialog).getByRole("img").getAttribute("src")).toBe("https://cdn.example/video-uploaded.png");
 
     await user.keyboard("{Escape}");
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());

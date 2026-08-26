@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getAdminNotice } from "@/lib/adminNotifications";
+import { bindUploadedProjectImage } from "@/lib/projectUploadSync";
 import { trpc } from "@/lib/trpc";
 import { Loader2, Save, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -131,9 +132,15 @@ export default function Admin() {
   const uploadProjectAsset = trpc.admin.uploadAsset.useMutation({
     onSuccess: async (result, variables) => {
       if (variables.projectId) {
-        await updateProject.mutateAsync({ id: variables.projectId, data: { imageKey: result.key } });
+        await bindUploadedProjectImage({
+          projectId: variables.projectId,
+          imageKey: result.key,
+          updateProject: (input) => updateProject.mutateAsync(input),
+          caches: { admin: utils.admin, public: utils.content },
+        });
+      } else {
+        await Promise.all([utils.admin.content.invalidate(), utils.content.invalidate()]);
       }
-      await utils.admin.content.invalidate();
       showNotice(getAdminNotice("projectImageUpload", "success"));
     },
     onError: () => showNotice(getAdminNotice("projectImageUpload", "error"), "error"),
