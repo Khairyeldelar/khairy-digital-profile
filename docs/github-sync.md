@@ -6,6 +6,10 @@ The server reads `GITHUB_TOKEN` from managed project secrets. The token must be 
 
 The first sync creates the file; later syncs read its GitHub blob SHA and update it with a new commit. Each request is protected by the existing designated-owner procedure. The button synchronizes editable site content, not arbitrary source-code changes; source-code updates remain synchronized through the repository workflow and checkpoints.
 
+## GitHub Pages content delivery
+
+The GitHub Pages workflow copies `content-sync/site-content.json` into the published artifact. The standalone frontend loads this snapshot from its repository subpath, so changes saved from the Admin control room appear on the GitHub Pages website after the corresponding GitHub Pages workflow finishes. The Full-Stack Manus deployment continues to read the same content directly from its database.
+
 ## Automatic sync after save
 
 The owner can enable **Automatic GitHub sync** from the Admin control room. When enabled, each successful profile, project, or social-link save starts one server-side sync immediately after the database write completes. Project-image uploads use the same path after the image key is linked to the project.

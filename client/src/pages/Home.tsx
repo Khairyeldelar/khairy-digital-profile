@@ -9,6 +9,7 @@ import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { filterProjectsByCategory, workCategories, type WorkCategory } from "@/lib/workCategories";
+import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { publicAssetPath, resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
@@ -307,10 +308,15 @@ export default function Home() {
     };
   }, []);
   const t = copy[language];
-  const contentQuery = trpc.content.useQuery();
-  const contentProfile = contentQuery.data?.profile;
-  const displayedProjects: Project[] = contentQuery.data?.projects?.length
-    ? contentQuery.data.projects.map((project) => ({
+  const standaloneContent = useStandaloneContentSnapshot();
+  const contentQuery = trpc.content.useQuery(undefined, { enabled: !isStandaloneSite() });
+  const contentData = standaloneContent ?? contentQuery.data;
+  const contentProfile = contentData?.profile;
+  const displayedProjects: Project[] = contentData?.projects?.length
+    ? contentData.projects.map((project) => {
+        const imageKey = "imageKey" in project ? project.imageKey : null;
+        const imageUrl = "imageUrl" in project ? project.imageUrl : null;
+        return {
         title: project.titleEn,
         titleAr: project.titleAr,
         description: project.descriptionEn,
@@ -318,20 +324,23 @@ export default function Home() {
         type: project.typeEn,
         typeAr: project.typeAr,
         category: project.category === "tutorials" || project.category === "videos" ? project.category : "applications",
-        image: resolveProjectImage(project.imageKey, project.imageUrl),
-        imageFallback: resolveProjectImage(project.imageKey),
+        image: resolveProjectImage(imageKey, imageUrl),
+        imageFallback: resolveProjectImage(imageKey),
         href: project.href,
-      }))
+      };
+      })
     : projects;
-  const displayedProfiles: ProfileItem[] = contentQuery.data?.socialLinks?.length
-    ? contentQuery.data.socialLinks.map(presentSocialLink)
+  const displayedProfiles: ProfileItem[] = contentData?.socialLinks?.length
+    ? contentData.socialLinks.map(presentSocialLink)
     : profiles;
   const displayName = contentProfile?.name ?? "Khairy Eid Aly";
   const displayRole = language === "ar" ? contentProfile?.roleAr : contentProfile?.roleEn;
   const displayBio = language === "ar" ? contentProfile?.bioAr : contentProfile?.bioEn;
   const displayLocation = language === "ar" ? contentProfile?.locationAr : contentProfile?.locationEn;
-  const portraitSrc = resolveProjectImage(contentProfile?.portraitKey) || publicAssetPath("assets/khairy-profile-portrait.webp");
-  const coverSrc = resolveProjectImage(contentProfile?.coverKey) || publicAssetPath("assets/khairy-profile-cover.webp");
+  const portraitKey = contentProfile && "portraitKey" in contentProfile ? contentProfile.portraitKey : null;
+  const coverKey = contentProfile && "coverKey" in contentProfile ? contentProfile.coverKey : null;
+  const portraitSrc = resolveProjectImage(portraitKey) || publicAssetPath("assets/khairy-profile-portrait.webp");
+  const coverSrc = resolveProjectImage(coverKey) || publicAssetPath("assets/khairy-profile-cover.webp");
   const emailSubject = language === "ar" ? "تواصل بخصوص مشروع رقمي" : "Hello Khairy — Digital Project";
   const emailBody = language === "ar"
     ? "مرحبًا خيري،\n\nأرغب في مناقشة مشروع رقمي معك.\n\nالاسم:\nفكرة المشروع:\nالميزانية أو الإطار الزمني:\n\nشكرًا لك."

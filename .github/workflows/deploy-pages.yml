@@ -36,6 +36,9 @@ jobs:
       - name: Build standalone site
         run: STANDALONE_BUILD=true pnpm exec vite build
 
+      - name: Include latest content snapshot
+        run: cp -R content-sync dist/public/content-sync
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

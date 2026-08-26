@@ -335,3 +335,10 @@
 - [x] Make public image paths work on the GitHub Pages subpath without breaking the managed Full-Stack preview.
 - [x] Replace large section title cards with compact elegant text rows in Arabic and English.
 - [x] Add regression tests and verify the responsive result on mobile and desktop, then publish the fix.
+
+## GitHub Pages Live Content Sync
+
+- [ ] Diagnose why admin-managed content appears on Manus but not on the standalone GitHub Pages site.
+- [ ] Make the standalone build load the latest approved content snapshot after GitHub sync.
+- [ ] Verify profile, projects, articles, social links, and image fallbacks on the public GitHub Pages URL.
+- [ ] Add regression tests, update documentation, and publish the corrected Pages build.

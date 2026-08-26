@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowUpRight, BadgeCheck, Languages, Moon, Sun } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { ProjectImage } from "@/components/ProjectImage";
+import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
@@ -47,10 +48,14 @@ export default function Article() {
   const articleTitle = decodeArticleSlug(slug);
   const [language, setLanguage] = useState<Language>(() => getInitialProfileLanguage(window.location.search, localStorage.getItem("khairy-language")));
   const { theme, toggleTheme } = useTheme();
-  const contentQuery = trpc.content.useQuery();
+  const standaloneContent = useStandaloneContentSnapshot();
+  const contentQuery = trpc.content.useQuery(undefined, { enabled: !isStandaloneSite() });
+  const contentData = standaloneContent ?? contentQuery.data;
   const project = useMemo(() => {
-    const remote = contentQuery.data?.projects?.find((item) => item.titleEn === articleTitle);
+    const remote = contentData?.projects?.find((item) => item.titleEn === articleTitle);
     if (remote) {
+      const imageKey = "imageKey" in remote ? remote.imageKey : null;
+      const imageUrl = "imageUrl" in remote ? remote.imageUrl : null;
       return {
         title: remote.titleEn,
         titleAr: remote.titleAr,
@@ -61,14 +66,14 @@ export default function Article() {
         type: remote.typeEn,
         typeAr: remote.typeAr,
         category: "tutorials" as const,
-        image: resolveProjectImage(remote.imageKey, remote.imageUrl),
-        imageFallback: resolveProjectImage(remote.imageKey),
+        image: resolveProjectImage(imageKey, imageUrl),
+        imageFallback: resolveProjectImage(imageKey),
         href: remote.href,
       };
     }
     return findFallbackProject(slug);
-  }, [contentQuery.data?.projects, articleTitle, slug]);
-  const profile = contentQuery.data?.profile;
+  }, [contentData?.projects, articleTitle, slug]);
+  const profile = contentData?.profile;
   const copy = labels[language];
 
   useEffect(() => {
