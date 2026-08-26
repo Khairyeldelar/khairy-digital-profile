@@ -4,6 +4,7 @@ const dbMocks = vi.hoisted(() => ({
   getSiteProfile: vi.fn(),
   getProjects: vi.fn(),
   getSocialLinks: vi.fn(),
+  getAutoGithubSync: vi.fn(),
 }));
 
 vi.mock("./db", () => dbMocks);
@@ -16,6 +17,7 @@ describe("GitHub content sync", () => {
 
   beforeEach(() => {
     process.env.GITHUB_TOKEN = "test-token";
+    dbMocks.getAutoGithubSync.mockResolvedValue(false);
     dbMocks.getSiteProfile.mockResolvedValue({
       name: "Khairy Eid Aly",
       roleEn: "Developer",

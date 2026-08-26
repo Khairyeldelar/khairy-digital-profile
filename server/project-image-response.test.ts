@@ -23,6 +23,7 @@ vi.mock("./db", () => ({
   getProjects,
   getSiteProfile: vi.fn(async () => undefined),
   getSocialLinks: vi.fn(async () => []),
+  getAutoGithubSync: vi.fn(async () => false),
 }));
 vi.mock("./storage", () => ({
   storageGetSignedUrl,

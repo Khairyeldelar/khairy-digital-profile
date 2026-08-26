@@ -11,6 +11,7 @@ vi.mock("./db", () => ({
   getProjects: vi.fn(async () => []),
   getSiteProfile: vi.fn(async () => undefined),
   getSocialLinks: vi.fn(async () => []),
+  getAutoGithubSync: vi.fn(async () => false),
   updateProject: vi.fn(),
   updateSocialLink: vi.fn(),
   upsertSiteProfile: vi.fn(),
