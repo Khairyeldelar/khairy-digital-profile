@@ -174,3 +174,19 @@
 - [x] Correct the owner identity configuration or matching logic while keeping the dashboard owner-only.
 - [x] Add regression coverage for the accepted owner identity and rejected non-owner identity.
 - [ ] Publish and verify that the owner account reaches the dashboard on mobile.
+
+## OAuth Owner Identity Confirmation
+
+- [ ] Capture a safe diagnostic of the OAuth user identity and role at callback/auth.me without exposing tokens.
+- [ ] Confirm the intended owner account identifier and update the owner grant from the verified source only.
+- [ ] Add regression tests for the verified owner identity and a different admin identity.
+- [ ] Publish and verify the real mobile dashboard access.
+
+## Admin Save Notifications
+
+- [x] Add visible success and error feedback for profile saves, project changes, social-link edits, and image uploads.
+- [x] Ensure notifications are accessible, readable, and reset correctly between operations.
+- [x] Verify the notification behavior with tests, visual preview, and a production build.
+
+- [x] Add focused Vitest coverage for admin notification messages and success/error states.
+- [ ] Exercise one real admin save in preview and confirm the visible notice changes.

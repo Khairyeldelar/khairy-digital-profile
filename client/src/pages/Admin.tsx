@@ -1,11 +1,14 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { AdminNoticeBanner } from "@/components/AdminNoticeBanner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { getAdminNotice } from "@/lib/adminNotifications";
 import { trpc } from "@/lib/trpc";
 import { Loader2, Save, Trash2, Upload } from "lucide-react";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 const emptyProject = {
@@ -42,12 +45,18 @@ export default function Admin() {
   const contentQuery = trpc.admin.content.useQuery(undefined, { enabled: ownerCheck.data === true });
   const [profile, setProfile] = useState<ProfileDraft | null>(null);
   const [newProject, setNewProject] = useState<ProjectDraft>(emptyProject);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState<{ message: string; kind: "success" | "error" } | null>(null);
+  const showNotice = (message: string, kind: "success" | "error" = "success") => {
+    setNotice({ message, kind });
+    if (kind === "success") toast.success(message);
+    else toast.error(message);
+  };
   const uploadAsset = trpc.admin.uploadAsset.useMutation({
     onSuccess: (result, variables) => {
       setProfile((current) => current ? { ...current, [`${variables.target}Key`]: result.key } : current);
-      setNotice("Asset uploaded. Save profile to apply it.");
+      showNotice(getAdminNotice("assetUpload", "success"));
     },
+    onError: () => showNotice(getAdminNotice("assetUpload", "error"), "error"),
   });
 
   const handleUpload = (file: File, target: "portrait" | "cover") => {
@@ -55,7 +64,9 @@ export default function Admin() {
     reader.onload = () => {
       const encoded = String(reader.result).split(",")[1];
       if (encoded) uploadAsset.mutate({ fileName: file.name, mimeType: file.type || "application/octet-stream", data: encoded, target });
+      else showNotice("The selected image could not be read.", "error");
     };
+    reader.onerror = () => showNotice("The selected image could not be read.", "error");
     reader.readAsDataURL(file);
   };
 
@@ -77,28 +88,32 @@ export default function Admin() {
 
   const saveProfile = trpc.admin.updateProfile.useMutation({
     onSuccess: () => {
-      setNotice("Profile saved successfully.");
+      showNotice(getAdminNotice("profileSave", "success"));
       void utils.admin.content.invalidate();
     },
+    onError: () => showNotice(getAdminNotice("profileSave", "error"), "error"),
   });
   const createProject = trpc.admin.createProject.useMutation({
     onSuccess: () => {
       setNewProject(emptyProject);
-      setNotice("Project added successfully.");
+      showNotice(getAdminNotice("projectCreate", "success"));
       void utils.admin.content.invalidate();
     },
+    onError: () => showNotice(getAdminNotice("projectCreate", "error"), "error"),
   });
   const updateProject = trpc.admin.updateProject.useMutation({
     onSuccess: () => {
-      setNotice("Project updated successfully.");
+      showNotice(getAdminNotice("projectUpdate", "success"));
       void utils.admin.content.invalidate();
     },
+    onError: () => showNotice(getAdminNotice("projectUpdate", "error"), "error"),
   });
   const uploadProjectAsset = trpc.admin.uploadAsset.useMutation({
     onSuccess: (result, variables) => {
       if (variables.projectId) updateProject.mutate({ id: variables.projectId, data: { imageKey: result.key } });
-      setNotice("Project image uploaded and linked.");
+      showNotice(getAdminNotice("projectImageUpload", "success"));
     },
+    onError: () => showNotice(getAdminNotice("projectImageUpload", "error"), "error"),
   });
 
   const handleProjectUpload = (file: File, projectId: number) => {
@@ -106,21 +121,25 @@ export default function Admin() {
     reader.onload = () => {
       const encoded = String(reader.result).split(",")[1];
       if (encoded) uploadProjectAsset.mutate({ fileName: file.name, mimeType: file.type || "application/octet-stream", data: encoded, target: "project", projectId });
+      else showNotice("The selected project image could not be read.", "error");
     };
+    reader.onerror = () => showNotice("The selected project image could not be read.", "error");
     reader.readAsDataURL(file);
   };
 
   const deleteProject = trpc.admin.deleteProject.useMutation({
     onSuccess: () => {
-      setNotice("Project deleted.");
+      showNotice(getAdminNotice("projectDelete", "success"));
       void utils.admin.content.invalidate();
     },
+    onError: () => showNotice(getAdminNotice("projectDelete", "error"), "error"),
   });
   const updateSocialLink = trpc.admin.updateSocialLink.useMutation({
     onSuccess: () => {
-      setNotice("Social link updated.");
+      showNotice(getAdminNotice("socialUpdate", "success"));
       void utils.admin.content.invalidate();
     },
+    onError: () => showNotice(getAdminNotice("socialUpdate", "error"), "error"),
   });
 
   if (authLoading) {
@@ -157,7 +176,7 @@ export default function Admin() {
             <h1 className="mt-2 text-3xl font-semibold tracking-tight">Content control room</h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Update the public card without touching code. Only the authenticated owner can access these controls.</p>
           </div>
-          {notice && <span className="text-sm text-emerald-600">{notice}</span>}
+          {notice && <AdminNoticeBanner message={notice.message} kind={notice.kind} />}
         </div>
 
         <Card>
