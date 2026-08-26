@@ -262,3 +262,12 @@
 - [x] Add a non-persistent `?lang=en` preview path to make bilingual visual verification reproducible without changing the default Arabic experience.
 - [x] Keep query-forced language previews transient so a later plain `/` visit remains Arabic by default.
 - [x] Ensure project-image success feedback waits for project binding and cache invalidation.
+
+## Work Categories and Horizontal About Card
+
+- [x] Split the public work area into three selectable categories: Applications, Tutorials, and Videos, with Arabic and English labels.
+- [x] Keep the three-column compact card grid within each selected work category and preserve the existing details modal behavior.
+- [x] Redesign the About Me card as a wide horizontal card on desktop and a compact responsive layout on mobile.
+- [x] Add focused tests for category selection and verify Arabic/English responsive rendering before checkpoint.
+- [x] Add a focused UI test that switches work categories and asserts only the selected category cards are visible.
+- [x] Add an interaction test confirming a selected-category card still opens the project details dialog after switching categories.

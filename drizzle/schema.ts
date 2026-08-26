@@ -47,6 +47,7 @@ export const projects = mysqlTable("projects", {
   descriptionAr: text("descriptionAr").notNull(),
   typeEn: varchar("typeEn", { length: 120 }).notNull(),
   typeAr: varchar("typeAr", { length: 120 }).notNull(),
+  category: varchar("category", { length: 32 }).notNull().default("applications"),
   href: text("href").notNull(),
   imageKey: text("imageKey"),
   sortOrder: int("sortOrder").notNull().default(0),

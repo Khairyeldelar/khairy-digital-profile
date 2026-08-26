@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `category` varchar(32) DEFAULT 'applications' NOT NULL;

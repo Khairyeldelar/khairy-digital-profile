@@ -800,7 +800,60 @@ a {
   line-height: 1.1;
   letter-spacing: -0.04em;
 }
-
+.work-category-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 18px;
+}
+.work-category-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0 17px;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  color: var(--ink-soft);
+  background: rgba(255, 254, 251, 0.74);
+  font-family: "DM Sans", "Noto Sans Arabic", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
+  transition: color 180ms var(--ease-out), background 180ms var(--ease-out), border-color 180ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.work-category-tab:hover {
+  border-color: rgba(228, 103, 77, 0.38);
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+.work-category-tab:active {
+  transform: scale(0.98);
+}
+.work-category-tab.active {
+  border-color: var(--coral);
+  color: #fffefb;
+  background: var(--ink);
+}
+.work-category-tab small {
+  color: var(--coral);
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+}
+.work-category-tab.active small {
+  color: #f58970;
+}
+.work-empty-state {
+  display: grid;
+  min-height: 150px;
+  place-items: center;
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  color: var(--ink-faint);
+  font-size: 0.82rem;
+}
 .project-image-wrap {
   position: relative;
   overflow: hidden;
@@ -1211,6 +1264,30 @@ a {
   padding: 27px 29px;
   border-radius: 24px;
 }
+.about-card {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.7fr) minmax(150px, 0.75fr) minmax(280px, 1.8fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 220px;
+  width: 100%;
+}
+.about-card .about-card-top,
+.about-card h2,
+.about-card p,
+.about-card .about-signature {
+  min-width: 0;
+}
+.about-card h2 {
+  margin: 0;
+}
+.about-card p {
+  max-width: none;
+  margin: 0;
+}
+.about-card .about-signature {
+  justify-self: end;
+}
 
 .about-card-top {
   display: flex;
@@ -1231,14 +1308,14 @@ a {
 }
 
 .about-card h2 {
-  margin-top: 42px;
+  margin-top: 0;
   font-size: 1.7rem;
   letter-spacing: -0.045em;
 }
 
 .about-card p {
-  max-width: 330px;
-  margin: 16px 0 25px;
+  max-width: none;
+  margin: 0;
   color: var(--ink-soft);
   font-size: 0.78rem;
   line-height: 1.8;
@@ -1580,13 +1657,25 @@ a {
     font-size: 0.65rem;
   }
 
+    .work-category-tabs {
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .work-category-tab {
+    min-height: 44px;
+    padding: 0 9px;
+    border-radius: 12px;
+    font-size: 0.62rem;
+  }
+  .work-category-tab small {
+    font-size: 0.5rem;
+  }
   .work-rail {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     padding: 0;
     margin: 0;
   }
-
   .project-card {
     border-radius: 14px;
   }
@@ -1657,11 +1746,17 @@ a {
     white-space: nowrap;
   }
 
-  .about-grid {
+    .about-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-
+  .about-card {
+    display: block;
+    min-height: 255px;
+  }
+  .about-card .about-signature {
+    justify-self: auto;
+  }
   .about-card,
   .contact-card {
     min-height: 255px;

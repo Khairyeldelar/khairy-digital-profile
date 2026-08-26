@@ -2,12 +2,13 @@
  * Design philosophy: Quiet Swiss Card — a calm editorial digital identity with generous whitespace,
  * one owned Burnt Coral accent, compact content, tactile cards, and application-like navigation.
  */
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ProjectCardTrigger } from "@/components/ProjectCardTrigger";
 import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
+import { filterProjectsByCategory, workCategories, type WorkCategory } from "@/lib/workCategories";
 import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -36,7 +37,7 @@ type ProfileItem = {
   icon: typeof Github;
 };
 
-type Project = {
+export type Project = {
   title: string;
   titleAr: string;
   description: string;
@@ -46,6 +47,7 @@ type Project = {
   image: string;
   imageFallback?: string;
   href: string;
+  category: WorkCategory;
 };
 
 const projects: Project[] = [
@@ -58,6 +60,7 @@ const projects: Project[] = [
     typeAr: "نظام منتج",
     image: "",
     href: "https://github.com/",
+    category: "applications",
   },
   {
     title: "Signal Studio",
@@ -68,6 +71,7 @@ const projects: Project[] = [
     typeAr: "أدوات صانع محتوى",
     image: "",
     href: "https://www.behance.net/",
+    category: "tutorials",
   },
   {
     title: "Atlas Flow",
@@ -78,6 +82,7 @@ const projects: Project[] = [
     typeAr: "توجيه رقمي",
     image: "",
     href: "https://dribbble.com/",
+    category: "videos",
   },
 ];
 
@@ -132,6 +137,8 @@ const copy = {
     visitProject: "Go to project",
     visitShort: "Visit",
     close: "Close",
+    workCategoryLabel: "Work category",
+    emptyCategory: "New work is coming soon.",
   },
   ar: {
     languageLabel: "التبديل إلى الإنجليزية",
@@ -167,11 +174,90 @@ const copy = {
     visitProject: "الذهاب إلى المشروع",
     visitShort: "زيارة",
     close: "إغلاق",
+    workCategoryLabel: "فئة الأعمال",
+    emptyCategory: "أعمال جديدة قريبًا.",
   },
 };
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+type WorkShowcaseCopy = {
+  workTitle: string;
+  workCategoryLabel: string;
+  emptyCategory: string;
+  viewProject: string;
+  visitProject: string;
+  visitShort: string;
+};
+
+export function WorkShowcase({ projects, language, copy }: { projects: Project[]; language: Language; copy: WorkShowcaseCopy }) {
+  const [selectedCategory, setSelectedCategory] = useState<WorkCategory>("applications");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const visibleProjects = filterProjectsByCategory(projects, selectedCategory);
+
+  return (
+    <>
+      <section id="work" className="content-section reveal reveal-delay-1" aria-labelledby="work-title">
+        <div className="work-heading-card" aria-label={copy.workTitle}>
+          <h2 id="work-title">{copy.workTitle}</h2>
+        </div>
+        <div className="work-category-tabs" role="tablist" aria-label={copy.workCategoryLabel}>
+          {workCategories.map((category) => {
+            const isActive = selectedCategory === category.id;
+            return (
+              <button
+                key={category.id}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                className={isActive ? "work-category-tab active" : "work-category-tab"}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                <span>{language === "ar" ? category.labelAr : category.labelEn}</span>
+                <small>0{workCategories.findIndex((item) => item.id === category.id) + 1}</small>
+              </button>
+            );
+          })}
+        </div>
+        <div className="work-rail" aria-label={language === "ar" ? "مشاريع الفئة المختارة" : "Selected work projects"}>
+          {visibleProjects.length > 0 ? visibleProjects.map((project, index) => (
+            <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
+              <ProjectCardTrigger
+                onOpen={(button) => { projectTriggerRef.current = button; setSelectedProject(project); }}
+                label={`${copy.viewProject}: ${language === "ar" ? project.titleAr : project.title}`}
+              >
+                <div className={`project-image-wrap project-art-${index + 1}`}>
+                  <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
+                  <ProjectImage src={project.image} fallbackSrc={project.imageFallback} className="project-image" alt={`${project.title} project preview`} />
+                  <span className="project-view"><ArrowUpRight size={17} /></span>
+                </div>
+                <div className="project-body">
+                  <div className="project-row">
+                    <h3>{language === "ar" ? project.titleAr : project.title}</h3>
+                  </div>
+                  <span className="project-open-label">{project.href ? copy.visitShort : copy.viewProject}</span>
+                </div>
+              </ProjectCardTrigger>
+            </article>
+          )) : (
+            <div className="work-empty-state" role="status">{copy.emptyCategory}</div>
+          )}
+        </div>
+      </section>
+      <ProjectDetailsDialog
+        project={selectedProject}
+        projectIndex={selectedProject ? projects.findIndex((item) => item.title === selectedProject.title) : 0}
+        language={language}
+        visitLabel={copy.visitProject}
+        open={Boolean(selectedProject)}
+        onOpenChange={(open) => { if (!open) setSelectedProject(null); }}
+        returnFocusRef={projectTriggerRef}
+      />
+    </>
+  );
 }
 
 export default function Home() {
@@ -186,8 +272,6 @@ export default function Home() {
     return getInitialProfileLanguage(window.location.search, localStorage.getItem("khairy-language"));
   });
   const [activeSection, setActiveSection] = useState("home");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const checkMobileOverflow = () => {
@@ -216,6 +300,7 @@ export default function Home() {
         descriptionAr: project.descriptionAr,
         type: project.typeEn,
         typeAr: project.typeAr,
+        category: project.category === "tutorials" || project.category === "videos" ? project.category : "applications",
         image: resolveProjectImage(project.imageKey, project.imageUrl),
         imageFallback: resolveProjectImage(project.imageKey),
         href: project.href,
@@ -346,43 +431,7 @@ export default function Home() {
         </section>
 
         <div className="section-flow">
-        <section id="work" className="content-section reveal reveal-delay-1" aria-labelledby="work-title">
-          <div className="work-heading-card" aria-label={t.workTitle}>
-            <h2 id="work-title">{t.workTitle}</h2>
-          </div>
-          <div className="work-rail" aria-label="Selected work projects">
-            {displayedProjects.map((project, index) => (
-              <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
-                <ProjectCardTrigger
-                  onOpen={(button) => { projectTriggerRef.current = button; setSelectedProject(project); }}
-                  label={`${t.viewProject}: ${language === "ar" ? project.titleAr : project.title}`}
-                >
-                  <div className={`project-image-wrap project-art-${index + 1}`}>
-                    <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
-                    <ProjectImage src={project.image} fallbackSrc={project.imageFallback} className="project-image" alt={`${project.title} project preview`} />
-                    <span className="project-view"><ArrowUpRight size={17} /></span>
-                  </div>
-                  <div className="project-body">
-                    <div className="project-row">
-                      <h3>{language === "ar" ? project.titleAr : project.title}</h3>
-                    </div>
-                    <span className="project-open-label">{project.href ? t.visitShort : t.viewProject}</span>
-                  </div>
-                </ProjectCardTrigger>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <ProjectDetailsDialog
-          project={selectedProject}
-          projectIndex={selectedProject ? displayedProjects.findIndex((item) => item.title === selectedProject.title) : 0}
-          language={language}
-          visitLabel={t.visitProject}
-          open={Boolean(selectedProject)}
-          onOpenChange={(open) => { if (!open) setSelectedProject(null); }}
-          returnFocusRef={projectTriggerRef}
-        />
+          <WorkShowcase projects={displayedProjects} language={language} copy={t} />
 
         <section id="about" className="about-card reveal reveal-delay-2" aria-labelledby="about-title">
           <div className="about-card-top"><span className="section-kicker">{t.aboutKicker}</span><span className="about-mark">K</span></div>

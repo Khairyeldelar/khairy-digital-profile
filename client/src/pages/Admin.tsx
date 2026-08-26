@@ -11,6 +11,12 @@ import { Loader2, Save, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
+const workCategoryOptions = [
+  { value: "applications", label: "Applications / تطبيقاتي" },
+  { value: "tutorials", label: "Tutorials / شروحاتي" },
+  { value: "videos", label: "Videos / فيديوهاتي" },
+] as const;
+
 const emptyProject = {
   titleEn: "",
   titleAr: "",
@@ -18,6 +24,7 @@ const emptyProject = {
   descriptionAr: "",
   typeEn: "",
   typeAr: "",
+  category: "applications" as "applications" | "tutorials" | "videos",
   href: "https://",
   imageKey: null as string | null,
   sortOrder: 0,
@@ -239,6 +246,11 @@ export default function Admin() {
                 <CardContent className="space-y-3">
                   <Input defaultValue={project.titleEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { titleEn: e.target.value } })} placeholder="Title · English" />
                   <Input dir="rtl" defaultValue={project.titleAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { titleAr: e.target.value } })} placeholder="العنوان · العربية" />
+                  <label className="grid gap-1.5 text-sm font-medium">Work category
+                    <select className="h-10 rounded-md border bg-background px-3 text-sm" value={project.category === "tutorials" || project.category === "videos" ? project.category : "applications"} onChange={(e) => updateProject.mutate({ id: project.id, data: { category: e.target.value as "applications" | "tutorials" | "videos" } })}>
+                      {workCategoryOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                    </select>
+                  </label>
                   <Textarea defaultValue={project.descriptionEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { descriptionEn: e.target.value } })} placeholder="Description · English" />
                   <Textarea dir="rtl" defaultValue={project.descriptionAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { descriptionAr: e.target.value } })} placeholder="الوصف · العربية" />
                   <Input defaultValue={project.href} onBlur={(e) => updateProject.mutate({ id: project.id, data: { href: e.target.value } })} placeholder="Project URL" />
@@ -254,6 +266,11 @@ export default function Admin() {
               <CardContent className="space-y-3">
                 <Input value={newProject.titleEn} onChange={(e) => setNewProject({ ...newProject, titleEn: e.target.value })} placeholder="Title · English" />
                 <Input dir="rtl" value={newProject.titleAr} onChange={(e) => setNewProject({ ...newProject, titleAr: e.target.value })} placeholder="العنوان · العربية" />
+                <label className="grid gap-1.5 text-sm font-medium">Work category
+                  <select className="h-10 rounded-md border bg-background px-3 text-sm" value={newProject.category} onChange={(e) => setNewProject({ ...newProject, category: e.target.value as ProjectDraft["category"] })}>
+                    {workCategoryOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  </select>
+                </label>
                 <Textarea value={newProject.descriptionEn} onChange={(e) => setNewProject({ ...newProject, descriptionEn: e.target.value })} placeholder="Description · English" />
                 <Textarea dir="rtl" value={newProject.descriptionAr} onChange={(e) => setNewProject({ ...newProject, descriptionAr: e.target.value })} placeholder="الوصف · العربية" />
                 <Input value={newProject.typeEn} onChange={(e) => setNewProject({ ...newProject, typeEn: e.target.value })} placeholder="Type · English" />

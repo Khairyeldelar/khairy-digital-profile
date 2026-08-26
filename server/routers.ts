@@ -35,6 +35,7 @@ const projectInput = z.object({
   descriptionAr: z.string().min(1),
   typeEn: z.string().min(1).max(120),
   typeAr: z.string().min(1).max(120),
+  category: z.enum(["applications", "tutorials", "videos"]).default("applications"),
   href: z.string().url(),
   imageKey: z.string().nullable().optional(),
   sortOrder: z.number().int().min(0).default(0),
