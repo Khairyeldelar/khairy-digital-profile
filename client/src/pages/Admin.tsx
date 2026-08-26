@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getAdminNotice } from "@/lib/adminNotifications";
 import { bindUploadedProjectImage } from "@/lib/projectUploadSync";
 import { trpc } from "@/lib/trpc";
-import { Loader2, Save, Trash2, Upload } from "lucide-react";
+import { Github, Loader2, Save, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
@@ -181,6 +181,10 @@ export default function Admin() {
     },
     onError: () => showNotice(getAdminNotice("socialUpdate", "error"), "error"),
   });
+  const syncGithub = trpc.admin.syncGithub.useMutation({
+    onSuccess: () => showNotice(getAdminNotice("githubSync", "success")),
+    onError: () => showNotice(getAdminNotice("githubSync", "error"), "error"),
+  });
 
   if (authLoading) {
     return <div className="flex min-h-screen items-center justify-center"><Loader2 className="animate-spin" /></div>;
@@ -216,7 +220,13 @@ export default function Admin() {
             <h1 className="mt-2 text-3xl font-semibold tracking-tight">Content control room</h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">Update the public card without touching code. Only the authenticated owner can access these controls.</p>
           </div>
-          {notice && <AdminNoticeBanner message={notice.message} kind={notice.kind} />}
+          <div className="flex flex-wrap items-center gap-3">
+            {notice && <AdminNoticeBanner message={notice.message} kind={notice.kind} />}
+            <Button type="button" variant="outline" onClick={() => syncGithub.mutate()} disabled={syncGithub.isPending}>
+              {syncGithub.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Github className="mr-2 h-4 w-4" />}
+              {syncGithub.isPending ? "Syncing…" : "Sync with GitHub"}
+            </Button>
+          </div>
         </div>
 
         <Card>

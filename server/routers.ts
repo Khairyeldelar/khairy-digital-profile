@@ -14,6 +14,7 @@ import {
 import { getSessionCookieOptions } from "./_core/cookies";
 import { storageGetSignedUrl, storagePut } from "./storage";
 import { systemRouter } from "./_core/systemRouter";
+import { syncGithubContent } from "./githubSync";
 import { adminProcedure, isDesignatedOwner, publicProcedure, router } from "./_core/trpc";
 
 const profileInput = z.object({
@@ -95,6 +96,7 @@ export const appRouter = router({
     deleteProject: adminProcedure.input(z.object({ id: z.number().int() })).mutation(({ input }) => deleteProject(input.id)),
     createSocialLink: adminProcedure.input(socialInput.omit({ platform: true })).mutation(({ input }) => createSocialLink({ ...input, platform: `custom-${Date.now()}` })),
     updateSocialLink: adminProcedure.input(z.object({ id: z.number().int(), data: socialInput.partial() })).mutation(({ input }) => updateSocialLink(input.id, input.data)),
+    syncGithub: adminProcedure.mutation(() => syncGithubContent()),
   }),
 });
 

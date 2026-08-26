@@ -39,6 +39,11 @@ describe("admin content access", () => {
     await expect(caller.admin.content()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
+  it("protects GitHub sync from non-owner identities", async () => {
+    const caller = appRouter.createCaller(contextFor({ ...owner, id: 2, openId: "different-admin", role: "admin" }));
+    await expect(caller.admin.syncGithub()).rejects.toMatchObject({ code: "FORBIDDEN" });
+  });
+
   it("allows the designated owner to read the control-room content", async () => {
     const caller = appRouter.createCaller(contextFor(owner));
     const result = await caller.admin.content();
