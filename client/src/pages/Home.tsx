@@ -162,7 +162,7 @@ function scrollToId(id: string) {
 export default function Home() {
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem("khairy-language");
-    return saved === "ar" ? "ar" : "en";
+    return saved === "en" ? "en" : "ar";
   });
   const [activeSection, setActiveSection] = useState("home");
   const t = copy[language];
