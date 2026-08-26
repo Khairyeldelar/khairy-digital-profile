@@ -355,9 +355,9 @@
 
 ## Simplified Blogger-Style Content Studio
 
-- [ ] Remove the fragmented content-management workflow and retain one focused rich article editor.
-- [ ] Let the owner choose the destination section only when publishing the completed article.
-- [ ] Provide Blogger-style rich text controls for headings, bold, lists, links, images, and embedded video within the editor.
-- [ ] Make every work card open the same details dialog with details and a button to open its dedicated content page.
-- [ ] Use a single content-page pattern for tutorials, games/applications, and videos while preserving GitHub synchronization.
-- [ ] Add regression tests, verify mobile and desktop behavior, and publish the simplified version.
+- [x] Remove the fragmented content-management workflow and retain one focused rich article editor.
+- [x] Let the owner choose the destination section only when publishing the completed article.
+- [x] Provide Blogger-style rich text controls for headings, bold, lists, links, images, and embedded video within the editor.
+- [x] Make every work card open the same details dialog with details and a button to open its dedicated content page.
+- [x] Use a single content-page pattern for tutorials, games/applications, and videos while preserving GitHub synchronization.
+- [x] Add regression tests, verify mobile and desktop behavior, and publish the simplified version.
