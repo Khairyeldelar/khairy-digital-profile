@@ -45,6 +45,8 @@ export const projects = mysqlTable("projects", {
   titleAr: varchar("titleAr", { length: 160 }).notNull(),
   descriptionEn: text("descriptionEn").notNull(),
   descriptionAr: text("descriptionAr").notNull(),
+  articleBodyEn: text("articleBodyEn").notNull().default(""),
+  articleBodyAr: text("articleBodyAr").notNull().default(""),
   typeEn: varchar("typeEn", { length: 120 }).notNull(),
   typeAr: varchar("typeAr", { length: 120 }).notNull(),
   category: varchar("category", { length: 32 }).notNull().default("applications"),

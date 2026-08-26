@@ -11,6 +11,7 @@ import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/l
 import { filterProjectsByCategory, workCategories, type WorkCategory } from "@/lib/workCategories";
 import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
+import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   ArrowRight,
@@ -42,6 +43,8 @@ export type Project = {
   titleAr: string;
   description: string;
   descriptionAr: string;
+  articleBodyEn?: string;
+  articleBodyAr?: string;
   type: string;
   typeAr: string;
   image: string;
@@ -50,7 +53,7 @@ export type Project = {
   category: WorkCategory;
 };
 
-const projects: Project[] = [
+export const projects: Project[] = [
   {
     title: "Nova Notes",
     titleAr: "نوفا نوتس",
@@ -192,19 +195,22 @@ type WorkShowcaseCopy = {
   visitShort: string;
 };
 
-export function WorkShowcase({ projects, language, copy }: { projects: Project[]; language: Language; copy: WorkShowcaseCopy }) {
-  const [selectedCategory, setSelectedCategory] = useState<WorkCategory>("applications");
+export function WorkShowcase({ projects, language, copy, category, sectionId = "work" }: { projects: Project[]; language: Language; copy: WorkShowcaseCopy; category?: WorkCategory; sectionId?: string }) {
+  const [selectedCategory, setSelectedCategory] = useState<WorkCategory>(category ?? "applications");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
-  const visibleProjects = filterProjectsByCategory(projects, selectedCategory);
+  const [, setLocation] = useLocation();
+  const activeCategory = category ?? selectedCategory;
+  const categoryMeta = workCategories.find((item) => item.id === category);
+  const visibleProjects = filterProjectsByCategory(projects, activeCategory);
 
   return (
     <>
-      <section id="work" className="content-section reveal reveal-delay-1" aria-labelledby="work-title">
-        <div className="work-heading-card" aria-label={copy.workTitle}>
-          <h2 id="work-title">{copy.workTitle}</h2>
+      <section id={sectionId} className="content-section reveal reveal-delay-1" aria-labelledby={`${sectionId}-title`}>
+        <div className="work-heading-card" aria-label={categoryMeta ? (language === "ar" ? categoryMeta.labelAr : categoryMeta.labelEn) : copy.workTitle}>
+          <h2 id={`${sectionId}-title`}>{categoryMeta ? (language === "ar" ? categoryMeta.labelAr : categoryMeta.labelEn) : copy.workTitle}</h2>
         </div>
-        <div className="work-category-tabs" role="tablist" aria-label={copy.workCategoryLabel}>
+        {!categoryMeta && <div className="work-category-tabs" role="tablist" aria-label={copy.workCategoryLabel}>
           {workCategories.map((category) => {
             const isActive = selectedCategory === category.id;
             return (
@@ -221,13 +227,20 @@ export function WorkShowcase({ projects, language, copy }: { projects: Project[]
               </button>
             );
           })}
-        </div>
+        </div>}
         <div className="work-rail" aria-label={language === "ar" ? "مشاريع الفئة المختارة" : "Selected work projects"}>
           {visibleProjects.length > 0 ? visibleProjects.map((project, index) => (
             <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
               <ProjectCardTrigger
-                onOpen={(button) => { projectTriggerRef.current = button; setSelectedProject(project); }}
-                label={`${copy.viewProject}: ${language === "ar" ? project.titleAr : project.title}`}
+                onOpen={(button) => {
+                  if (project.category === "tutorials") {
+                    setLocation(`/article/${encodeURIComponent(project.title)}`);
+                    return;
+                  }
+                  projectTriggerRef.current = button;
+                  setSelectedProject(project);
+                }}
+                label={`${project.category === "tutorials" ? (language === "ar" ? "قراءة" : "Read") : copy.viewProject}: ${language === "ar" ? project.titleAr : project.title}`}
               >
                 <div className={`project-image-wrap project-art-${index + 1}`}>
                   <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
@@ -238,7 +251,7 @@ export function WorkShowcase({ projects, language, copy }: { projects: Project[]
                   <div className="project-row">
                     <h3>{language === "ar" ? project.titleAr : project.title}</h3>
                   </div>
-                  <span className="project-open-label">{project.href ? copy.visitShort : copy.viewProject}</span>
+                  <span className="project-open-label">{project.category === "tutorials" ? (language === "ar" ? "قراءة" : "Read") : project.href ? copy.visitShort : copy.viewProject}</span>
                 </div>
               </ProjectCardTrigger>
             </article>
@@ -431,14 +444,9 @@ export default function Home() {
         </section>
 
         <div className="section-flow">
-          <WorkShowcase projects={displayedProjects} language={language} copy={t} />
-
-        <section id="about" className="about-card reveal reveal-delay-2" aria-labelledby="about-title">
-          <div className="about-card-top"><span className="section-kicker">{t.aboutKicker}</span><span className="about-mark">K</span></div>
-          <h2 id="about-title">{t.aboutTitle}</h2>
-          <p>{t.aboutText}</p>
-          <span className="about-signature">Khairy Eid Aly <span>↗</span></span>
-        </section>
+          <WorkShowcase projects={displayedProjects} language={language} copy={t} category="applications" sectionId="work" />
+          <WorkShowcase projects={displayedProjects} language={language} copy={t} category="tutorials" sectionId="tutorials" />
+          <WorkShowcase projects={displayedProjects} language={language} copy={t} category="videos" sectionId="videos" />
 
         <section id="profiles" className="content-section reveal reveal-delay-2" aria-labelledby="profiles-title">
           <div className="section-heading compact">

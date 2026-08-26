@@ -4,7 +4,8 @@ import { filterProjectsByCategory, workCategories } from "./workCategories";
 describe("work categories", () => {
   it("exposes the three bilingual categories and filters projects", () => {
     expect(workCategories.map((category) => category.id)).toEqual(["applications", "tutorials", "videos"]);
-    expect(workCategories.map((category) => category.labelAr)).toEqual(["تطبيقاتي", "شروحاتي", "فيديوهاتي"]);
+    expect(workCategories.map((category) => category.labelAr)).toEqual(["تطبيقاتي", "شروحات ومعلومات", "فيديوهاتي"]);
+    expect(workCategories.map((category) => category.labelEn)).toEqual(["Applications", "Tutorials and Information", "Videos"]);
 
     const projects = [
       { title: "App", category: "applications" as const },

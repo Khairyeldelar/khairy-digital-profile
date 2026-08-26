@@ -67,6 +67,16 @@ describe("WorkShowcase category interaction", () => {
     expect(screen.queryByText("Video Project")).toBeNull();
   });
 
+  it("routes tutorial cards to their article page", async () => {
+    const user = userEvent.setup();
+    render(<WorkShowcase projects={projects} language="en" copy={copy} category="tutorials" sectionId="tutorials" />);
+
+    await user.click(screen.getByRole("button", { name: /Read: Tutorial Project/ }));
+
+    expect(window.location.pathname).toContain("/article/Tutorial%20Project");
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
   it("keeps the selected category card connected to the details dialog", async () => {
     const user = userEvent.setup();
     render(<WorkShowcase projects={projects} language="en" copy={copy} />);

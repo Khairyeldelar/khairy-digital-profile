@@ -273,3 +273,25 @@
 - [x] Add an interaction test confirming a selected-category card still opens the project details dialog after switching categories.
 - [x] Invalidate both admin and public content caches after project-image binding.
 - [x] Add regression coverage for upload binding and public-card/modal rendering after a fresh load.
+
+## Owner Login Attempt
+
+- [x] Attempt the published admin login from the existing browser session without requesting or exposing credentials.
+- [x] If authentication succeeds, verify `/admin` access and a visible save notification; otherwise document the account-authentication blocker.
+
+## Work Sections and Article Pages Revision
+
+- [x] Remove the public About Me card completely while retaining the contact section.
+- [x] Redesign the top profile card as a polished horizontal desktop layout with responsive mobile behavior.
+- [x] Render three independent work sections in order: Applications, Tutorials and Information, then Videos; each uses a three-column compact card grid.
+- [x] Add article/tutorial detail pages that preserve the profile identity header and core site data while showing the full article content.
+- [x] Keep video cards on the existing floating-details interaction and make their destination button open the video URL.
+- [x] Add admin controls and tests for the revised work categories and article-page routing, then verify Arabic and English layouts.
+- [x] Fix article slug matching for browser-decoded route parameters and verify a tutorial opens its full detail page.
+- [x] Prevent RTL article pages from horizontal clipping while preserving right-to-left article text and metadata.
+
+## Article Content Hardening
+
+- [x] Rename the middle work category to Tutorials and Information / شروحات ومعلومات in shared category data and UI tests.
+- [x] Add dedicated bilingual article-body fields to tutorial content and expose them in the admin project form.
+- [x] Render dedicated article body content on `/article/:slug` and add persisted-data/admin regression coverage.

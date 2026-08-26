@@ -28,11 +28,13 @@ const profileInput = z.object({
   coverKey: z.string().nullable().optional(),
 });
 
-const projectInput = z.object({
+export const projectInput = z.object({
   titleEn: z.string().min(1).max(160),
   titleAr: z.string().min(1).max(160),
   descriptionEn: z.string().min(1),
   descriptionAr: z.string().min(1),
+  articleBodyEn: z.string().default(""),
+  articleBodyAr: z.string().default(""),
   typeEn: z.string().min(1).max(120),
   typeAr: z.string().min(1).max(120),
   category: z.enum(["applications", "tutorials", "videos"]).default("applications"),

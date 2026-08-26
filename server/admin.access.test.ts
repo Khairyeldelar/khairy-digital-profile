@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { appRouter, socialInput } from "./routers";
+import { appRouter, projectInput, socialInput } from "./routers";
 import { ENV } from "./_core/env";
 import type { TrpcContext } from "./_core/context";
 
@@ -97,6 +97,24 @@ describe("admin content access", () => {
       sortOrder: 99,
       isPublished: false,
     })).rejects.toMatchObject({ code: "BAD_REQUEST" });
+  });
+
+  it("accepts the complete shape of a tutorial project with article body", () => {
+    const result = projectInput.safeParse({
+      titleEn: "Deep Dive",
+      titleAr: "شرح عميق",
+      descriptionEn: "Short summary",
+      descriptionAr: "نبذة قصيرة",
+      articleBodyEn: "Full article content in English.",
+      articleBodyAr: "محتوى المقال الكامل بالعربية.",
+      typeEn: "Tutorial",
+      typeAr: "شرح",
+      category: "tutorials",
+      href: "https://example.com/tutorial",
+      sortOrder: 1,
+      isPublished: true,
+    });
+    expect(result.success).toBe(true);
   });
 
   it("rejects invalid mutation input before touching the database", async () => {

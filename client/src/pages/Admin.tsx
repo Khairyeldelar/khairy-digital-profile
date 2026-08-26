@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 
 const workCategoryOptions = [
   { value: "applications", label: "Applications / تطبيقاتي" },
-  { value: "tutorials", label: "Tutorials / شروحاتي" },
+  { value: "tutorials", label: "Tutorials and Information / شروحات ومعلومات" },
   { value: "videos", label: "Videos / فيديوهاتي" },
 ] as const;
 
@@ -26,6 +26,8 @@ const emptyProject = {
   typeEn: "",
   typeAr: "",
   category: "applications" as "applications" | "tutorials" | "videos",
+  articleBodyEn: "",
+  articleBodyAr: "",
   href: "https://",
   imageKey: null as string | null,
   sortOrder: 0,
@@ -260,6 +262,12 @@ export default function Admin() {
                   </label>
                   <Textarea defaultValue={project.descriptionEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { descriptionEn: e.target.value } })} placeholder="Description · English" />
                   <Textarea dir="rtl" defaultValue={project.descriptionAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { descriptionAr: e.target.value } })} placeholder="الوصف · العربية" />
+                  {project.category === "tutorials" && (
+                    <>
+                      <Textarea defaultValue={project.articleBodyEn} onBlur={(e) => updateProject.mutate({ id: project.id, data: { articleBodyEn: e.target.value } })} placeholder="Article body · English" rows={6} />
+                      <Textarea dir="rtl" defaultValue={project.articleBodyAr} onBlur={(e) => updateProject.mutate({ id: project.id, data: { articleBodyAr: e.target.value } })} placeholder="نص المقال · العربية" rows={6} />
+                    </>
+                  )}
                   <Input defaultValue={project.href} onBlur={(e) => updateProject.mutate({ id: project.id, data: { href: e.target.value } })} placeholder="Project URL" />
                   <Input defaultValue={project.imageKey ?? ""} onBlur={(e) => updateProject.mutate({ id: project.id, data: { imageKey: e.target.value || null } })} placeholder="Managed image key (optional)" />
                   <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground"><Upload className="h-3.5 w-3.5" />Upload project image<input className="sr-only" type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) handleProjectUpload(file, project.id); }} /></label>
@@ -280,6 +288,12 @@ export default function Admin() {
                 </label>
                 <Textarea value={newProject.descriptionEn} onChange={(e) => setNewProject({ ...newProject, descriptionEn: e.target.value })} placeholder="Description · English" />
                 <Textarea dir="rtl" value={newProject.descriptionAr} onChange={(e) => setNewProject({ ...newProject, descriptionAr: e.target.value })} placeholder="الوصف · العربية" />
+                {newProject.category === "tutorials" && (
+                  <>
+                    <Textarea value={newProject.articleBodyEn} onChange={(e) => setNewProject({ ...newProject, articleBodyEn: e.target.value })} placeholder="Article body · English" rows={6} />
+                    <Textarea dir="rtl" value={newProject.articleBodyAr} onChange={(e) => setNewProject({ ...newProject, articleBodyAr: e.target.value })} placeholder="نص المقال · العربية" rows={6} />
+                  </>
+                )}
                 <Input value={newProject.typeEn} onChange={(e) => setNewProject({ ...newProject, typeEn: e.target.value })} placeholder="Type · English" />
                 <Input dir="rtl" value={newProject.typeAr} onChange={(e) => setNewProject({ ...newProject, typeAr: e.target.value })} placeholder="النوع · العربية" />
                 <Input value={newProject.href} onChange={(e) => setNewProject({ ...newProject, href: e.target.value })} placeholder="Project URL" />
