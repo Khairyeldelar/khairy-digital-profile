@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { getInitialTheme, shouldPersistTheme, type ThemePreference } from "@/lib/themePreference";
 
-type Theme = "light" | "dark";
+type Theme = ThemePreference;
 
 interface ThemeContextType {
   theme: Theme;
@@ -23,8 +24,7 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (switchable) {
-      const stored = localStorage.getItem("theme");
-      return (stored as Theme) || defaultTheme;
+      return getInitialTheme(window.location.search, localStorage.getItem("theme"), defaultTheme);
     }
     return defaultTheme;
   });
@@ -37,7 +37,7 @@ export function ThemeProvider({
       root.classList.remove("dark");
     }
 
-    if (switchable) {
+    if (switchable && shouldPersistTheme(window.location.search)) {
       localStorage.setItem("theme", theme);
     }
   }, [theme, switchable]);

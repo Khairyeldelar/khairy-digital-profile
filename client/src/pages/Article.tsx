@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowUpRight, BadgeCheck, Languages } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BadgeCheck, Languages, Moon, Sun } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { ProjectImage } from "@/components/ProjectImage";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
+import { useTheme } from "@/contexts/ThemeContext";
 import { projects as fallbackProjects, type Project } from "./Home";
 
 type Language = "ar" | "en";
@@ -45,6 +46,7 @@ export default function Article() {
   const slug = params?.slug ?? "";
   const articleTitle = decodeArticleSlug(slug);
   const [language, setLanguage] = useState<Language>(() => getInitialProfileLanguage(window.location.search, localStorage.getItem("khairy-language")));
+  const { theme, toggleTheme } = useTheme();
   const contentQuery = trpc.content.useQuery();
   const project = useMemo(() => {
     const remote = contentQuery.data?.projects?.find((item) => item.titleEn === articleTitle);
@@ -93,7 +95,12 @@ export default function Article() {
           <span className="brand-emblem"><span className="brand-glyph brand-glyph-header"><span className="glyph-stroke glyph-stroke-a" /><span className="glyph-stroke glyph-stroke-b" /><span className="glyph-cut" /></span></span>
           <span className="brand-word">KHAIRY <span>EID ALY</span></span>
         </button>
-        <button className="language-switch" onClick={() => setLanguage(language === "ar" ? "en" : "ar")}><Languages size={15} /><span>{copy.language}</span></button>
+        <div className="article-header-actions">
+          <button className="theme-switch" type="button" onClick={() => toggleTheme?.()} aria-label={language === "ar" ? (theme === "dark" ? "التبديل إلى الوضع الفاتح" : "التبديل إلى الوضع الليلي") : (theme === "dark" ? "Switch to light mode" : "Switch to dark mode")} title={language === "ar" ? (theme === "dark" ? "الوضع الفاتح" : "الوضع الليلي") : (theme === "dark" ? "Light mode" : "Dark mode")}>
+            {theme === "dark" ? <Sun size={16} strokeWidth={1.8} /> : <Moon size={16} strokeWidth={1.8} />}
+          </button>
+          <button className="language-switch" onClick={() => setLanguage(language === "ar" ? "en" : "ar")}><Languages size={15} /><span>{copy.language}</span></button>
+        </div>
       </header>
 
       <main className="article-content">

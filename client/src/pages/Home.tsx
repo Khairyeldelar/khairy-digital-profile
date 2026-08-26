@@ -13,6 +13,7 @@ import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useTheme } from "@/contexts/ThemeContext";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -25,6 +26,8 @@ import {
   MapPin,
   Youtube,
   Languages,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 type Language = "en" | "ar";
@@ -285,6 +288,7 @@ export default function Home() {
     return getInitialProfileLanguage(window.location.search, localStorage.getItem("khairy-language"));
   });
   const [activeSection, setActiveSection] = useState("home");
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const checkMobileOverflow = () => {
@@ -373,6 +377,15 @@ export default function Home() {
           <span className="online-pulse" aria-hidden="true" />
           <span>{t.digitalProfile}</span>
         </div>
+        <button
+          className="theme-switch"
+          type="button"
+          onClick={() => toggleTheme?.()}
+          aria-label={language === "ar" ? (theme === "dark" ? "التبديل إلى الوضع الفاتح" : "التبديل إلى الوضع الليلي") : (theme === "dark" ? "Switch to light mode" : "Switch to dark mode")}
+          title={language === "ar" ? (theme === "dark" ? "الوضع الفاتح" : "الوضع الليلي") : (theme === "dark" ? "Light mode" : "Dark mode")}
+        >
+          {theme === "dark" ? <Sun size={16} strokeWidth={1.8} /> : <Moon size={16} strokeWidth={1.8} />}
+        </button>
         <button className="language-switch" onClick={() => setLanguage(language === "en" ? "ar" : "en")} aria-label={t.languageLabel}>
           <Languages size={15} strokeWidth={1.8} />
           <span>{t.languageName}</span>

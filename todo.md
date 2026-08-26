@@ -295,3 +295,12 @@
 - [x] Rename the middle work category to Tutorials and Information / شروحات ومعلومات in shared category data and UI tests.
 - [x] Add dedicated bilingual article-body fields to tutorial content and expose them in the admin project form.
 - [x] Render dedicated article body content on `/article/:slug` and add persisted-data/admin regression coverage.
+
+## Dark Mode Toggle
+
+- [x] Add an accessible dark-mode toggle button to the top site header with Arabic and English labels.
+- [x] Persist the user's light/dark preference and respect it across Home and article pages without changing the Arabic default language.
+- [x] Add dark theme tokens for page background, cards, text, borders, controls, and profile imagery overlays while preserving the coral accent.
+- [x] Add Vitest coverage for the theme preference and verify light/dark rendering on mobile and desktop before checkpoint.
+- [x] Add a non-persistent `?theme=dark` preview path for reproducible visual verification while keeping saved theme preference unchanged.
+- [x] Fix dark-mode contrast for work section headings and verify readable text over dark cards.
