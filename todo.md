@@ -190,3 +190,13 @@
 
 - [x] Add focused Vitest coverage for admin notification messages and success/error states.
 - [ ] Exercise one real admin save in preview and confirm the visible notice changes.
+
+## Compact Project Cards and Details Modal
+
+- [x] Reduce project-card height and keep the closed card limited to image, title, and view/visit action.
+- [x] Add an accessible floating project-details modal with image, title, details, and optional destination button.
+- [x] Preserve three-column responsive layout and verify keyboard, mobile, and desktop interactions.
+
+- [x] Add a focused keyboard interaction check for opening and closing the project details dialog.
+
+- [x] Add an integration test that opens the real project details dialog with keyboard and closes it with Escape while restoring focus.

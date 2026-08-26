@@ -2,7 +2,9 @@
  * Design philosophy: Quiet Swiss Card — a calm editorial digital identity with generous whitespace,
  * one owned Burnt Coral accent, compact content, tactile cards, and application-like navigation.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ProjectCardTrigger } from "@/components/ProjectCardTrigger";
+import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
@@ -117,8 +119,6 @@ const copy = {
     workTitle: "Small digital worlds,",
     workTitleEm: "made with care.",
     workAside: "A few things I have been shaping lately.",
-    swipe: "Swipe to explore",
-    drag: "or drag the rail",
     findMe: "03 / Find me around",
     profilesTitle: "My Profiles",
     aboutKicker: "A little context",
@@ -128,6 +128,10 @@ const copy = {
     contactTitle: "Have a good idea?",
     contactTitleEm: "Let’s make it useful.",
     footer: "Made for the next good idea",
+    viewProject: "View",
+    visitProject: "Go to project",
+    visitShort: "Visit",
+    close: "Close",
   },
   ar: {
     languageLabel: "التبديل إلى الإنجليزية",
@@ -150,8 +154,6 @@ const copy = {
     workTitle: "عوالم رقمية صغيرة،",
     workTitleEm: "مصنوعة بعناية.",
     workAside: "بعض الأشياء التي أعمل على تشكيلها مؤخرًا.",
-    swipe: "اسحب للاستكشاف",
-    drag: "أو حرّك الشريط",
     findMe: "03 / تجدني هنا",
     profilesTitle: "حساباتي",
     aboutKicker: "نبذة قصيرة",
@@ -161,6 +163,10 @@ const copy = {
     contactTitle: "لديك فكرة جيدة؟",
     contactTitleEm: "لنجعلها مفيدة.",
     footer: "مصمم للفكرة الجيدة القادمة",
+    viewProject: "مشاهدة",
+    visitProject: "الذهاب إلى المشروع",
+    visitShort: "زيارة",
+    close: "إغلاق",
   },
 };
 
@@ -181,6 +187,8 @@ export default function Home() {
     return saved === "en" ? "en" : "ar";
   });
   const [activeSection, setActiveSection] = useState("home");
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const checkMobileOverflow = () => {
@@ -376,27 +384,36 @@ export default function Home() {
           <div className="work-rail" aria-label="Selected work projects">
             {displayedProjects.map((project, index) => (
               <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
-                <a className="project-image-link" href={project.href} target="_blank" rel="noreferrer" aria-label={`View ${project.title}`}>
+                <ProjectCardTrigger
+                  onOpen={(button) => { projectTriggerRef.current = button; setSelectedProject(project); }}
+                  label={`${t.viewProject}: ${language === "ar" ? project.titleAr : project.title}`}
+                >
                   <div className={`project-image-wrap project-art-${index + 1}`}>
                     <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
                     {project.image && <img className="project-image" src={project.image} alt={`${project.title} project preview`} onError={(event) => { event.currentTarget.style.display = "none"; }} />}
-                    <span className="project-cover-label">{language === "ar" ? project.typeAr : project.type}</span>
                     <span className="project-view"><ArrowUpRight size={17} /></span>
                   </div>
-                </a>
-                <div className="project-body">
-                  <div className="project-row">
-                    <h3>{language === "ar" ? project.titleAr : project.title}</h3>
-                    <span className="project-count">0{index + 1}</span>
+                  <div className="project-body">
+                    <div className="project-row">
+                      <h3>{language === "ar" ? project.titleAr : project.title}</h3>
+                    </div>
+                    <span className="project-open-label">{project.href ? t.visitShort : t.viewProject}</span>
                   </div>
-                  <p>{language === "ar" ? project.descriptionAr : project.description}</p>
-                  <span className="project-type">{language === "ar" ? project.typeAr : project.type}</span>
-                </div>
+                </ProjectCardTrigger>
               </article>
             ))}
           </div>
-          <p className="rail-hint"><span>{t.swipe}</span><ArrowRight size={15} /> <span>{t.drag}</span></p>
         </section>
+
+        <ProjectDetailsDialog
+          project={selectedProject}
+          projectIndex={selectedProject ? displayedProjects.findIndex((item) => item.title === selectedProject.title) : 0}
+          language={language}
+          visitLabel={t.visitProject}
+          open={Boolean(selectedProject)}
+          onOpenChange={(open) => { if (!open) setSelectedProject(null); }}
+          returnFocusRef={projectTriggerRef}
+        />
 
         <section id="profiles" className="content-section reveal reveal-delay-2" aria-labelledby="profiles-title">
           <div className="section-heading compact">
