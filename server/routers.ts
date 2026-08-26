@@ -12,7 +12,7 @@ import {
   upsertSiteProfile,
 } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
-import { storagePut } from "./storage";
+import { storageGetSignedUrl, storagePut } from "./storage";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, isDesignatedOwner, publicProcedure, router } from "./_core/trpc";
 
@@ -52,6 +52,14 @@ export const socialInput = z.object({
   isPublished: z.boolean(),
 });
 
+async function projectsWithImageUrls(publishedOnly: boolean) {
+  const rows = await getProjects(publishedOnly);
+  return Promise.all(rows.map(async (project) => ({
+    ...project,
+    imageUrl: project.imageKey ? await storageGetSignedUrl(project.imageKey).catch(() => null) : null,
+  })));
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -65,13 +73,13 @@ export const appRouter = router({
   ownerCheck: publicProcedure.query(({ ctx }) => isDesignatedOwner(ctx.user)),
   content: publicProcedure.query(async () => ({
     profile: await getSiteProfile(),
-    projects: await getProjects(true),
+    projects: await projectsWithImageUrls(true),
     socialLinks: await getSocialLinks(true),
   })),
   admin: router({
     content: adminProcedure.query(async () => ({
       profile: await getSiteProfile(),
-      projects: await getProjects(false),
+      projects: await projectsWithImageUrls(false),
       socialLinks: await getSocialLinks(false),
     })),
     updateProfile: adminProcedure.input(profileInput).mutation(({ input }) => upsertSiteProfile(input)),

@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import React, { useRef, useState } from "react";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { ProjectCardTrigger } from "./ProjectCardTrigger";
 import { ProjectDetailsDialog, type ProjectDetails } from "./ProjectDetailsDialog";
 
@@ -31,6 +31,13 @@ function ProjectDialogHarness() {
 }
 
 describe("ProjectDetailsDialog keyboard flow", () => {
+  afterEach(() => cleanup());
+  it("renders the resolved project image in the open details dialog", () => {
+    const returnFocusRef = { current: null };
+    render(<ProjectDetailsDialog project={{ ...project, image: "https://cdn.example/uploaded.png" }} projectIndex={0} language="ar" visitLabel="الذهاب إلى المشروع" open onOpenChange={() => undefined} returnFocusRef={returnFocusRef} />);
+    expect(screen.getByRole("img").getAttribute("src")).toBe("https://cdn.example/uploaded.png");
+  });
+
   it("opens from the card button and closes with Escape", async () => {
     const user = userEvent.setup();
     render(<ProjectDialogHarness />);

@@ -203,10 +203,10 @@
 
 ## Project Image Upload Sync Bug
 
-- [ ] Trace project-image upload response, database persistence, public query mapping, and image URL resolution.
-- [ ] Fix project image storage-key or public-URL synchronization without breaking existing images.
-- [ ] Add regression coverage for uploaded project image persistence and public rendering data.
-- [ ] Verify an uploaded image in the public page and publish the fix.
+- [x] Trace project-image upload response, database persistence, public query mapping, and image URL resolution.
+- [x] Fix project image storage-key or public-URL synchronization without breaking existing images.
+- [x] Add regression coverage for uploaded project image persistence and public rendering data.
+- [x] Verify an uploaded image in the public page and publish the fix.
 
 ## Custom Social Links
 
@@ -224,3 +224,12 @@
 - [x] Add a protected successful-create test using a mocked database boundary without persistent records.
 
 - [ ] Save the final checkpoint for custom bilingual social links after migration and verification.
+
+## Project Image Visibility Follow-up
+
+- [x] Reproduce the public project image failure with the saved imageKey and browser-visible URL.
+- [x] Fix the image URL resolution or rendering fallback so uploaded project images display publicly.
+- [x] Add regression coverage for project image URL mapping and loaded-image rendering.
+- [x] Verify the uploaded image on the public domain and save a checkpoint.
+
+- [x] Add focused coverage for signed project-image URL mapping and fallback behavior.

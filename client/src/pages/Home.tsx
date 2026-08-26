@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ProjectCardTrigger } from "@/components/ProjectCardTrigger";
 import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
+import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
@@ -84,11 +85,6 @@ const profiles: ProfileItem[] = [
   { name: "YouTube", handle: "Ideas in motion", handleAr: "أفكار تتحرك", href: "https://www.youtube.com/", icon: Youtube },
   { name: "Email", handle: "Say hello directly", handleAr: "راسلني مباشرة", href: "mailto:khairy.eldelar5@gmail.com", icon: Mail },
 ];
-
-const storageAsset = (key?: string | null) => {
-  if (!key) return "";
-  return key.startsWith("/manus-storage/") ? key : `/manus-storage/${key}`;
-};
 
 const navItems = [
   { id: "home", labelEn: "Home", labelAr: "الرئيسية" },
@@ -217,7 +213,7 @@ export default function Home() {
         descriptionAr: project.descriptionAr,
         type: project.typeEn,
         typeAr: project.typeAr,
-        image: storageAsset(project.imageKey),
+        image: resolveProjectImage(project.imageKey, project.imageUrl),
         href: project.href,
       }))
     : projects;
@@ -228,8 +224,8 @@ export default function Home() {
   const displayRole = language === "ar" ? contentProfile?.roleAr : contentProfile?.roleEn;
   const displayBio = language === "ar" ? contentProfile?.bioAr : contentProfile?.bioEn;
   const displayLocation = language === "ar" ? contentProfile?.locationAr : contentProfile?.locationEn;
-  const portraitSrc = storageAsset(contentProfile?.portraitKey) || "/manus-storage/khairy-profile-portrait_8e111237.png";
-  const coverSrc = storageAsset(contentProfile?.coverKey) || "/manus-storage/khairy-profile-cover_01195ff9.png";
+  const portraitSrc = resolveProjectImage(contentProfile?.portraitKey) || "/manus-storage/khairy-profile-portrait_8e111237.png";
+  const coverSrc = resolveProjectImage(contentProfile?.coverKey) || "/manus-storage/khairy-profile-cover_01195ff9.png";
   const emailSubject = language === "ar" ? "تواصل بخصوص مشروع رقمي" : "Hello Khairy — Digital Project";
   const emailBody = language === "ar"
     ? "مرحبًا خيري،\n\nأرغب في مناقشة مشروع رقمي معك.\n\nالاسم:\nفكرة المشروع:\nالميزانية أو الإطار الزمني:\n\nشكرًا لك."
