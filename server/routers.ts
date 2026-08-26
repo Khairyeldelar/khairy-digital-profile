@@ -12,9 +12,8 @@ import {
 } from "./db";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { storagePut } from "./storage";
-import { ENV } from "./_core/env";
 import { systemRouter } from "./_core/systemRouter";
-import { adminProcedure, publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, isDesignatedOwner, publicProcedure, router } from "./_core/trpc";
 
 const profileInput = z.object({
   name: z.string().min(1).max(160),
@@ -59,7 +58,7 @@ export const appRouter = router({
       return { success: true } as const;
     }),
   }),
-  ownerCheck: publicProcedure.query(({ ctx }) => Boolean(ctx.user && ctx.user.openId === ENV.ownerOpenId)),
+  ownerCheck: publicProcedure.query(({ ctx }) => isDesignatedOwner(ctx.user)),
   content: publicProcedure.query(async () => ({
     profile: await getSiteProfile(),
     projects: await getProjects(true),

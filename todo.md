@@ -167,3 +167,10 @@
 - [x] Identify the exact post-callback failure point and replace the fragile session handoff if needed.
 - [x] Add regression coverage for the discovered failure path.
 - [ ] Publish the final fix and obtain a successful mobile verification.
+
+## Owner Identity Mismatch
+
+- [x] Inspect the authenticated openId and configured OWNER_OPEN_ID without exposing secrets.
+- [x] Correct the owner identity configuration or matching logic while keeping the dashboard owner-only.
+- [x] Add regression coverage for the accepted owner identity and rejected non-owner identity.
+- [ ] Publish and verify that the owner account reaches the dashboard on mobile.

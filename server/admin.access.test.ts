@@ -26,7 +26,7 @@ const owner = {
 describe("admin content access", () => {
   it("exposes the owner signal only for the designated identity", async () => {
     expect(await appRouter.createCaller(contextFor(owner)).ownerCheck()).toBe(true);
-    expect(await appRouter.createCaller(contextFor({ ...owner, openId: "different-admin" })).ownerCheck()).toBe(false);
+    expect(await appRouter.createCaller(contextFor({ ...owner, id: 2, openId: "different-admin", role: "admin" })).ownerCheck()).toBe(false);
   });
 
   it("rejects unauthenticated access", async () => {
@@ -35,7 +35,7 @@ describe("admin content access", () => {
   });
 
   it("rejects an admin with a different identity", async () => {
-    const caller = appRouter.createCaller(contextFor({ ...owner, openId: "different-admin" }));
+    const caller = appRouter.createCaller(contextFor({ ...owner, id: 2, openId: "different-admin", role: "admin" }));
     await expect(caller.admin.content()).rejects.toMatchObject({ code: "FORBIDDEN" });
   });
 
