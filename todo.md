@@ -66,6 +66,6 @@
 
 ## GitHub Pages 404 Fix
 
-- [ ] Configure the client router base for the repository subpath.
-- [ ] Rebuild and redeploy GitHub Pages.
-- [ ] Verify the public project URL loads the home page on mobile and desktop.
+- [x] Configure the client router base for the repository subpath.
+- [x] Rebuild and redeploy GitHub Pages.
+- [x] Verify the fixed public project URL loads the home page on mobile and desktop after redeploy.
