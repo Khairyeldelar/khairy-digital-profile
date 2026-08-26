@@ -802,25 +802,36 @@ a {
 .work-heading-card {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
-  min-height: 82px;
-  padding: 14px 24px;
-  margin-bottom: 24px;
-  background: rgba(255, 254, 251, 0.92);
-  border: 1px solid rgba(30, 36, 34, 0.08);
-  border-radius: 24px;
-  box-shadow: 0 14px 34px rgba(30, 36, 34, 0.07);
-  text-align: center;
+  min-height: 0;
+  padding: 0 0 10px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
 }
 
 .work-heading-card h2 {
+  position: relative;
   margin: 0;
+  padding-inline-start: 14px;
   color: var(--ink);
-  font-size: clamp(2rem, 5vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.04em;
+  font-size: clamp(1rem, 1.8vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.work-heading-card h2::before {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--coral);
+  content: "";
+  transform: translateY(-50%);
 }
 .work-category-tabs {
   display: grid;
@@ -1691,7 +1702,16 @@ a {
     font-size: 0.65rem;
   }
 
-    .work-category-tabs {
+    .work-heading-card {
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+  }
+
+  .work-heading-card h2 {
+    font-size: 0.95rem;
+  }
+
+  .work-category-tabs {
     gap: 6px;
     margin-bottom: 12px;
   }
@@ -2190,10 +2210,10 @@ html[dir="rtl"] .about-card p {
   filter: brightness(0.82) saturate(0.85);
 }
 
-.dark .work-heading-card {
-  color: var(--ink);
-  background: var(--card);
-}
+  .dark .work-heading-card {
+    border-bottom-color: var(--line-soft);
+    background: transparent;
+  }
 
 .dark .contact-card {
   background: #101413;

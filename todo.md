@@ -328,3 +328,10 @@
 - [x] Trigger one GitHub content sync after each successful profile, project, social-link, or image save when automatic sync is enabled.
 - [x] Show clear syncing, success, and failure feedback without blocking or duplicating manual sync actions.
 - [x] Add Vitest coverage for the setting, save-trigger behavior, and error handling; update documentation and publish a checkpoint.
+
+## GitHub Pages Image Paths and Compact Section Labels
+
+- [x] Diagnose why profile, cover, and project images fail on the GitHub Pages repository URL.
+- [x] Make public image paths work on the GitHub Pages subpath without breaking the managed Full-Stack preview.
+- [x] Replace large section title cards with compact elegant text rows in Arabic and English.
+- [x] Add regression tests and verify the responsive result on mobile and desktop, then publish the fix.

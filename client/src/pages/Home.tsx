@@ -9,7 +9,7 @@ import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { filterProjectsByCategory, workCategories, type WorkCategory } from "@/lib/workCategories";
-import { resolveProjectImage } from "@/lib/projectImage";
+import { publicAssetPath, resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -330,8 +330,8 @@ export default function Home() {
   const displayRole = language === "ar" ? contentProfile?.roleAr : contentProfile?.roleEn;
   const displayBio = language === "ar" ? contentProfile?.bioAr : contentProfile?.bioEn;
   const displayLocation = language === "ar" ? contentProfile?.locationAr : contentProfile?.locationEn;
-  const portraitSrc = resolveProjectImage(contentProfile?.portraitKey) || "/manus-storage/khairy-profile-portrait_8e111237.png";
-  const coverSrc = resolveProjectImage(contentProfile?.coverKey) || "/manus-storage/khairy-profile-cover_01195ff9.png";
+  const portraitSrc = resolveProjectImage(contentProfile?.portraitKey) || publicAssetPath("assets/khairy-profile-portrait.webp");
+  const coverSrc = resolveProjectImage(contentProfile?.coverKey) || publicAssetPath("assets/khairy-profile-cover.webp");
   const emailSubject = language === "ar" ? "تواصل بخصوص مشروع رقمي" : "Hello Khairy — Digital Project";
   const emailBody = language === "ar"
     ? "مرحبًا خيري،\n\nأرغب في مناقشة مشروع رقمي معك.\n\nالاسم:\nفكرة المشروع:\nالميزانية أو الإطار الزمني:\n\nشكرًا لك."
@@ -368,7 +368,7 @@ export default function Home() {
       <header className="site-header" aria-label="Site header">
         <button className="brand-lockup" onClick={() => scrollToId("home")} aria-label="Back to home">
           <span className="brand-emblem" aria-hidden="true">
-            <img className="brand-mark" src="/assets/khairy-mark.svg" alt="" />
+            <img className="brand-mark" src={publicAssetPath("assets/khairy-mark.svg")} alt="" />
             <span className="brand-glyph brand-glyph-header"><span className="glyph-stroke glyph-stroke-a" /><span className="glyph-stroke glyph-stroke-b" /><span className="glyph-cut" /></span>
           </span>
           <span className="brand-word">KHAIRY <span>EID ALY</span></span>
@@ -411,7 +411,7 @@ export default function Home() {
               alt=""
               onError={(event) => {
                 event.currentTarget.onerror = null;
-                event.currentTarget.src = "/assets/khairy-profile-cover.webp";
+                event.currentTarget.src = publicAssetPath("assets/khairy-profile-cover.webp");
               }}
             />
           </div>
@@ -423,7 +423,7 @@ export default function Home() {
                 alt="Portrait of Khairy Eid Aly"
                 onError={(event) => {
                   event.currentTarget.onerror = null;
-                  event.currentTarget.src = "/assets/khairy-profile-portrait.webp";
+                  event.currentTarget.src = publicAssetPath("assets/khairy-profile-portrait.webp");
                 }}
               />
               <span className="portrait-status" aria-label="Available" />
