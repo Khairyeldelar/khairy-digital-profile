@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-26T21:57:30.481Z",
+  "generatedAt": "2026-08-26T22:14:04.074Z",
   "profile": {
     "name": "Khairy Eid Aly",
     "roleEn": "Developer • Creator • Influencer",
@@ -21,8 +21,23 @@
       "articleBodyAr": "",
       "typeEn": "Product system",
       "typeAr": "نظام منتج",
-      "category": "videos",
+      "category": "tutorials",
       "href": "https://play.google.com/store/apps/details?id=com.app.canyousurvivemobile",
+      "sortOrder": 0,
+      "isPublished": true
+    },
+    {
+      "id": 3,
+      "titleEn": "Atlas Flow",
+      "titleAr": "أطلس فلو",
+      "descriptionEn": "Turning complex digital journeys into simple paths.",
+      "descriptionAr": "تحويل الرحلات الرقمية المعقدة إلى مسارات بسيطة.",
+      "articleBodyEn": "",
+      "articleBodyAr": "",
+      "typeEn": "Digital direction",
+      "typeAr": "توجيه رقمي",
+      "category": "tutorials",
+      "href": "https://dribbble.com/",
       "sortOrder": 0,
       "isPublished": true
     },
@@ -39,21 +54,6 @@
       "category": "tutorials",
       "href": "https://www.behance.net/",
       "sortOrder": 2,
-      "isPublished": true
-    },
-    {
-      "id": 3,
-      "titleEn": "Atlas Flow",
-      "titleAr": "أطلس فلو",
-      "descriptionEn": "Turning complex digital journeys into simple paths.",
-      "descriptionAr": "تحويل الرحلات الرقمية المعقدة إلى مسارات بسيطة.",
-      "articleBodyEn": "",
-      "articleBodyAr": "",
-      "typeEn": "Digital direction",
-      "typeAr": "توجيه رقمي",
-      "category": "applications",
-      "href": "https://dribbble.com/",
-      "sortOrder": 3,
       "isPublished": true
     }
   ],
