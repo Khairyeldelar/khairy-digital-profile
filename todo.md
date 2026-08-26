@@ -106,3 +106,31 @@
 - [x] Commit the latest admin dashboard, storage, grid, and hardening changes.
 - [x] Push the new commit to the public GitHub repository.
 - [x] Verify the remote commit and summarize the synchronization result.
+
+## OAuth Callback Fix
+
+- [x] Inspect the OAuth start and callback implementation plus recent server logs.
+- [x] Confirm redirect origin, state nonce, cookie attributes, and OAuth environment configuration.
+- [x] Fix the callback flow without weakening CSRF protection by creating the missing production users table.
+- [ ] Test the admin login flow on the Manus domain and save a checkpoint.
+
+## OAuth Proof Follow-up
+
+- [ ] Exercise the live Manus OAuth start/callback flow and validate the runtime redirect origin and nonce cookie.
+- [ ] Retry /admin login after creating the users table and confirm a valid session is issued.
+- [ ] Document the production schema migration path so auth tables exist in future environments.
+
+## OAuth Admin Redirect Fix
+
+- [x] Preserve the requested admin path in the OAuth state without trusting arbitrary external URLs.
+- [x] Redirect back to /admin after a successful callback instead of always redirecting to /.
+- [ ] Verify the login flow and save a checkpoint.
+
+## OAuth Return Path Proof
+
+- [x] Add focused tests for /admin return paths and unsafe-path fallback.
+- [x] Publish the redirect fix to the Manus deployment via the next checkpoint.
+- [ ] Confirm a real login from /admin returns to /admin with a valid session.
+
+- [ ] Save a new checkpoint after the OAuth return-path changes.
+- [ ] Verify on the live Manus domain that /admin login returns to /admin with a valid session.
