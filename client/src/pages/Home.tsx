@@ -239,7 +239,14 @@ export default function Home() {
       <main className="page-wrap">
         <section id="home" className="profile-card reveal" aria-labelledby="profile-name">
           <div className="profile-cover" aria-hidden="true">
-            <img src="/manus-storage/khairy-profile-cover_01195ff9.png" alt="" />
+            <img
+              src="/manus-storage/khairy-profile-cover_01195ff9.png"
+              alt=""
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = "/assets/khairy-profile-cover.webp";
+              }}
+            />
           </div>
           <div className="profile-topline">
             <span className="eyebrow"><span className="eyebrow-line" /> {t.personalCard}</span>
@@ -257,6 +264,10 @@ export default function Home() {
                 className="portrait"
                 src="/manus-storage/khairy-profile-portrait_8e111237.png"
                 alt="Portrait of Khairy Eid Aly"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = "/assets/khairy-profile-portrait.webp";
+                }}
               />
               <span className="portrait-status" aria-label="Available" />
             </div>

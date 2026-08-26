@@ -56,3 +56,10 @@
 - [x] Remove Render deployment configuration and documentation.
 - [x] Push the clean Full-Stack source to the public GitHub repository.
 - [x] Verify the repository contains the latest source and no Render deployment path is active.
+
+## GitHub Pages Publish Request
+
+- [ ] Verify the Pages workflow and repository visibility after the Full-Stack upgrade.
+- [ ] Prepare a Pages-compatible static build without changing the Full-Stack source of record.
+- [ ] Run the GitHub Pages workflow and verify the public URL.
+- [ ] Confirm the published result and explain the Full-Stack versus static-hosting distinction.
