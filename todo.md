@@ -338,7 +338,7 @@
 
 ## GitHub Pages Live Content Sync
 
-- [ ] Diagnose why admin-managed content appears on Manus but not on the standalone GitHub Pages site.
-- [ ] Make the standalone build load the latest approved content snapshot after GitHub sync.
-- [ ] Verify profile, projects, articles, social links, and image fallbacks on the public GitHub Pages URL.
-- [ ] Add regression tests, update documentation, and publish the corrected Pages build.
+- [x] Diagnose why admin-managed content appears on Manus but not on the standalone GitHub Pages site.
+- [x] Make the standalone build load the latest approved content snapshot after GitHub sync.
+- [x] Verify profile, projects, articles, social links, and image fallbacks on the public GitHub Pages URL.
+- [x] Add regression tests, update documentation, and publish the corrected Pages build.
