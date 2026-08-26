@@ -134,3 +134,17 @@
 
 - [ ] Save a new checkpoint after the OAuth return-path changes.
 - [ ] Verify on the live Manus domain that /admin login returns to /admin with a valid session.
+
+## OAuth Session Persistence Bug
+
+- [x] Reproduce and trace why the live callback returns to the sign-in screen after authentication.
+- [x] Fix production session cookie issuance or callback redirect handling without weakening CSRF protection.
+- [x] Add regression coverage for callback session persistence and /admin access.
+- [ ] Publish the fix and verify the real mobile login flow reaches the protected dashboard.
+
+- [x] Add an isolated callback test asserting app_session_id is set and /admin is returned after success.
+- [x] Add an authenticated-session regression assertion for admin access after callback.
+
+- [x] Prove that the exact app_session_id emitted by callback authenticates a subsequent admin request.
+
+- [x] Verify the callback-issued cookie through an actual protected admin procedure, not only token decoding.

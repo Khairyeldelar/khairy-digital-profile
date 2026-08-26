@@ -43,6 +43,8 @@ export function getSessionCookieOptions(
     httpOnly: true,
     path: "/",
     sameSite: "none",
-    secure: isSecureRequest(req),
+    // Production is always HTTPS at the public edge, even when the app sees
+    // an internal HTTP hop. SameSite=None cookies must also be Secure.
+    secure: process.env.NODE_ENV === "production" || isSecureRequest(req),
   };
 }
