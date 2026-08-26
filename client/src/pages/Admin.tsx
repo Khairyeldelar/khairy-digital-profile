@@ -68,12 +68,21 @@ export default function Admin() {
   const [profile, setProfile] = useState<ProfileDraft | null>(null);
   const [newProject, setNewProject] = useState<ProjectDraft>(emptyProject);
   const [newSocial, setNewSocial] = useState<SocialDraft>(emptySocial);
+  const [autoGithubSync, setAutoGithubSync] = useState(false);
   const [notice, setNotice] = useState<{ message: string; kind: "success" | "error" } | null>(null);
   const showNotice = (message: string, kind: "success" | "error" = "success") => {
     setNotice({ message, kind });
     if (kind === "success") toast.success(message);
     else toast.error(message);
   };
+  type AutoSyncResult = { autoGithubSync?: boolean; githubSync?: unknown; githubSyncError?: string };
+  const showSaveNotice = (action: Parameters<typeof getAdminNotice>[0], result?: unknown) => {
+    const syncResult = result as AutoSyncResult | undefined;
+    if (syncResult?.githubSyncError) return showNotice(getAdminNotice("githubAutoSyncRun", "error"), "error");
+    if (syncResult?.autoGithubSync && syncResult.githubSync) return showNotice(getAdminNotice("githubAutoSyncRun", "success"));
+    return showNotice(getAdminNotice(action, "success"));
+  };
+
   const uploadAsset = trpc.admin.uploadAsset.useMutation({
     onSuccess: (result, variables) => {
       setProfile((current) => current ? { ...current, [`${variables.target}Key`]: result.key } : current);
@@ -96,6 +105,7 @@ export default function Admin() {
   useEffect(() => {
     if (!contentQuery.data?.profile) return;
     const item = contentQuery.data.profile;
+    setAutoGithubSync(contentQuery.data.autoGithubSync);
     setProfile({
       name: item.name,
       roleEn: item.roleEn,
@@ -107,26 +117,26 @@ export default function Admin() {
       portraitKey: item.portraitKey ?? "",
       coverKey: item.coverKey ?? "",
     });
-  }, [contentQuery.data?.profile]);
+  }, [contentQuery.data?.profile, contentQuery.data?.autoGithubSync]);
 
   const saveProfile = trpc.admin.updateProfile.useMutation({
-    onSuccess: () => {
-      showNotice(getAdminNotice("profileSave", "success"));
+    onSuccess: (result) => {
+      showSaveNotice("profileSave", result);
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("profileSave", "error"), "error"),
   });
   const createProject = trpc.admin.createProject.useMutation({
-    onSuccess: () => {
+    onSuccess: (result) => {
       setNewProject(emptyProject);
-      showNotice(getAdminNotice("projectCreate", "success"));
+      showSaveNotice("projectCreate", result);
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("projectCreate", "error"), "error"),
   });
   const updateProject = trpc.admin.updateProject.useMutation({
-    onSuccess: () => {
-      showNotice(getAdminNotice("projectUpdate", "success"));
+    onSuccess: (result) => {
+      showSaveNotice("projectUpdate", result);
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("projectUpdate", "error"), "error"),
@@ -134,16 +144,17 @@ export default function Admin() {
   const uploadProjectAsset = trpc.admin.uploadAsset.useMutation({
     onSuccess: async (result, variables) => {
       if (variables.projectId) {
-        await bindUploadedProjectImage({
+        const saveResult = await bindUploadedProjectImage({
           projectId: variables.projectId,
           imageKey: result.key,
           updateProject: (input) => updateProject.mutateAsync(input),
           caches: { admin: utils.admin, public: utils.content },
         });
+        showSaveNotice("projectImageUpload", saveResult);
       } else {
         await Promise.all([utils.admin.content.invalidate(), utils.content.invalidate()]);
+        showNotice(getAdminNotice("projectImageUpload", "success"));
       }
-      showNotice(getAdminNotice("projectImageUpload", "success"));
     },
     onError: () => showNotice(getAdminNotice("projectImageUpload", "error"), "error"),
   });
@@ -160,23 +171,23 @@ export default function Admin() {
   };
 
   const deleteProject = trpc.admin.deleteProject.useMutation({
-    onSuccess: () => {
-      showNotice(getAdminNotice("projectDelete", "success"));
+    onSuccess: (result) => {
+      showSaveNotice("projectDelete", result);
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("projectDelete", "error"), "error"),
   });
   const createSocialLink = trpc.admin.createSocialLink.useMutation({
-    onSuccess: () => {
+    onSuccess: (result) => {
       setNewSocial(emptySocial);
-      showNotice("Social link added successfully.");
+      showSaveNotice("socialUpdate", result);
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice("Could not add the social link. Check the URL and try again.", "error"),
   });
   const updateSocialLink = trpc.admin.updateSocialLink.useMutation({
-    onSuccess: () => {
-      showNotice(getAdminNotice("socialUpdate", "success"));
+    onSuccess: (result) => {
+      showSaveNotice("socialUpdate", result);
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("socialUpdate", "error"), "error"),
@@ -184,6 +195,17 @@ export default function Admin() {
   const syncGithub = trpc.admin.syncGithub.useMutation({
     onSuccess: () => showNotice(getAdminNotice("githubSync", "success")),
     onError: () => showNotice(getAdminNotice("githubSync", "error"), "error"),
+  });
+  const updateAutoSync = trpc.admin.setAutoGithubSync.useMutation({
+    onSuccess: (enabled) => {
+      setAutoGithubSync(enabled);
+      showNotice(getAdminNotice("githubAutoSync", "success"));
+      void utils.admin.content.invalidate();
+    },
+    onError: () => {
+      setAutoGithubSync((current) => !current);
+      showNotice(getAdminNotice("githubAutoSync", "error"), "error");
+    },
   });
 
   if (authLoading) {
@@ -228,6 +250,28 @@ export default function Admin() {
             </Button>
           </div>
         </div>
+
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 p-4">
+            <div>
+              <p className="font-medium">Automatic GitHub sync</p>
+              <p className="text-sm text-muted-foreground">After every successful save, publish the latest content snapshot automatically.</p>
+            </div>
+            <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-md border bg-background px-3 text-sm font-medium">
+              <input
+                type="checkbox"
+                checked={autoGithubSync}
+                disabled={updateAutoSync.isPending}
+                onChange={(event) => {
+                  const enabled = event.target.checked;
+                  setAutoGithubSync(enabled);
+                  updateAutoSync.mutate({ enabled });
+                }}
+              />
+              {updateAutoSync.isPending ? "Saving…" : autoGithubSync ? "Enabled" : "Disabled"}
+            </label>
+          </CardContent>
+        </Card>
 
         <Card>
           <CardHeader><CardTitle>Profile and visual identity</CardTitle></CardHeader>

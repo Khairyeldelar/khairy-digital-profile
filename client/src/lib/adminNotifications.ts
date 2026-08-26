@@ -1,5 +1,5 @@
 export type AdminNoticeKind = "success" | "error";
-export type AdminNoticeAction = "assetUpload" | "profileSave" | "projectCreate" | "projectUpdate" | "projectDelete" | "projectImageUpload" | "socialUpdate" | "githubSync";
+export type AdminNoticeAction = "assetUpload" | "profileSave" | "projectCreate" | "projectUpdate" | "projectDelete" | "projectImageUpload" | "socialUpdate" | "githubSync" | "githubAutoSync" | "githubAutoSyncRun";
 
 const notices: Record<AdminNoticeAction, Record<AdminNoticeKind, string>> = {
   assetUpload: { success: "Asset uploaded. Save profile to apply it.", error: "Asset upload failed. Please try again." },
@@ -10,6 +10,8 @@ const notices: Record<AdminNoticeAction, Record<AdminNoticeKind, string>> = {
   projectImageUpload: { success: "Project image uploaded and linked.", error: "Project image upload failed. Please try again." },
   socialUpdate: { success: "Social link updated.", error: "Social link could not be updated. Please try again." },
   githubSync: { success: "Content synced with GitHub.", error: "GitHub sync failed. Please try again." },
+  githubAutoSync: { success: "Automatic GitHub sync enabled.", error: "Automatic GitHub sync setting could not be saved." },
+  githubAutoSyncRun: { success: "Saved and synced with GitHub automatically.", error: "Saved, but automatic GitHub sync failed." },
 };
 
 export function getAdminNotice(action: AdminNoticeAction, kind: AdminNoticeKind): string {

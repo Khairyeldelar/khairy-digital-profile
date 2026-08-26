@@ -7,6 +7,8 @@ import {
   getProjects,
   getSiteProfile,
   getSocialLinks,
+  getAutoGithubSync,
+  setAutoGithubSync,
   updateProject,
   updateSocialLink,
   upsertSiteProfile,
@@ -56,6 +58,29 @@ export const socialInput = z.object({
   isPublished: z.boolean(),
 });
 
+async function runAutoGithubSync<T>(result: T) {
+  const attach = (metadata: Record<string, unknown>) => {
+    if (result && typeof result === "object" && !Array.isArray(result)) {
+      return { ...(result as Record<string, unknown>), ...metadata };
+    }
+    return { result, ...metadata };
+  };
+
+  const enabled = await getAutoGithubSync();
+  if (!enabled) return attach({ autoGithubSync: false, githubSync: null });
+
+  try {
+    return attach({ autoGithubSync: true, githubSync: await syncGithubContent() });
+  } catch (error) {
+    console.error("[GitHub] Automatic sync failed after save:", error);
+    return attach({
+      autoGithubSync: true,
+      githubSync: null,
+      githubSyncError: "Content saved, but GitHub synchronization failed.",
+    });
+  }
+}
+
 async function projectsWithImageUrls(publishedOnly: boolean) {
   const rows = await getProjects(publishedOnly);
   return Promise.all(rows.map(async (project) => ({
@@ -80,22 +105,24 @@ export const appRouter = router({
     projects: await projectsWithImageUrls(true),
     socialLinks: await getSocialLinks(true),
   })),
-  admin: router({
+    admin: router({
     content: adminProcedure.query(async () => ({
       profile: await getSiteProfile(),
       projects: await projectsWithImageUrls(false),
       socialLinks: await getSocialLinks(false),
+      autoGithubSync: await getAutoGithubSync(),
     })),
-    updateProfile: adminProcedure.input(profileInput).mutation(({ input }) => upsertSiteProfile(input)),
+    updateProfile: adminProcedure.input(profileInput).mutation(async ({ input }) => runAutoGithubSync(await upsertSiteProfile(input))),
     uploadAsset: adminProcedure.input(z.object({ fileName: z.string().min(1).max(180), mimeType: z.string().min(1).max(120), data: z.string().min(1).max(12_000_000), target: z.enum(["portrait", "cover", "project"]), projectId: z.number().int().optional() })).mutation(async ({ ctx, input }) => {
       const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
       return storagePut(`admin/${ctx.user.openId}/${input.target}/${safeName}`, Buffer.from(input.data, "base64"), input.mimeType);
     }),
-    createProject: adminProcedure.input(projectInput).mutation(({ input }) => createProject(input)),
-    updateProject: adminProcedure.input(z.object({ id: z.number().int(), data: projectInput.partial() })).mutation(({ input }) => updateProject(input.id, input.data)),
-    deleteProject: adminProcedure.input(z.object({ id: z.number().int() })).mutation(({ input }) => deleteProject(input.id)),
-    createSocialLink: adminProcedure.input(socialInput.omit({ platform: true })).mutation(({ input }) => createSocialLink({ ...input, platform: `custom-${Date.now()}` })),
-    updateSocialLink: adminProcedure.input(z.object({ id: z.number().int(), data: socialInput.partial() })).mutation(({ input }) => updateSocialLink(input.id, input.data)),
+    setAutoGithubSync: adminProcedure.input(z.object({ enabled: z.boolean() })).mutation(({ input }) => setAutoGithubSync(input.enabled)),
+    createProject: adminProcedure.input(projectInput).mutation(async ({ input }) => runAutoGithubSync(await createProject(input))),
+    updateProject: adminProcedure.input(z.object({ id: z.number().int(), data: projectInput.partial() })).mutation(async ({ input }) => runAutoGithubSync(await updateProject(input.id, input.data))),
+    deleteProject: adminProcedure.input(z.object({ id: z.number().int() })).mutation(async ({ input }) => runAutoGithubSync(await deleteProject(input.id))),
+    createSocialLink: adminProcedure.input(socialInput.omit({ platform: true })).mutation(async ({ input }) => runAutoGithubSync(await createSocialLink({ ...input, platform: `custom-${Date.now()}` }))),
+    updateSocialLink: adminProcedure.input(z.object({ id: z.number().int(), data: socialInput.partial() })).mutation(async ({ input }) => runAutoGithubSync(await updateSocialLink(input.id, input.data))),
     syncGithub: adminProcedure.mutation(() => syncGithubContent()),
   }),
 });

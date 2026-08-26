@@ -321,3 +321,10 @@
 - [x] Add a protected server-side GitHub sync procedure and admin button that reports sync success or failure without exposing credentials.
 - [x] Add secure GitHub repository/token configuration and document required permissions without committing secrets.
 - [x] Add Vitest coverage for sync validation, owner protection, and visible success/error feedback, then publish a checkpoint.
+
+## Automatic GitHub Sync After Save
+
+- [x] Add an admin-controlled automatic-sync setting that persists across sessions without exposing GitHub credentials.
+- [x] Trigger one GitHub content sync after each successful profile, project, social-link, or image save when automatic sync is enabled.
+- [x] Show clear syncing, success, and failure feedback without blocking or duplicating manual sync actions.
+- [x] Add Vitest coverage for the setting, save-trigger behavior, and error handling; update documentation and publish a checkpoint.

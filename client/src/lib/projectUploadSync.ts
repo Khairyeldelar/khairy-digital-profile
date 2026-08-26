@@ -20,6 +20,7 @@ export async function bindUploadedProjectImage(input: {
     public: { invalidate: Invalidate };
   };
 }) {
-  await input.updateProject({ id: input.projectId, data: { imageKey: input.imageKey } });
+  const result = await input.updateProject({ id: input.projectId, data: { imageKey: input.imageKey } });
   await refreshProjectImageCaches(input.caches);
+  return result;
 }

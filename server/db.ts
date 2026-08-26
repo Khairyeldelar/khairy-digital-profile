@@ -1,6 +1,6 @@
 import { asc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertProject, InsertSiteProfile, InsertSocialLink, InsertUser, Project, SiteProfile, SocialLink, projects, siteProfile, socialLinks, users } from "../drizzle/schema";
+import { InsertProject, InsertSiteProfile, InsertSocialLink, InsertUser, Project, SiteProfile, SocialLink, projects, siteProfile, siteSettings, socialLinks, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -108,6 +108,20 @@ export async function getSocialLinks(publishedOnly = true): Promise<SocialLink[]
   if (!db) return [];
   const query = db.select().from(socialLinks).orderBy(asc(socialLinks.sortOrder), asc(socialLinks.id));
   return publishedOnly ? query.where(eq(socialLinks.isPublished, true)) : query;
+}
+
+export async function getAutoGithubSync(): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  const rows = await db.select({ autoGithubSync: siteSettings.autoGithubSync }).from(siteSettings).where(eq(siteSettings.id, 1)).limit(1);
+  return rows[0]?.autoGithubSync ?? false;
+}
+
+export async function setAutoGithubSync(enabled: boolean): Promise<boolean> {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.insert(siteSettings).values({ id: 1, autoGithubSync: enabled }).onDuplicateKeyUpdate({ set: { autoGithubSync: enabled } });
+  return getAutoGithubSync();
 }
 
 export async function upsertSiteProfile(input: InsertSiteProfile) {

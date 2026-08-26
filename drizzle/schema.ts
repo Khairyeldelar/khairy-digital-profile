@@ -71,8 +71,15 @@ export const socialLinks = mysqlTable("social_links", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const siteSettings = mysqlTable("site_settings", {
+  id: int("id").primaryKey().default(1),
+  autoGithubSync: boolean("autoGithubSync").notNull().default(false),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type SiteProfile = typeof siteProfile.$inferSelect;
 export type InsertSiteProfile = typeof siteProfile.$inferInsert;
+export type SiteSettings = typeof siteSettings.$inferSelect;
 export type Project = typeof projects.$inferSelect;
 export type InsertProject = typeof projects.$inferInsert;
 export type SocialLink = typeof socialLinks.$inferSelect;
