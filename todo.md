@@ -50,3 +50,9 @@
 - [ ] Configure required production environment variables and storage/database dependencies.
 - [ ] Deploy the service on Render or pause for account authorization if required.
 - [ ] Verify the external URL and confirm the app loads without the Manus preview badge.
+
+## GitHub-Only Hosting Decision
+
+- [ ] Remove Render deployment configuration and documentation.
+- [ ] Push the clean Full-Stack source to the public GitHub repository.
+- [ ] Verify the repository contains the latest source and no Render deployment path is active.
