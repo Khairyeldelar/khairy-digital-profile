@@ -69,3 +69,33 @@
 - [x] Configure the client router base for the repository subpath.
 - [x] Rebuild and redeploy GitHub Pages.
 - [x] Verify the fixed public project URL loads the home page on mobile and desktop after redeploy.
+
+## Work Grid and Admin Dashboard
+
+- [x] Design the content model for profile settings, projects, and social links.
+- [x] Add database tables and migration SQL for editable site content.
+- [x] Add protected owner-only tRPC procedures for reading and updating content.
+- [x] Build the admin dashboard using the existing DashboardLayout component.
+- [x] Replace the horizontal work strip with a compact responsive three-column grid.
+- [x] Add managed image upload handling for profile and project assets.
+- [x] Add Vitest coverage and verify public/admin access flows.
+
+- [x] Keep the work section at exactly three compact columns on narrow mobile screens, with readable touch targets and no horizontal scroll.
+
+## Admin and Mobile Grid Hardening
+
+- [x] Restrict admin procedures and the /admin UI to the designated OWNER_OPEN_ID.
+- [x] Add managed project-image upload controls and persist project image keys.
+- [x] Add tests for owner access, public content loading, and content mutations.
+- [x] Refine mobile three-column labels and tap targets while confirming no horizontal overflow.
+
+## Final Hardening Follow-up
+
+- [x] Gate the Admin UI explicitly by OWNER_OPEN_ID and render forbidden errors before loading states.
+- [x] Add a successful owner mutation test without creating persistent test records.
+- [x] Increase the mobile project action hit area and verify document width does not overflow.
+
+## Final Verification Addendum
+
+- [x] Expose a safe owner identity signal to the client and gate the admin route explicitly.
+- [x] Add a runtime mobile overflow check and verify the public page stays within the viewport width.

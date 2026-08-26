@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertProject, InsertSiteProfile, InsertSocialLink, InsertUser, Project, SiteProfile, SocialLink, projects, siteProfile, socialLinks, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,59 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getSiteProfile(): Promise<SiteProfile | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  const rows = await db.select().from(siteProfile).where(eq(siteProfile.id, 1)).limit(1);
+  return rows[0];
+}
+
+export async function getProjects(publishedOnly = true): Promise<Project[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const query = db.select().from(projects).orderBy(asc(projects.sortOrder), asc(projects.id));
+  return publishedOnly ? query.where(eq(projects.isPublished, true)) : query;
+}
+
+export async function getSocialLinks(publishedOnly = true): Promise<SocialLink[]> {
+  const db = await getDb();
+  if (!db) return [];
+  const query = db.select().from(socialLinks).orderBy(asc(socialLinks.sortOrder), asc(socialLinks.id));
+  return publishedOnly ? query.where(eq(socialLinks.isPublished, true)) : query;
+}
+
+export async function upsertSiteProfile(input: InsertSiteProfile) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const values = { ...input, id: 1 };
+  await db.insert(siteProfile).values(values).onDuplicateKeyUpdate({ set: values });
+  return getSiteProfile();
+}
+
+export async function createProject(input: InsertProject) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(projects).values(input);
+  return getProjects(false).then(rows => rows.find(row => row.id === result[0].insertId));
+}
+
+export async function updateProject(id: number, input: Partial<InsertProject>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(projects).set(input).where(eq(projects.id, id));
+  return getProjects(false).then(rows => rows.find(row => row.id === id));
+}
+
+export async function deleteProject(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.delete(projects).where(eq(projects.id, id));
+  return { success: true } as const;
+}
+
+export async function updateSocialLink(id: number, input: Partial<InsertSocialLink>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  await db.update(socialLinks).set(input).where(eq(socialLinks.id, id));
+  return getSocialLinks(false).then(rows => rows.find(row => row.id === id));
+}

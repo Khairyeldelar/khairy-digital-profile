@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +25,50 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+export const siteProfile = mysqlTable("site_profile", {
+  id: int("id").primaryKey().default(1),
+  name: varchar("name", { length: 160 }).notNull().default("Khairy Eid Aly"),
+  roleEn: varchar("roleEn", { length: 240 }).notNull().default("Developer • Creator • Digital Projects"),
+  roleAr: varchar("roleAr", { length: 240 }).notNull().default("مطور • صانع محتوى • مشاريع رقمية"),
+  bioEn: text("bioEn").notNull(),
+  bioAr: text("bioAr").notNull(),
+  locationEn: varchar("locationEn", { length: 160 }).notNull(),
+  locationAr: varchar("locationAr", { length: 160 }).notNull(),
+  portraitKey: text("portraitKey"),
+  coverKey: text("coverKey"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const projects = mysqlTable("projects", {
+  id: int("id").autoincrement().primaryKey(),
+  titleEn: varchar("titleEn", { length: 160 }).notNull(),
+  titleAr: varchar("titleAr", { length: 160 }).notNull(),
+  descriptionEn: text("descriptionEn").notNull(),
+  descriptionAr: text("descriptionAr").notNull(),
+  typeEn: varchar("typeEn", { length: 120 }).notNull(),
+  typeAr: varchar("typeAr", { length: 120 }).notNull(),
+  href: text("href").notNull(),
+  imageKey: text("imageKey"),
+  sortOrder: int("sortOrder").notNull().default(0),
+  isPublished: boolean("isPublished").notNull().default(true),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const socialLinks = mysqlTable("social_links", {
+  id: int("id").autoincrement().primaryKey(),
+  platform: varchar("platform", { length: 40 }).notNull().unique(),
+  handleEn: varchar("handleEn", { length: 160 }).notNull(),
+  handleAr: varchar("handleAr", { length: 160 }).notNull(),
+  href: text("href").notNull(),
+  sortOrder: int("sortOrder").notNull().default(0),
+  isPublished: boolean("isPublished").notNull().default(true),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SiteProfile = typeof siteProfile.$inferSelect;
+export type InsertSiteProfile = typeof siteProfile.$inferInsert;
+export type Project = typeof projects.$inferSelect;
+export type InsertProject = typeof projects.$inferInsert;
+export type SocialLink = typeof socialLinks.$inferSelect;
+export type InsertSocialLink = typeof socialLinks.$inferInsert;

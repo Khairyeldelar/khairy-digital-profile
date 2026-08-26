@@ -3,6 +3,7 @@
  * one owned Burnt Coral accent, compact content, tactile cards, and application-like navigation.
  */
 import { useEffect, useState } from "react";
+import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   ArrowRight,
@@ -79,6 +80,13 @@ const profiles: ProfileItem[] = [
   { name: "YouTube", handle: "Ideas in motion", handleAr: "أفكار تتحرك", href: "https://www.youtube.com/", icon: Youtube },
   { name: "Email", handle: "Say hello directly", handleAr: "راسلني مباشرة", href: "mailto:khairy.eldelar5@gmail.com", icon: Mail },
 ];
+
+const iconByPlatform = { Github, Linkedin, Facebook, Instagram, Youtube, Mail } as const;
+
+const storageAsset = (key?: string | null) => {
+  if (!key) return "";
+  return key.startsWith("/manus-storage/") ? key : `/manus-storage/${key}`;
+};
 
 const navItems = [
   { id: "home", labelEn: "Home", labelAr: "الرئيسية" },
@@ -173,7 +181,53 @@ export default function Home() {
     return saved === "en" ? "en" : "ar";
   });
   const [activeSection, setActiveSection] = useState("home");
+
+  useEffect(() => {
+    const checkMobileOverflow = () => {
+      if (window.innerWidth > 760) return;
+      const hasOverflow = document.documentElement.scrollWidth > window.innerWidth + 1;
+      document.documentElement.dataset.mobileOverflow = hasOverflow ? "true" : "false";
+      if (hasOverflow) console.warn("Mobile layout overflow detected");
+    };
+    const timer = window.setTimeout(checkMobileOverflow, 350);
+    window.addEventListener("resize", checkMobileOverflow);
+    window.addEventListener("load", checkMobileOverflow);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("resize", checkMobileOverflow);
+      window.removeEventListener("load", checkMobileOverflow);
+    };
+  }, []);
   const t = copy[language];
+  const contentQuery = trpc.content.useQuery();
+  const contentProfile = contentQuery.data?.profile;
+  const displayedProjects: Project[] = contentQuery.data?.projects?.length
+    ? contentQuery.data.projects.map((project) => ({
+        title: project.titleEn,
+        titleAr: project.titleAr,
+        description: project.descriptionEn,
+        descriptionAr: project.descriptionAr,
+        type: project.typeEn,
+        typeAr: project.typeAr,
+        image: storageAsset(project.imageKey),
+        href: project.href,
+      }))
+    : projects;
+  const displayedProfiles: ProfileItem[] = contentQuery.data?.socialLinks?.length
+    ? contentQuery.data.socialLinks.map((link) => ({
+        name: link.platform,
+        handle: link.handleEn,
+        handleAr: link.handleAr,
+        href: link.href,
+        icon: iconByPlatform[link.platform as keyof typeof iconByPlatform] ?? Mail,
+      }))
+    : profiles;
+  const displayName = contentProfile?.name ?? "Khairy Eid Aly";
+  const displayRole = language === "ar" ? contentProfile?.roleAr : contentProfile?.roleEn;
+  const displayBio = language === "ar" ? contentProfile?.bioAr : contentProfile?.bioEn;
+  const displayLocation = language === "ar" ? contentProfile?.locationAr : contentProfile?.locationEn;
+  const portraitSrc = storageAsset(contentProfile?.portraitKey) || "/manus-storage/khairy-profile-portrait_8e111237.png";
+  const coverSrc = storageAsset(contentProfile?.coverKey) || "/manus-storage/khairy-profile-cover_01195ff9.png";
   const emailSubject = language === "ar" ? "تواصل بخصوص مشروع رقمي" : "Hello Khairy — Digital Project";
   const emailBody = language === "ar"
     ? "مرحبًا خيري،\n\nأرغب في مناقشة مشروع رقمي معك.\n\nالاسم:\nفكرة المشروع:\nالميزانية أو الإطار الزمني:\n\nشكرًا لك."
@@ -240,7 +294,7 @@ export default function Home() {
         <section id="home" className="profile-card reveal" aria-labelledby="profile-name">
           <div className="profile-cover" aria-hidden="true">
             <img
-              src="/manus-storage/khairy-profile-cover_01195ff9.png"
+              src={coverSrc}
               alt=""
               onError={(event) => {
                 event.currentTarget.onerror = null;
@@ -262,7 +316,7 @@ export default function Home() {
             <div className="portrait-wrap">
               <img
                 className="portrait"
-                src="/manus-storage/khairy-profile-portrait_8e111237.png"
+                src={portraitSrc}
                 alt="Portrait of Khairy Eid Aly"
                 onError={(event) => {
                   event.currentTarget.onerror = null;
@@ -272,10 +326,10 @@ export default function Home() {
               <span className="portrait-status" aria-label="Available" />
             </div>
             <div className="profile-copy">
-              <p className="profile-kicker">{t.location}</p>
-              <h1 id="profile-name" className="profile-name">Khairy Eid Aly</h1>
-              <p className="profile-role">{t.role} <span>•</span> {t.creator} <span>•</span> {t.projects}</p>
-              <p className="profile-bio">{t.bio}</p>
+              <p className="profile-kicker">{displayLocation ?? t.location}</p>
+              <h1 id="profile-name" className="profile-name">{displayName}</h1>
+              <p className="profile-role">{displayRole ?? `${t.role} • ${t.creator} • ${t.projects}`}</p>
+              <p className="profile-bio">{displayBio ?? t.bio}</p>
               <div className="profile-actions">
                 <button className="action action-primary" onClick={() => scrollToId("work")}>
                   {t.myWork} <ArrowRight size={16} strokeWidth={1.9} />
@@ -320,7 +374,7 @@ export default function Home() {
             <p className="section-aside">{t.workAside}</p>
           </div>
           <div className="work-rail" aria-label="Selected work projects">
-            {projects.map((project, index) => (
+            {displayedProjects.map((project, index) => (
               <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
                 <a className="project-image-link" href={project.href} target="_blank" rel="noreferrer" aria-label={`View ${project.title}`}>
                   <div className={`project-image-wrap project-art-${index + 1}`}>
@@ -353,7 +407,7 @@ export default function Home() {
             <span className="section-symbol">↘</span>
           </div>
           <div className="profiles-card">
-            {profiles.map((profile, index) => {
+            {displayedProfiles.map((profile, index) => {
               const Icon = profile.icon;
               return (
                 <a className="profile-row" key={profile.name} href={profile.name === "Email" ? emailHref : profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
