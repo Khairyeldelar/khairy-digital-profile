@@ -2199,3 +2199,68 @@ html[dir="rtl"] .about-card p {
   background: #101413;
   color: #fffefb;
 }
+
+@media (max-width: 760px) {
+  .profile-hero-refined {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    align-items: center;
+    gap: 14px;
+    margin: 25px 0 22px;
+    text-align: start;
+  }
+
+  .profile-hero-refined .portrait-wrap {
+    justify-self: center;
+    width: 92px;
+    height: 104px;
+    margin: 0;
+  }
+
+  .profile-hero-refined .profile-copy {
+    width: auto;
+    min-width: 0;
+    text-align: start;
+  }
+
+  .profile-hero-refined .profile-name-row {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .profile-hero-refined .profile-name {
+    font-size: clamp(1.45rem, 7vw, 2rem);
+    letter-spacing: -0.065em;
+    line-height: 1;
+  }
+
+  .profile-hero-refined .verified-badge {
+    width: 24px;
+    height: 24px;
+  }
+
+  .profile-hero-refined .profile-role {
+    margin-top: 9px;
+    font-size: 0.62rem;
+    line-height: 1.45;
+  }
+
+  .profile-hero-refined .profile-bio {
+    max-width: none;
+    margin: 9px 0 0;
+    font-size: 0.64rem;
+    line-height: 1.55;
+  }
+
+  html[dir="rtl"] .profile-hero-refined {
+    text-align: right;
+  }
+
+  html[dir="rtl"] .profile-hero-refined .profile-copy {
+    text-align: right;
+  }
+
+  html[dir="rtl"] .profile-hero-refined .profile-name-row {
+    justify-content: flex-start;
+  }
+}
