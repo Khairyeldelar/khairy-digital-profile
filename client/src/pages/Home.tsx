@@ -7,12 +7,14 @@ import { ProjectCardTrigger } from "@/components/ProjectCardTrigger";
 import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
+import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { resolveProjectImage } from "@/lib/projectImage";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
   ArrowRight,
   ArrowUpRight,
+  BadgeCheck,
   Facebook,
   Github,
   Instagram,
@@ -181,8 +183,7 @@ export default function Home() {
   let { user, loading, error, isAuthenticated, logout } = useAuth();
 
   const [language, setLanguage] = useState<Language>(() => {
-    const saved = localStorage.getItem("khairy-language");
-    return saved === "en" ? "en" : "ar";
+    return getInitialProfileLanguage(window.location.search, localStorage.getItem("khairy-language"));
   });
   const [activeSection, setActiveSection] = useState("home");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -238,7 +239,7 @@ export default function Home() {
   useEffect(() => {
     document.documentElement.lang = language;
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
-    localStorage.setItem("khairy-language", language);
+    if (shouldPersistProfileLanguage(window.location.search)) localStorage.setItem("khairy-language", language);
   }, [language]);
 
   useEffect(() => {
@@ -303,17 +304,7 @@ export default function Home() {
               }}
             />
           </div>
-          <div className="profile-topline">
-            <span className="eyebrow"><span className="eyebrow-line" /> {t.personalCard}</span>
-            <span className="availability"><span className="availability-dot" /> {t.availability}</span>
-          </div>
-
-          <div className="identity-seal" aria-label="Khairy Eid Aly mark">
-            <span className="brand-glyph brand-glyph-seal" aria-hidden="true"><span className="glyph-stroke glyph-stroke-a" /><span className="glyph-stroke glyph-stroke-b" /><span className="glyph-cut" /></span>
-            <span>K / E</span>
-          </div>
-
-          <div className="profile-hero">
+          <div className="profile-hero profile-hero-refined">
             <div className="portrait-wrap">
               <img
                 className="portrait"
@@ -327,45 +318,34 @@ export default function Home() {
               <span className="portrait-status" aria-label="Available" />
             </div>
             <div className="profile-copy">
-              <p className="profile-kicker">{displayLocation ?? t.location}</p>
-              <h1 id="profile-name" className="profile-name">{displayName}</h1>
+              <div className="profile-name-row">
+                <h1 id="profile-name" className="profile-name">{displayName}</h1>
+                <span className="verified-badge" aria-label={language === "ar" ? "حساب موثق" : "Verified profile"} title={language === "ar" ? "موثق" : "Verified"}>
+                  <BadgeCheck size={22} strokeWidth={2.2} aria-hidden="true" />
+                </span>
+              </div>
               <p className="profile-role">{displayRole ?? `${t.role} • ${t.creator} • ${t.projects}`}</p>
               <p className="profile-bio">{displayBio ?? t.bio}</p>
-              <div className="profile-actions">
-                <button className="action action-primary" onClick={() => scrollToId("work")}>
-                  {t.myWork} <ArrowRight size={16} strokeWidth={1.9} />
-                </button>
-                <button className="action action-secondary" onClick={() => scrollToId("contact")}>
-                  {t.contactMe} <ArrowUpRight size={16} strokeWidth={1.9} />
-                </button>
-              </div>
             </div>
           </div>
 
           <div className="meta-strip" aria-label="Focus areas">
             <div className="meta-item">
               <span className="meta-index">01</span>
-              <span className="meta-label">{t.focus}</span>
               <strong>{t.role}</strong>
             </div>
             <div className="meta-item">
               <span className="meta-index">02</span>
-              <span className="meta-label">{t.making}</span>
               <strong>{t.creator}</strong>
             </div>
             <div className="meta-item">
               <span className="meta-index">03</span>
-              <span className="meta-label">{t.direction}</span>
               <strong>{t.projects}</strong>
             </div>
           </div>
-
-          <div className="profile-footer">
-            <span className="footer-note"><MapPin size={14} /> {t.building}</span>
-            <span className="footer-number">K / E <span>•</span> 001</span>
-          </div>
         </section>
 
+        <div className="section-flow">
         <section id="work" className="content-section reveal reveal-delay-1" aria-labelledby="work-title">
           <div className="work-heading-card" aria-label={t.workTitle}>
             <h2 id="work-title">{t.workTitle}</h2>
@@ -404,6 +384,13 @@ export default function Home() {
           returnFocusRef={projectTriggerRef}
         />
 
+        <section id="about" className="about-card reveal reveal-delay-2" aria-labelledby="about-title">
+          <div className="about-card-top"><span className="section-kicker">{t.aboutKicker}</span><span className="about-mark">K</span></div>
+          <h2 id="about-title">{t.aboutTitle}</h2>
+          <p>{t.aboutText}</p>
+          <span className="about-signature">Khairy Eid Aly <span>↗</span></span>
+        </section>
+
         <section id="profiles" className="content-section reveal reveal-delay-2" aria-labelledby="profiles-title">
           <div className="section-heading compact">
             <div>
@@ -428,13 +415,6 @@ export default function Home() {
         </section>
 
         <div className="about-grid">
-          <section id="about" className="about-card reveal reveal-delay-2" aria-labelledby="about-title">
-            <div className="about-card-top"><span className="section-kicker">{t.aboutKicker}</span><span className="about-mark">K</span></div>
-            <h2 id="about-title">{t.aboutTitle}</h2>
-            <p>{t.aboutText}</p>
-            <span className="about-signature">Khairy Eid Aly <span>↗</span></span>
-          </section>
-
           <section id="contact" className="contact-card reveal reveal-delay-3" aria-labelledby="contact-title">
             <div className="contact-icon"><Mail size={20} strokeWidth={1.7} /></div>
             <p className="section-kicker">{t.contactKicker}</p>
@@ -442,8 +422,8 @@ export default function Home() {
             <a className="contact-link" href={emailHref}>khairy.eldelar5@gmail.com <ArrowUpRight size={16} /></a>
           </section>
         </div>
+        </div>
       </main>
-
       <footer className="site-footer">
         <span>© 2026 Khairy Eid Aly</span>
         <span>{t.footer} <span className="accent-dot">•</span></span>

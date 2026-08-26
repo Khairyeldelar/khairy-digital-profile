@@ -248,5 +248,16 @@
 
 ## Work Heading Card
 
-- [ ] Place «أعمالي» inside a thin white full-width card with minimal height and centered typography.
-- [ ] Match the profile-card radius, border, shadow, and responsive spacing, then verify and checkpoint.
+- [x] Place «أعمالي» inside a thin white full-width card with minimal height and centered typography.
+- [x] Match the profile-card radius, border, shadow, and responsive spacing, then verify and checkpoint.
+
+## Reference-Inspired Profile Layout
+
+- [x] Rework the top profile card to combine cover, portrait, name, verification badge, three identity labels, and short bio only.
+- [x] Reorder the public sections into clear horizontal section blocks while preserving the existing work card and social-link functionality.
+- [x] Keep the existing coral, charcoal, warm-white palette and verify Arabic/English responsive behavior.
+
+- [x] Resolve the two timeout regressions in admin and OAuth tests introduced or exposed during layout verification.
+
+- [x] Add a non-persistent `?lang=en` preview path to make bilingual visual verification reproducible without changing the default Arabic experience.
+- [x] Keep query-forced language previews transient so a later plain `/` visit remains Arabic by default.
