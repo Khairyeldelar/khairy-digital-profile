@@ -2,7 +2,7 @@
  * Design philosophy: Quiet Swiss Card — warm paper neutrals, charcoal type, one Burnt Coral signal,
  * editorial spacing, compact card modules, and movement that feels calm rather than decorative.
  */
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -225,6 +225,35 @@ a {
   border-radius: 50%;
   background: var(--coral);
   box-shadow: 0 0 0 4px rgba(228, 103, 77, 0.11);
+}
+
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  margin-left: auto;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  color: var(--ink-soft);
+  background: rgba(255, 254, 251, 0.68);
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out), background 180ms var(--ease-out), transform 160ms var(--ease-out);
+}
+
+.language-switch:hover {
+  border-color: rgba(228, 103, 77, 0.35);
+  color: var(--coral-dark);
+  background: var(--coral-wash);
+  transform: translateY(-1px);
+}
+
+.language-switch:active {
+  transform: scale(0.97);
 }
 
 .desktop-nav {
@@ -1243,6 +1272,13 @@ a {
     font-size: 0.61rem;
   }
 
+  .language-switch {
+    min-height: 31px;
+    margin-left: auto;
+    padding: 0 9px;
+    font-size: 0.61rem;
+  }
+
   .desktop-nav {
     display: none;
   }
@@ -1547,6 +1583,55 @@ a {
     width: min(100%, 850px);
     margin-right: auto;
     margin-left: auto;
+  }
+}
+
+html[dir="rtl"] body {
+  font-family: "Noto Sans Arabic", "Manrope", sans-serif;
+}
+
+html[dir="rtl"] .brand-word,
+html[dir="rtl"] .profile-name,
+html[dir="rtl"] .section-heading h2,
+html[dir="rtl"] .about-card h2,
+html[dir="rtl"] .contact-card h2,
+html[dir="rtl"] .project-row h3 {
+  font-family: "Noto Sans Arabic", "DM Sans", sans-serif;
+  letter-spacing: -0.045em;
+}
+
+html[dir="rtl"] .meta-item + .meta-item {
+  border-right: 1px solid var(--line);
+  border-left: 0;
+}
+
+html[dir="rtl"] .section-aside {
+  text-align: left;
+}
+
+html[dir="rtl"] .profile-row:hover {
+  padding-right: 23px;
+  padding-left: 19px;
+}
+
+html[dir="rtl"] .action svg,
+html[dir="rtl"] .contact-link svg,
+html[dir="rtl"] .rail-hint svg {
+  transform: scaleX(-1);
+}
+
+html[dir="rtl"] .profile-bio,
+html[dir="rtl"] .about-card p {
+  line-height: 1.95;
+}
+
+@media (max-width: 760px) {
+  html[dir="rtl"] .meta-item + .meta-item {
+    border-right: 0;
+  }
+
+  html[dir="rtl"] .section-aside {
+    text-align: left;
   }
 }
 

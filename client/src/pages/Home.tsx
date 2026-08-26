@@ -13,19 +13,26 @@ import {
   Mail,
   MapPin,
   Youtube,
+  Languages,
 } from "lucide-react";
+
+type Language = "en" | "ar";
 
 type ProfileItem = {
   name: string;
   handle: string;
+  handleAr: string;
   href: string;
   icon: typeof Github;
 };
 
 type Project = {
   title: string;
+  titleAr: string;
   description: string;
+  descriptionAr: string;
   type: string;
+  typeAr: string;
   image: string;
   href: string;
 };
@@ -33,49 +40,138 @@ type Project = {
 const projects: Project[] = [
   {
     title: "Nova Notes",
+    titleAr: "نوفا نوتس",
     description: "A calmer way to capture ideas and keep them moving.",
+    descriptionAr: "طريقة أهدأ لالتقاط الأفكار وإبقائها في حركة.",
     type: "Product system",
+    typeAr: "نظام منتج",
     image: "/manus-storage/project-nova_c6a1f9ba.jpg",
     href: "https://github.com/",
   },
   {
     title: "Signal Studio",
+    titleAr: "سيجنال ستوديو",
     description: "A compact visual toolkit for thoughtful content.",
+    descriptionAr: "مجموعة بصرية صغيرة لصناعة محتوى مدروس.",
     type: "Creator toolkit",
+    typeAr: "أدوات صانع محتوى",
     image: "/manus-storage/project-signal_5ef777fa.jpg",
     href: "https://www.behance.net/",
   },
   {
     title: "Atlas Flow",
+    titleAr: "أطلس فلو",
     description: "Turning complex digital journeys into simple paths.",
+    descriptionAr: "تحويل الرحلات الرقمية المعقدة إلى مسارات بسيطة.",
     type: "Digital direction",
+    typeAr: "توجيه رقمي",
     image: "/manus-storage/project-atlas_0382e072.jpg",
     href: "https://dribbble.com/",
   },
 ];
 
 const profiles: ProfileItem[] = [
-  { name: "GitHub", handle: "Code, experiments & builds", href: "https://github.com/", icon: Github },
-  { name: "LinkedIn", handle: "Work, notes & connections", href: "https://www.linkedin.com/", icon: Linkedin },
-  { name: "Facebook", handle: "A little more of the human side", href: "https://www.facebook.com/", icon: Facebook },
-  { name: "Instagram", handle: "Visual notes from the process", href: "https://www.instagram.com/", icon: Instagram },
-  { name: "YouTube", handle: "Ideas in motion", href: "https://www.youtube.com/", icon: Youtube },
-  { name: "Email", handle: "Say hello directly", href: "mailto:hello@khairy.dev", icon: Mail },
+  { name: "GitHub", handle: "Code, experiments & builds", handleAr: "كود وتجارب ومشاريع", href: "https://github.com/", icon: Github },
+  { name: "LinkedIn", handle: "Work, notes & connections", handleAr: "عمل وملاحظات وتواصل", href: "https://www.linkedin.com/", icon: Linkedin },
+  { name: "Facebook", handle: "A little more of the human side", handleAr: "جانب أكثر إنسانية", href: "https://www.facebook.com/", icon: Facebook },
+  { name: "Instagram", handle: "Visual notes from the process", handleAr: "ملاحظات بصرية من الرحلة", href: "https://www.instagram.com/", icon: Instagram },
+  { name: "YouTube", handle: "Ideas in motion", handleAr: "أفكار تتحرك", href: "https://www.youtube.com/", icon: Youtube },
+  { name: "Email", handle: "Say hello directly", handleAr: "راسلني مباشرة", href: "mailto:hello@khairy.dev", icon: Mail },
 ];
 
 const navItems = [
-  { id: "home", label: "Home" },
-  { id: "work", label: "Work" },
-  { id: "profiles", label: "Profiles" },
-  { id: "contact", label: "Contact" },
+  { id: "home", labelEn: "Home", labelAr: "الرئيسية" },
+  { id: "work", labelEn: "Work", labelAr: "أعمالي" },
+  { id: "profiles", labelEn: "Profiles", labelAr: "حساباتي" },
+  { id: "contact", labelEn: "Contact", labelAr: "تواصل" },
 ];
+
+const copy = {
+  en: {
+    languageLabel: "Switch to Arabic",
+    languageName: "العربية",
+    digitalProfile: "Digital profile",
+    personalCard: "Personal card / 01",
+    availability: "Open to good ideas",
+    location: "Cairo · Remote · 2026",
+    role: "Developer",
+    creator: "Creator",
+    projects: "Digital Projects",
+    bio: "I turn ideas into clear, useful digital experiences — with a little character.",
+    myWork: "My Work",
+    contactMe: "Contact Me",
+    focus: "Focus",
+    making: "Making",
+    direction: "Direction",
+    building: "Building from curiosity",
+    selectedWork: "02 / Selected work",
+    workTitle: "Small digital worlds,",
+    workTitleEm: "made with care.",
+    workAside: "A few things I have been shaping lately.",
+    swipe: "Swipe to explore",
+    drag: "or drag the rail",
+    findMe: "03 / Find me around",
+    profilesTitle: "My Profiles",
+    aboutKicker: "A little context",
+    aboutTitle: "About Me",
+    aboutText: "I like the space where technology meets a clear point of view. I build, document, and refine digital ideas until they feel simple to use.",
+    contactKicker: "04 / Contact",
+    contactTitle: "Have a good idea?",
+    contactTitleEm: "Let’s make it useful.",
+    footer: "Made for the next good idea",
+  },
+  ar: {
+    languageLabel: "التبديل إلى الإنجليزية",
+    languageName: "English",
+    digitalProfile: "بطاقة رقمية",
+    personalCard: "بطاقة شخصية / 01",
+    availability: "منفتح على الأفكار الجيدة",
+    location: "القاهرة · عن بُعد · 2026",
+    role: "مطور",
+    creator: "صانع محتوى",
+    projects: "مشاريع رقمية",
+    bio: "أحوّل الأفكار إلى تجارب رقمية واضحة ومفيدة — بلمسة شخصية.",
+    myWork: "أعمالي",
+    contactMe: "تواصل معي",
+    focus: "التخصص",
+    making: "صناعة",
+    direction: "التوجه",
+    building: "أبني بدافع الفضول",
+    selectedWork: "02 / أعمال مختارة",
+    workTitle: "عوالم رقمية صغيرة،",
+    workTitleEm: "مصنوعة بعناية.",
+    workAside: "بعض الأشياء التي أعمل على تشكيلها مؤخرًا.",
+    swipe: "اسحب للاستكشاف",
+    drag: "أو حرّك الشريط",
+    findMe: "03 / تجدني هنا",
+    profilesTitle: "حساباتي",
+    aboutKicker: "نبذة قصيرة",
+    aboutTitle: "عني",
+    aboutText: "أحب المساحة التي تلتقي فيها التقنية مع وجهة نظر واضحة. أبني الأفكار الرقمية وأوثقها وأصقلها حتى تصبح سهلة الاستخدام.",
+    contactKicker: "04 / تواصل",
+    contactTitle: "لديك فكرة جيدة؟",
+    contactTitleEm: "لنجعلها مفيدة.",
+    footer: "مصمم للفكرة الجيدة القادمة",
+  },
+};
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 export default function Home() {
+  const [language, setLanguage] = useState<Language>(() => {
+    const saved = localStorage.getItem("khairy-language");
+    return saved === "ar" ? "ar" : "en";
+  });
   const [activeSection, setActiveSection] = useState("home");
+  const t = copy[language];
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
+    localStorage.setItem("khairy-language", language);
+  }, [language]);
 
   useEffect(() => {
     const sections = navItems
@@ -108,8 +204,12 @@ export default function Home() {
         </button>
         <div className="header-meta">
           <span className="online-pulse" aria-hidden="true" />
-          <span>Digital profile</span>
+          <span>{t.digitalProfile}</span>
         </div>
+        <button className="language-switch" onClick={() => setLanguage(language === "en" ? "ar" : "en")} aria-label={t.languageLabel}>
+          <Languages size={15} strokeWidth={1.8} />
+          <span>{t.languageName}</span>
+        </button>
         <nav className="desktop-nav" aria-label="Primary navigation">
           {navItems.map((item) => (
             <button
@@ -117,7 +217,7 @@ export default function Home() {
               className={activeSection === item.id ? "nav-link active" : "nav-link"}
               onClick={() => scrollToId(item.id)}
             >
-              {item.label}
+              {language === "ar" ? item.labelAr : item.labelEn}
             </button>
           ))}
         </nav>
@@ -126,8 +226,8 @@ export default function Home() {
       <main className="page-wrap">
         <section id="home" className="profile-card reveal" aria-labelledby="profile-name">
           <div className="profile-topline">
-            <span className="eyebrow"><span className="eyebrow-line" /> Personal card / 01</span>
-            <span className="availability"><span className="availability-dot" /> Open to good ideas</span>
+            <span className="eyebrow"><span className="eyebrow-line" /> {t.personalCard}</span>
+            <span className="availability"><span className="availability-dot" /> {t.availability}</span>
           </div>
 
           <div className="identity-seal" aria-label="Khairy Eid Aly mark">
@@ -145,16 +245,16 @@ export default function Home() {
               <span className="portrait-status" aria-label="Available" />
             </div>
             <div className="profile-copy">
-              <p className="profile-kicker">Cairo · Remote · 2026</p>
+              <p className="profile-kicker">{t.location}</p>
               <h1 id="profile-name" className="profile-name">Khairy Eid Aly</h1>
-              <p className="profile-role">Developer <span>•</span> Creator <span>•</span> Digital Projects</p>
-              <p className="profile-bio">I turn ideas into clear, useful digital experiences — with a little character.</p>
+              <p className="profile-role">{t.role} <span>•</span> {t.creator} <span>•</span> {t.projects}</p>
+              <p className="profile-bio">{t.bio}</p>
               <div className="profile-actions">
                 <button className="action action-primary" onClick={() => scrollToId("work")}>
-                  My Work <ArrowRight size={16} strokeWidth={1.9} />
+                  {t.myWork} <ArrowRight size={16} strokeWidth={1.9} />
                 </button>
                 <button className="action action-secondary" onClick={() => scrollToId("contact")}>
-                  Contact Me <ArrowUpRight size={16} strokeWidth={1.9} />
+                  {t.contactMe} <ArrowUpRight size={16} strokeWidth={1.9} />
                 </button>
               </div>
             </div>
@@ -163,23 +263,23 @@ export default function Home() {
           <div className="meta-strip" aria-label="Focus areas">
             <div className="meta-item">
               <span className="meta-index">01</span>
-              <span className="meta-label">Focus</span>
-              <strong>Developer</strong>
+              <span className="meta-label">{t.focus}</span>
+              <strong>{t.role}</strong>
             </div>
             <div className="meta-item">
               <span className="meta-index">02</span>
-              <span className="meta-label">Making</span>
-              <strong>Content Creator</strong>
+              <span className="meta-label">{t.making}</span>
+              <strong>{t.creator}</strong>
             </div>
             <div className="meta-item">
               <span className="meta-index">03</span>
-              <span className="meta-label">Direction</span>
-              <strong>Digital Projects</strong>
+              <span className="meta-label">{t.direction}</span>
+              <strong>{t.projects}</strong>
             </div>
           </div>
 
           <div className="profile-footer">
-            <span className="footer-note"><MapPin size={14} /> Building from curiosity</span>
+            <span className="footer-note"><MapPin size={14} /> {t.building}</span>
             <span className="footer-number">K / E <span>•</span> 001</span>
           </div>
         </section>
@@ -187,10 +287,10 @@ export default function Home() {
         <section id="work" className="content-section reveal reveal-delay-1" aria-labelledby="work-title">
           <div className="section-heading">
             <div>
-              <p className="section-kicker">02 / Selected work</p>
-              <h2 id="work-title">Small digital worlds,<br /><em>made with care.</em></h2>
+              <p className="section-kicker">{t.selectedWork}</p>
+              <h2 id="work-title">{t.workTitle}<br /><em>{t.workTitleEm}</em></h2>
             </div>
-            <p className="section-aside">A few things I have been shaping lately.</p>
+            <p className="section-aside">{t.workAside}</p>
           </div>
           <div className="work-rail" aria-label="Selected work projects">
             {projects.map((project, index) => (
@@ -199,29 +299,29 @@ export default function Home() {
                   <div className={`project-image-wrap project-art-${index + 1}`}>
                     <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
                     <img className="project-image" src={project.image} alt={`${project.title} project preview`} onError={(event) => { event.currentTarget.style.display = "none"; }} />
-                    <span className="project-cover-label">{project.type}</span>
+                    <span className="project-cover-label">{language === "ar" ? project.typeAr : project.type}</span>
                     <span className="project-view"><ArrowUpRight size={17} /></span>
                   </div>
                 </a>
                 <div className="project-body">
                   <div className="project-row">
-                    <h3>{project.title}</h3>
+                    <h3>{language === "ar" ? project.titleAr : project.title}</h3>
                     <span className="project-count">0{index + 1}</span>
                   </div>
-                  <p>{project.description}</p>
-                  <span className="project-type">{project.type}</span>
+                  <p>{language === "ar" ? project.descriptionAr : project.description}</p>
+                  <span className="project-type">{language === "ar" ? project.typeAr : project.type}</span>
                 </div>
               </article>
             ))}
           </div>
-          <p className="rail-hint"><span>Swipe to explore</span><ArrowRight size={15} /> <span>or drag the rail</span></p>
+          <p className="rail-hint"><span>{t.swipe}</span><ArrowRight size={15} /> <span>{t.drag}</span></p>
         </section>
 
         <section id="profiles" className="content-section reveal reveal-delay-2" aria-labelledby="profiles-title">
           <div className="section-heading compact">
             <div>
-              <p className="section-kicker">03 / Find me around</p>
-              <h2 id="profiles-title">My Profiles</h2>
+              <p className="section-kicker">{t.findMe}</p>
+              <h2 id="profiles-title">{t.profilesTitle}</h2>
             </div>
             <span className="section-symbol">↘</span>
           </div>
@@ -232,7 +332,7 @@ export default function Home() {
                 <a className="profile-row" key={profile.name} href={profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
                   <span className="profile-row-index">0{index + 1}</span>
                   <span className="profile-row-icon"><Icon size={18} strokeWidth={1.8} /></span>
-                  <span className="profile-row-copy"><strong>{profile.name}</strong><small>{profile.handle}</small></span>
+                  <span className="profile-row-copy"><strong>{profile.name}</strong><small>{language === "ar" ? profile.handleAr : profile.handle}</small></span>
                   <ArrowUpRight className="profile-row-arrow" size={18} strokeWidth={1.7} />
                 </a>
               );
@@ -242,16 +342,16 @@ export default function Home() {
 
         <div className="about-grid">
           <section id="about" className="about-card reveal reveal-delay-2" aria-labelledby="about-title">
-            <div className="about-card-top"><span className="section-kicker">A little context</span><span className="about-mark">K</span></div>
-            <h2 id="about-title">About Me</h2>
-            <p>I like the space where technology meets a clear point of view. I build, document, and refine digital ideas until they feel simple to use.</p>
+            <div className="about-card-top"><span className="section-kicker">{t.aboutKicker}</span><span className="about-mark">K</span></div>
+            <h2 id="about-title">{t.aboutTitle}</h2>
+            <p>{t.aboutText}</p>
             <span className="about-signature">Khairy Eid Aly <span>↗</span></span>
           </section>
 
           <section id="contact" className="contact-card reveal reveal-delay-3" aria-labelledby="contact-title">
             <div className="contact-icon"><Mail size={20} strokeWidth={1.7} /></div>
-            <p className="section-kicker">04 / Contact</p>
-            <h2 id="contact-title">Have a good idea?<br /><em>Let’s make it useful.</em></h2>
+            <p className="section-kicker">{t.contactKicker}</p>
+            <h2 id="contact-title">{t.contactTitle}<br /><em>{t.contactTitleEm}</em></h2>
             <a className="contact-link" href="mailto:hello@khairy.dev">hello@khairy.dev <ArrowUpRight size={16} /></a>
           </section>
         </div>
@@ -259,14 +359,14 @@ export default function Home() {
 
       <footer className="site-footer">
         <span>© 2026 Khairy Eid Aly</span>
-        <span>Made for the next good idea <span className="accent-dot">•</span></span>
+        <span>{t.footer} <span className="accent-dot">•</span></span>
       </footer>
 
       <nav className="mobile-nav" aria-label="Mobile navigation">
         {navItems.map((item) => (
           <button key={item.id} className={activeSection === item.id ? "mobile-nav-item active" : "mobile-nav-item"} onClick={() => scrollToId(item.id)}>
             <span className="mobile-nav-dot" />
-            {item.label}
+            {language === "ar" ? item.labelAr : item.labelEn}
           </button>
         ))}
       </nav>
