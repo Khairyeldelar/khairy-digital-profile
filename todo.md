@@ -63,3 +63,9 @@
 - [x] Prepare a Pages-compatible static build without changing the Full-Stack source of record.
 - [x] Run the GitHub Pages workflow and verify the public URL.
 - [x] Confirm the published result and explain the Full-Stack versus static-hosting distinction.
+
+## GitHub Pages 404 Fix
+
+- [ ] Configure the client router base for the repository subpath.
+- [ ] Rebuild and redeploy GitHub Pages.
+- [ ] Verify the public project URL loads the home page on mobile and desktop.
