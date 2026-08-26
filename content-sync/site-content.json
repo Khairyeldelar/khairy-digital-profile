@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-26T21:57:30.481Z",
+  "profile": {
+    "name": "Khairy Eid Aly",
+    "roleEn": "Developer • Creator • Influencer",
+    "roleAr": "مطور • صانع محتوى • مؤثر",
+    "bioEn": "I turn ideas into clear, useful digital experiences — with a little character.",
+    "bioAr": "أحوّل الأفكار إلى تجارب رقمية واضحة ومفيدة — بلمسة شخصية.",
+    "locationEn": "Cairo · Remote · 2026",
+    "locationAr": "القاهرة · عن بُعد · 2026"
+  },
+  "projects": [
+    {
+      "id": 1,
+      "titleEn": "Can you survive",
+      "titleAr": "هل تستطيع النجاة ",
+      "descriptionEn": "New game available now on Google Play ",
+      "descriptionAr": "لعبة هل تستطيع النجاة متاحه الآن على جوجل بلاي ",
+      "articleBodyEn": "",
+      "articleBodyAr": "",
+      "typeEn": "Product system",
+      "typeAr": "نظام منتج",
+      "category": "videos",
+      "href": "https://play.google.com/store/apps/details?id=com.app.canyousurvivemobile",
+      "sortOrder": 0,
+      "isPublished": true
+    },
+    {
+      "id": 2,
+      "titleEn": "Signal Studio",
+      "titleAr": "سيجنال ستوديو",
+      "descriptionEn": "A compact visual toolkit for thoughtful content.",
+      "descriptionAr": "مجموعة بصرية صغيرة لصناعة محتوى مدروس.",
+      "articleBodyEn": "",
+      "articleBodyAr": "",
+      "typeEn": "Creator toolkit",
+      "typeAr": "أدوات صانع محتوى",
+      "category": "tutorials",
+      "href": "https://www.behance.net/",
+      "sortOrder": 2,
+      "isPublished": true
+    },
+    {
+      "id": 3,
+      "titleEn": "Atlas Flow",
+      "titleAr": "أطلس فلو",
+      "descriptionEn": "Turning complex digital journeys into simple paths.",
+      "descriptionAr": "تحويل الرحلات الرقمية المعقدة إلى مسارات بسيطة.",
+      "articleBodyEn": "",
+      "articleBodyAr": "",
+      "typeEn": "Digital direction",
+      "typeAr": "توجيه رقمي",
+      "category": "applications",
+      "href": "https://dribbble.com/",
+      "sortOrder": 3,
+      "isPublished": true
+    }
+  ],
+  "socialLinks": [
+    {
+      "id": 1,
+      "platform": "GitHub",
+      "platformEn": "",
+      "platformAr": "",
+      "handleEn": "Code, experiments & builds",
+      "handleAr": "كود وتجارب ومشاريع",
+      "href": "https://github.com/",
+      "sortOrder": 1,
+      "isPublished": true
+    },
+    {
+      "id": 2,
+      "platform": "LinkedIn",
+      "platformEn": "",
+      "platformAr": "",
+      "handleEn": "Work, notes & connections",
+      "handleAr": "عمل وملاحظات وتواصل",
+      "href": "https://www.linkedin.com/",
+      "sortOrder": 2,
+      "isPublished": true
+    },
+    {
+      "id": 3,
+      "platform": "Facebook",
+      "platformEn": "",
+      "platformAr": "",
+      "handleEn": "A little more of the human side",
+      "handleAr": "جانب أكثر إنسانية",
+      "href": "https://www.facebook.com/khairy.eldelar/",
+      "sortOrder": 3,
+      "isPublished": true
+    },
+    {
+      "id": 4,
+      "platform": "Instagram",
+      "platformEn": "",
+      "platformAr": "",
+      "handleEn": "Visual notes from the process",
+      "handleAr": "ملاحظات بصرية من الرحلة",
+      "href": "https://www.instagram.com/khairy.eldelar/",
+      "sortOrder": 4,
+      "isPublished": true
+    },
+    {
+      "id": 5,
+      "platform": "YouTube",
+      "platformEn": "",
+      "platformAr": "",
+      "handleEn": "Ideas in motion",
+      "handleAr": "أفكار تتحرك",
+      "href": "https://www.youtube.com/",
+      "sortOrder": 5,
+      "isPublished": true
+    },
+    {
+      "id": 6,
+      "platform": "Email",
+      "platformEn": "",
+      "platformAr": "",
+      "handleEn": "Say hello directly",
+      "handleAr": "راسلني مباشرة",
+      "href": "mailto:khairy.eldelar5@gmail.com",
+      "sortOrder": 6,
+      "isPublished": true
+    }
+  ]
+}
