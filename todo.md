@@ -314,3 +314,10 @@
 
 - [x] Replace numbered identity items below the profile card with one horizontal separator-based row in Arabic and English.
 - [x] Verify the shorter profile card on mobile and desktop, run tests, and save a checkpoint.
+
+## GitHub Sync Button
+
+- [ ] Push the latest Dark Mode and compact identity-row changes to the configured public GitHub repository.
+- [ ] Add a protected server-side GitHub sync procedure and admin button that reports sync success or failure without exposing credentials.
+- [ ] Add secure GitHub repository/token configuration and document required permissions without committing secrets.
+- [ ] Add Vitest coverage for sync validation, owner protection, and visible success/error feedback, then publish a checkpoint.
