@@ -319,6 +319,37 @@ a {
   border-radius: 30px;
 }
 
+.profile-cover {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 230px;
+  overflow: hidden;
+  background: #f9fbff;
+  opacity: 0.78;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
+}
+
+.profile-cover::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 254, 251, 0.02) 0%, rgba(255, 254, 251, 0.22) 47%, var(--card) 100%);
+  content: "";
+}
+
+.profile-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 39%;
+  filter: saturate(0.78) contrast(0.96);
+}
+
 .profile-card::before {
   position: absolute;
   top: -120px;
@@ -1290,6 +1321,14 @@ a {
   .profile-card {
     padding: 20px 17px 17px;
     border-radius: 24px;
+  }
+
+  .profile-cover {
+    height: 173px;
+  }
+
+  .profile-cover::after {
+    background: linear-gradient(to bottom, rgba(255, 254, 251, 0.03) 0%, rgba(255, 254, 251, 0.28) 45%, var(--card) 100%);
   }
 
   .identity-seal {

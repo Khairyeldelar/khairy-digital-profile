@@ -230,6 +230,9 @@ export default function Home() {
 
       <main className="page-wrap">
         <section id="home" className="profile-card reveal" aria-labelledby="profile-name">
+          <div className="profile-cover" aria-hidden="true">
+            <img src="/manus-storage/khairy-profile-cover_01195ff9.png" alt="" />
+          </div>
           <div className="profile-topline">
             <span className="eyebrow"><span className="eyebrow-line" /> {t.personalCard}</span>
             <span className="availability"><span className="availability-dot" /> {t.availability}</span>
@@ -244,7 +247,7 @@ export default function Home() {
             <div className="portrait-wrap">
               <img
                 className="portrait"
-                src="/manus-storage/khairy-portrait-anchor_f5c4ca38.jpg"
+                src="/manus-storage/khairy-profile-portrait_8e111237.png"
                 alt="Portrait of Khairy Eid Aly"
               />
               <span className="portrait-status" aria-label="Available" />

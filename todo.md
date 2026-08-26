@@ -6,3 +6,10 @@
 - [x] Add complete RTL layout rules without breaking icons, horizontal work scrolling, or bottom navigation.
 - [x] Verify desktop and mobile rendering in both languages.
 - [x] Run TypeScript/build checks; checkpoint remains to be created after final verification.
+
+## Attached Image Update
+
+- [x] Upload the attached portrait and cover image to the project asset storage.
+- [x] Replace the profile portrait source with the attached portrait.
+- [x] Add the attached cover as the profile card visual while preserving readable content.
+- [x] Verify the new composition on desktop and mobile; checkpoint remains to be created after final verification.
