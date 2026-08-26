@@ -13,3 +13,18 @@
 - [x] Replace the profile portrait source with the attached portrait.
 - [x] Add the attached cover as the profile card visual while preserving readable content.
 - [x] Verify the new composition on desktop and mobile; checkpoint remains to be created after final verification.
+
+## GitHub Upload
+
+- [ ] Inspect the current Git repository state and remotes.
+- [ ] Create or select a private GitHub repository for the project.
+- [ ] Commit and push the latest stable project version.
+- [ ] Verify the remote repository and explain the Manus badge limitation.
+
+## Independent GitHub Pages Release
+
+- [ ] Copy the user-provided portrait and cover into the repository public assets.
+- [ ] Replace Manus storage URLs with repository-relative asset URLs.
+- [ ] Add GitHub Pages-compatible Vite base configuration and deployment workflow.
+- [ ] Create a private GitHub repository and push the independent release.
+- [ ] Verify the GitHub Pages deployment URL and confirm the Manus preview badge is not part of the independent build.

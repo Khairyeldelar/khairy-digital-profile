@@ -45,7 +45,7 @@ const projects: Project[] = [
     descriptionAr: "طريقة أهدأ لالتقاط الأفكار وإبقائها في حركة.",
     type: "Product system",
     typeAr: "نظام منتج",
-    image: "/manus-storage/project-nova_c6a1f9ba.jpg",
+    image: "",
     href: "https://github.com/",
   },
   {
@@ -55,7 +55,7 @@ const projects: Project[] = [
     descriptionAr: "مجموعة بصرية صغيرة لصناعة محتوى مدروس.",
     type: "Creator toolkit",
     typeAr: "أدوات صانع محتوى",
-    image: "/manus-storage/project-signal_5ef777fa.jpg",
+    image: "",
     href: "https://www.behance.net/",
   },
   {
@@ -65,7 +65,7 @@ const projects: Project[] = [
     descriptionAr: "تحويل الرحلات الرقمية المعقدة إلى مسارات بسيطة.",
     type: "Digital direction",
     typeAr: "توجيه رقمي",
-    image: "/manus-storage/project-atlas_0382e072.jpg",
+    image: "",
     href: "https://dribbble.com/",
   },
 ];
@@ -202,7 +202,7 @@ export default function Home() {
       <header className="site-header" aria-label="Site header">
         <button className="brand-lockup" onClick={() => scrollToId("home")} aria-label="Back to home">
           <span className="brand-emblem" aria-hidden="true">
-            <img className="brand-mark" src="/manus-storage/khairy-mark_46e99a1a.png" alt="" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+            <img className="brand-mark" src="/assets/khairy-mark.svg" alt="" />
             <span className="brand-glyph brand-glyph-header"><span className="glyph-stroke glyph-stroke-a" /><span className="glyph-stroke glyph-stroke-b" /><span className="glyph-cut" /></span>
           </span>
           <span className="brand-word">KHAIRY <span>EID ALY</span></span>
@@ -231,7 +231,7 @@ export default function Home() {
       <main className="page-wrap">
         <section id="home" className="profile-card reveal" aria-labelledby="profile-name">
           <div className="profile-cover" aria-hidden="true">
-            <img src="/manus-storage/khairy-profile-cover_01195ff9.png" alt="" />
+            <img src="/assets/khairy-profile-cover.png" alt="" />
           </div>
           <div className="profile-topline">
             <span className="eyebrow"><span className="eyebrow-line" /> {t.personalCard}</span>
@@ -247,7 +247,7 @@ export default function Home() {
             <div className="portrait-wrap">
               <img
                 className="portrait"
-                src="/manus-storage/khairy-profile-portrait_8e111237.png"
+                src="/assets/khairy-profile-portrait.png"
                 alt="Portrait of Khairy Eid Aly"
               />
               <span className="portrait-status" aria-label="Available" />
@@ -306,7 +306,7 @@ export default function Home() {
                 <a className="project-image-link" href={project.href} target="_blank" rel="noreferrer" aria-label={`View ${project.title}`}>
                   <div className={`project-image-wrap project-art-${index + 1}`}>
                     <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
-                    <img className="project-image" src={project.image} alt={`${project.title} project preview`} onError={(event) => { event.currentTarget.style.display = "none"; }} />
+                    {project.image && <img className="project-image" src={project.image} alt={`${project.title} project preview`} onError={(event) => { event.currentTarget.style.display = "none"; }} />}
                     <span className="project-cover-label">{language === "ar" ? project.typeAr : project.type}</span>
                     <span className="project-view"><ArrowUpRight size={17} /></span>
                   </div>

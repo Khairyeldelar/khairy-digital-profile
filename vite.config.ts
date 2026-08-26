@@ -203,9 +203,15 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
-
+const isStandaloneBuild = process.env.GITHUB_ACTIONS === "true" || process.env.STANDALONE_BUILD === "true";
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  ...(isStandaloneBuild ? [] : [vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()]),
+];
 export default defineConfig({
+  base: isStandaloneBuild ? "/khairy-digital-profile/" : "/",
   plugins,
   resolve: {
     alias: {
