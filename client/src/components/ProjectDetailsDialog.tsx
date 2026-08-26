@@ -56,10 +56,10 @@ export function ProjectDetailsDialog({ project, projectIndex, language, visitLab
               <DialogDescription>{language === "ar" ? project.descriptionAr : project.description}</DialogDescription>
             </DialogHeader>
             <p className="project-dialog-type">{language === "ar" ? project.typeAr : project.type}</p>
-            {project.href && (
+            {project && (
               <DialogFooter>
-                <a className="action action-primary project-dialog-link" href={project.href} target="_blank" rel="noreferrer">
-                  {visitLabel} <ArrowUpRight size={16} strokeWidth={1.9} />
+                <a className="action action-primary project-dialog-link" href={`/article/${encodeURIComponent(project.title)}`}>
+                  {language === "ar" ? "دخول إلى الصفحة" : "Open content"} <ArrowUpRight size={16} strokeWidth={1.9} />
                 </a>
               </DialogFooter>
             )}

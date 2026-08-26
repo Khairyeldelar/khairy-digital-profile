@@ -5,6 +5,7 @@ import { ProjectImage } from "@/components/ProjectImage";
 import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { resolveProjectImage } from "@/lib/projectImage";
+import { hasRichMarkup, sanitizeArticleHtml } from "@/lib/richArticleHtml";
 import { trpc } from "@/lib/trpc";
 import { useTheme } from "@/contexts/ThemeContext";
 import { projects as fallbackProjects, type Project } from "./Home";
@@ -69,7 +70,7 @@ export default function Article() {
         articleBodyAr: remote.articleBodyAr,
         type: remote.typeEn,
         typeAr: remote.typeAr,
-        category: "tutorials" as const,
+        category: remote.category,
         image: resolveProjectImage(imageKey, imageUrl),
         imageFallback: resolveProjectImage(imageKey),
         href: remote.href,
@@ -120,10 +121,10 @@ export default function Article() {
       <button className="article-back" onClick={() => setLocation("/")}><ArrowLeft size={16} />{copy.back}</button>
       <section className="article-profile-strip" dir={language} aria-label={language === "ar" ? "الملف التعريفي" : "Profile identity"}><div className="article-profile-avatar"><span>{name.slice(0, 1)}</span></div><div><strong>{name}</strong><p>{role ?? (language === "ar" ? "مطور وصانع محتوى" : "Developer and creator")}</p></div><BadgeCheck className="article-verified" size={21} /><p className="article-profile-bio">{bio}</p></section>
       <article className="article-card" dir={language}>
-        <div className="article-kicker">{copy.article}</div><h1>{title}</h1><div className="article-meta"><span>{language === "ar" ? project.typeAr : project.type}</span><span>•</span><span>Khairy Eid Aly</span></div>
+        <div className="article-kicker">{project.category === "applications" ? (language === "ar" ? "تطبيق أو لعبة" : "Application or game") : project.category === "videos" ? (language === "ar" ? "فيديو" : "Video") : copy.article}</div><h1>{title}</h1><div className="article-meta"><span>{language === "ar" ? project.typeAr : project.type}</span><span>•</span><span>Khairy Eid Aly</span></div>
         <ProjectImage src={project.image} fallbackSrc={project.imageFallback} className="article-image" alt={title} />
         {placedMedia("start")}
-        <div className="article-body"><p>{description}</p>{articleBody ? <div className="article-rich-body">{articleBody}</div> : null}</div>
+        <div className="article-body"><p>{description}</p>{articleBody ? hasRichMarkup(articleBody) ? <div className="article-rich-body rich-article-render" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(articleBody) }} /> : <div className="article-rich-body">{articleBody}</div> : null}</div>
         {placedMedia("middle")}{placedMedia("end")}
         {project.href && <a className="article-link" href={project.href} target="_blank" rel="noreferrer">{copy.readMore}<ArrowUpRight size={16} /></a>}
       </article>

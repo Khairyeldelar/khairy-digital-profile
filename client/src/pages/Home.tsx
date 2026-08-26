@@ -248,14 +248,6 @@ export function WorkShowcase({ projects, language, copy, category, sectionId = "
             <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
               <ProjectCardTrigger
                 onOpen={(button) => {
-                  if (project.category === "tutorials") {
-                    setLocation(`/article/${encodeURIComponent(project.title)}`);
-                    return;
-                  }
-                  if (project.category === "videos") {
-                    setLocation(`/video/${encodeURIComponent(project.title)}`);
-                    return;
-                  }
                   projectTriggerRef.current = button;
                   setSelectedProject(project);
                 }}

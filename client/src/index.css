@@ -2193,6 +2193,21 @@ html[dir="rtl"] .about-card p {
 .comment-form button { display: inline-flex; width: fit-content; min-height: 40px; align-items: center; gap: 8px; border: 0; border-radius: 12px; padding: 0 15px; color: #fffefb; background: var(--ink); font: inherit; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
 .comment-form button:disabled { opacity: 0.6; cursor: not-allowed; }
 .comment-error { margin: 0; color: #c94d3b; font-size: 0.8rem; }
+
+.rich-editor { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
+.rich-editor-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid var(--line-soft); background: var(--card); }
+.rich-editor-toolbar button { display: inline-grid; width: 32px; height: 32px; place-items: center; border: 1px solid transparent; border-radius: 8px; color: var(--ink-soft); background: transparent; cursor: pointer; }
+.rich-editor-toolbar button:hover { border-color: var(--line); color: var(--coral); background: var(--coral-wash); }
+.rich-editor-canvas { min-height: 240px; padding: 16px; color: var(--ink); font-size: 0.96rem; line-height: 1.9; outline: none; }
+.rich-editor-canvas:empty::before { color: var(--ink-faint); content: attr(data-placeholder); }
+.rich-editor-canvas h2 { margin: 1.1em 0 0.45em; font-size: 1.3em; }
+.rich-editor-canvas img { display: block; max-width: 100%; height: auto; margin: 16px auto; border-radius: 12px; }
+.rich-editor-canvas iframe { display: block; width: 100%; min-height: 280px; margin: 16px auto; border: 0; border-radius: 12px; }
+.rich-article-render h2 { margin: 1.4em 0 0.55em; color: var(--ink); font-size: 1.35em; }
+.rich-article-render ul, .rich-article-render ol { padding-inline-start: 1.5em; }
+.rich-article-render a { color: var(--coral); text-decoration: underline; }
+.rich-article-render img { display: block; max-width: 100%; height: auto; margin: 24px auto; border-radius: 16px; }
+.rich-article-render iframe { width: 100%; min-height: 360px; border: 0; border-radius: 16px; }
 :root.dark {
   --paper: #151918;
   --paper-deep: #202522;
