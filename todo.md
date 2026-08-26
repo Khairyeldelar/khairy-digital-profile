@@ -59,7 +59,7 @@
 
 ## GitHub Pages Publish Request
 
-- [ ] Verify the Pages workflow and repository visibility after the Full-Stack upgrade.
-- [ ] Prepare a Pages-compatible static build without changing the Full-Stack source of record.
-- [ ] Run the GitHub Pages workflow and verify the public URL.
-- [ ] Confirm the published result and explain the Full-Stack versus static-hosting distinction.
+- [x] Verify the Pages workflow and repository visibility after the Full-Stack upgrade.
+- [x] Prepare a Pages-compatible static build without changing the Full-Stack source of record.
+- [x] Run the GitHub Pages workflow and verify the public URL.
+- [x] Confirm the published result and explain the Full-Stack versus static-hosting distinction.
