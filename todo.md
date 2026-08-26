@@ -118,7 +118,7 @@
 
 - [ ] Exercise the live Manus OAuth start/callback flow and validate the runtime redirect origin and nonce cookie.
 - [ ] Retry /admin login after creating the users table and confirm a valid session is issued.
-- [ ] Document the production schema migration path so auth tables exist in future environments.
+- [x] Document the production schema migration path so auth tables exist in future environments.
 
 ## OAuth Admin Redirect Fix
 
@@ -261,3 +261,4 @@
 
 - [x] Add a non-persistent `?lang=en` preview path to make bilingual visual verification reproducible without changing the default Arabic experience.
 - [x] Keep query-forced language previews transient so a later plain `/` visit remains Arabic by default.
+- [x] Ensure project-image success feedback waits for project binding and cache invalidation.

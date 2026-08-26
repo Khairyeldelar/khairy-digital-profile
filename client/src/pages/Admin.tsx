@@ -122,8 +122,11 @@ export default function Admin() {
     onError: () => showNotice(getAdminNotice("projectUpdate", "error"), "error"),
   });
   const uploadProjectAsset = trpc.admin.uploadAsset.useMutation({
-    onSuccess: (result, variables) => {
-      if (variables.projectId) updateProject.mutate({ id: variables.projectId, data: { imageKey: result.key } });
+    onSuccess: async (result, variables) => {
+      if (variables.projectId) {
+        await updateProject.mutateAsync({ id: variables.projectId, data: { imageKey: result.key } });
+      }
+      await utils.admin.content.invalidate();
       showNotice(getAdminNotice("projectImageUpload", "success"));
     },
     onError: () => showNotice(getAdminNotice("projectImageUpload", "error"), "error"),
