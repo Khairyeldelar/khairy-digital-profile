@@ -99,3 +99,10 @@
 
 - [x] Expose a safe owner identity signal to the client and gate the admin route explicitly.
 - [x] Add a runtime mobile overflow check and verify the public page stays within the viewport width.
+
+## GitHub Sync Follow-up
+
+- [ ] Inspect local Git status and the configured GitHub remote.
+- [ ] Commit the latest admin dashboard, storage, grid, and hardening changes.
+- [ ] Push the new commit to the public GitHub repository.
+- [ ] Verify the remote commit and summarize the synchronization result.
