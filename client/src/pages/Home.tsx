@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ProjectCardTrigger } from "@/components/ProjectCardTrigger";
 import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
+import { presentSocialLink } from "@/lib/socialLinkPresentation";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import {
@@ -24,6 +25,7 @@ type Language = "en" | "ar";
 
 type ProfileItem = {
   name: string;
+  nameAr?: string;
   handle: string;
   handleAr: string;
   href: string;
@@ -82,8 +84,6 @@ const profiles: ProfileItem[] = [
   { name: "YouTube", handle: "Ideas in motion", handleAr: "أفكار تتحرك", href: "https://www.youtube.com/", icon: Youtube },
   { name: "Email", handle: "Say hello directly", handleAr: "راسلني مباشرة", href: "mailto:khairy.eldelar5@gmail.com", icon: Mail },
 ];
-
-const iconByPlatform = { Github, Linkedin, Facebook, Instagram, Youtube, Mail } as const;
 
 const storageAsset = (key?: string | null) => {
   if (!key) return "";
@@ -222,13 +222,7 @@ export default function Home() {
       }))
     : projects;
   const displayedProfiles: ProfileItem[] = contentQuery.data?.socialLinks?.length
-    ? contentQuery.data.socialLinks.map((link) => ({
-        name: link.platform,
-        handle: link.handleEn,
-        handleAr: link.handleAr,
-        href: link.href,
-        icon: iconByPlatform[link.platform as keyof typeof iconByPlatform] ?? Mail,
-      }))
+    ? contentQuery.data.socialLinks.map(presentSocialLink)
     : profiles;
   const displayName = contentProfile?.name ?? "Khairy Eid Aly";
   const displayRole = language === "ar" ? contentProfile?.roleAr : contentProfile?.roleEn;
@@ -430,7 +424,7 @@ export default function Home() {
                 <a className="profile-row" key={profile.name} href={profile.name === "Email" ? emailHref : profile.href} target={profile.name === "Email" ? undefined : "_blank"} rel={profile.name === "Email" ? undefined : "noreferrer"}>
                   <span className="profile-row-index">0{index + 1}</span>
                   <span className="profile-row-icon"><Icon size={18} strokeWidth={1.8} /></span>
-                  <span className="profile-row-copy"><strong>{profile.name}</strong><small>{language === "ar" ? profile.handleAr : profile.handle}</small></span>
+                  <span className="profile-row-copy"><strong>{language === "ar" ? (profile.nameAr || profile.name) : profile.name}</strong><small>{language === "ar" ? profile.handleAr : profile.handle}</small></span>
                   <ArrowUpRight className="profile-row-arrow" size={18} strokeWidth={1.7} />
                 </a>
               );

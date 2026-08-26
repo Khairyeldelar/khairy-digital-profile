@@ -200,3 +200,27 @@
 - [x] Add a focused keyboard interaction check for opening and closing the project details dialog.
 
 - [x] Add an integration test that opens the real project details dialog with keyboard and closes it with Escape while restoring focus.
+
+## Project Image Upload Sync Bug
+
+- [ ] Trace project-image upload response, database persistence, public query mapping, and image URL resolution.
+- [ ] Fix project image storage-key or public-URL synchronization without breaking existing images.
+- [ ] Add regression coverage for uploaded project image persistence and public rendering data.
+- [ ] Verify an uploaded image in the public page and publish the fix.
+
+## Custom Social Links
+
+- [x] Add editable Arabic/English platform names and descriptions to social links.
+- [x] Add a protected admin form to create arbitrary social links with URL, names, descriptions, order, and publish state.
+- [x] Preserve existing links and render new custom links on the public profile with a consistent icon fallback.
+- [x] Add tests for creation, validation, localization, and public display, then save a checkpoint.
+
+- [x] Add separate Arabic and English platform-name fields to the social-links schema and UI.
+- [x] Add sort-order and published-state controls to the custom social-link form.
+- [x] Add focused tests for successful creation, localized public rendering, and icon fallback.
+- [x] Apply the schema migration and save a checkpoint after the complete feature verification.
+
+- [x] Add a tested social-link presentation mapper for Arabic/English names and fallback icons.
+- [x] Add a protected successful-create test using a mocked database boundary without persistent records.
+
+- [ ] Save the final checkpoint for custom bilingual social links after migration and verification.

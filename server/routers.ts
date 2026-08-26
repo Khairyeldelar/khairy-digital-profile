@@ -2,6 +2,7 @@ import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
 import {
   createProject,
+  createSocialLink,
   deleteProject,
   getProjects,
   getSiteProfile,
@@ -40,10 +41,13 @@ const projectInput = z.object({
   isPublished: z.boolean().default(true),
 });
 
-const socialInput = z.object({
+export const socialInput = z.object({
+  platform: z.string().min(1).max(40),
+  platformEn: z.string().min(1).max(80),
+  platformAr: z.string().min(1).max(80),
   handleEn: z.string().min(1).max(160),
   handleAr: z.string().min(1).max(160),
-  href: z.string().min(1),
+  href: z.string().url(),
   sortOrder: z.number().int().min(0),
   isPublished: z.boolean(),
 });
@@ -78,7 +82,8 @@ export const appRouter = router({
     createProject: adminProcedure.input(projectInput).mutation(({ input }) => createProject(input)),
     updateProject: adminProcedure.input(z.object({ id: z.number().int(), data: projectInput.partial() })).mutation(({ input }) => updateProject(input.id, input.data)),
     deleteProject: adminProcedure.input(z.object({ id: z.number().int() })).mutation(({ input }) => deleteProject(input.id)),
-    updateSocialLink: adminProcedure.input(z.object({ id: z.number().int(), data: socialInput })).mutation(({ input }) => updateSocialLink(input.id, input.data)),
+    createSocialLink: adminProcedure.input(socialInput.omit({ platform: true })).mutation(({ input }) => createSocialLink({ ...input, platform: `custom-${Date.now()}` })),
+    updateSocialLink: adminProcedure.input(z.object({ id: z.number().int(), data: socialInput.partial() })).mutation(({ input }) => updateSocialLink(input.id, input.data)),
   }),
 });
 

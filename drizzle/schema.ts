@@ -58,6 +58,8 @@ export const projects = mysqlTable("projects", {
 export const socialLinks = mysqlTable("social_links", {
   id: int("id").autoincrement().primaryKey(),
   platform: varchar("platform", { length: 40 }).notNull().unique(),
+  platformEn: varchar("platformEn", { length: 80 }).notNull().default(""),
+  platformAr: varchar("platformAr", { length: 80 }).notNull().default(""),
   handleEn: varchar("handleEn", { length: 160 }).notNull(),
   handleAr: varchar("handleAr", { length: 160 }).notNull(),
   href: text("href").notNull(),

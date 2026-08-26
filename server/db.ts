@@ -139,6 +139,13 @@ export async function deleteProject(id: number) {
   return { success: true } as const;
 }
 
+export async function createSocialLink(input: InsertSocialLink) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is not available");
+  const result = await db.insert(socialLinks).values(input);
+  return getSocialLinks(false).then(rows => rows.find(row => row.id === result[0].insertId));
+}
+
 export async function updateSocialLink(id: number, input: Partial<InsertSocialLink>) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");

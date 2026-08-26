@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { appRouter } from "./routers";
+import { appRouter, socialInput } from "./routers";
 import { ENV } from "./_core/env";
 import type { TrpcContext } from "./_core/context";
 
@@ -70,6 +70,33 @@ describe("admin content access", () => {
       },
     });
     expect(updated?.id).toBe(email.id);
+  });
+
+  it("accepts the complete shape of a custom social link", () => {
+    const result = socialInput.safeParse({
+      platform: "Behance",
+      platformEn: "Behance",
+      platformAr: "بيهانس",
+      handleEn: "Selected work and case studies",
+      handleAr: "أعمال ودراسات حالة مختارة",
+      href: "https://www.behance.net/khairy",
+      sortOrder: 5,
+      isPublished: true,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an invalid custom social-link URL before touching the database", async () => {
+    const caller = appRouter.createCaller(contextFor(owner));
+    await expect(caller.admin.createSocialLink({
+      platformEn: "Invalid Test Shape",
+      platformAr: "منصة غير صالحة",
+      handleEn: "Description",
+      handleAr: "وصف",
+      href: "not-a-url",
+      sortOrder: 99,
+      isPublished: false,
+    })).rejects.toMatchObject({ code: "BAD_REQUEST" });
   });
 
   it("rejects invalid mutation input before touching the database", async () => {

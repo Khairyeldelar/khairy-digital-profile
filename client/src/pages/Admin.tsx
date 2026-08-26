@@ -26,6 +26,18 @@ const emptyProject = {
 
 type ProjectDraft = typeof emptyProject;
 
+const emptySocial = {
+  platformEn: "",
+  platformAr: "",
+  handleEn: "",
+  handleAr: "",
+  href: "https://",
+  sortOrder: 0,
+  isPublished: true,
+};
+
+type SocialDraft = typeof emptySocial;
+
 type ProfileDraft = {
   name: string;
   roleEn: string;
@@ -45,6 +57,7 @@ export default function Admin() {
   const contentQuery = trpc.admin.content.useQuery(undefined, { enabled: ownerCheck.data === true });
   const [profile, setProfile] = useState<ProfileDraft | null>(null);
   const [newProject, setNewProject] = useState<ProjectDraft>(emptyProject);
+  const [newSocial, setNewSocial] = useState<SocialDraft>(emptySocial);
   const [notice, setNotice] = useState<{ message: string; kind: "success" | "error" } | null>(null);
   const showNotice = (message: string, kind: "success" | "error" = "success") => {
     setNotice({ message, kind });
@@ -133,6 +146,14 @@ export default function Admin() {
       void utils.admin.content.invalidate();
     },
     onError: () => showNotice(getAdminNotice("projectDelete", "error"), "error"),
+  });
+  const createSocialLink = trpc.admin.createSocialLink.useMutation({
+    onSuccess: () => {
+      setNewSocial(emptySocial);
+      showNotice("Social link added successfully.");
+      void utils.admin.content.invalidate();
+    },
+    onError: () => showNotice("Could not add the social link. Check the URL and try again.", "error"),
   });
   const updateSocialLink = trpc.admin.updateSocialLink.useMutation({
     onSuccess: () => {
@@ -243,13 +264,29 @@ export default function Admin() {
 
         <Card>
           <CardHeader><CardTitle>Social links</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="space-y-4">
+            <div className="rounded-lg border border-dashed p-4">
+              <p className="mb-3 text-sm font-medium">Add a custom platform</p>
+              <div className="grid gap-3 md:grid-cols-2">
+                <Input value={newSocial.platformEn} onChange={(e) => setNewSocial({ ...newSocial, platformEn: e.target.value })} placeholder="Platform name · English" />
+                <Input dir="rtl" value={newSocial.platformAr} onChange={(e) => setNewSocial({ ...newSocial, platformAr: e.target.value })} placeholder="اسم المنصة · العربية" />
+                <Input value={newSocial.href} onChange={(e) => setNewSocial({ ...newSocial, href: e.target.value })} placeholder="https://platform.example/your-name" />
+                <Input value={newSocial.handleEn} onChange={(e) => setNewSocial({ ...newSocial, handleEn: e.target.value })} placeholder="Short description · English" />
+                <Input dir="rtl" value={newSocial.handleAr} onChange={(e) => setNewSocial({ ...newSocial, handleAr: e.target.value })} placeholder="نبذة قصيرة · العربية" />
+                <Input type="number" min={0} value={newSocial.sortOrder} onChange={(e) => setNewSocial({ ...newSocial, sortOrder: Number(e.target.value) || 0 })} placeholder="Display order" />
+                <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={newSocial.isPublished} onChange={(e) => setNewSocial({ ...newSocial, isPublished: e.target.checked })} /> Published on public profile</label>
+              </div>
+              <Button className="mt-3" onClick={() => createSocialLink.mutate(newSocial)} disabled={createSocialLink.isPending || !newSocial.platformEn.trim() || !newSocial.platformAr.trim() || !newSocial.handleEn.trim() || !newSocial.handleAr.trim() || !newSocial.href.trim()}>
+                {createSocialLink.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null} Add platform
+              </Button>
+            </div>
             {data.socialLinks.map((link) => (
-              <div key={link.id} className="grid gap-2 rounded-lg border p-3 md:grid-cols-[120px_1fr_1fr_2fr_auto] md:items-center">
-                <strong>{link.platform}</strong>
-                <Input defaultValue={link.handleEn} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { handleEn: e.target.value, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="Label · English" />
-                <Input dir="rtl" defaultValue={link.handleAr} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { handleEn: link.handleEn, handleAr: e.target.value, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="التسمية · العربية" />
-                <Input defaultValue={link.href} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { handleEn: link.handleEn, handleAr: link.handleAr, href: e.target.value, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="URL" />
+              <div key={link.id} className="grid gap-2 rounded-lg border p-3 md:grid-cols-[1fr_1fr_1fr_1fr_2fr_auto] md:items-center">
+                <Input defaultValue={link.platformEn || link.platform} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: e.target.value, platformAr: link.platformAr || link.platform, handleEn: link.handleEn, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="Platform name · English" />
+                <Input dir="rtl" defaultValue={link.platformAr || link.platformEn || link.platform} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: e.target.value, handleEn: link.handleEn, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="اسم المنصة · العربية" />
+                <Input defaultValue={link.handleEn} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: link.platformAr || link.platform, handleEn: e.target.value, handleAr: link.handleAr, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="Short description · English" />
+                <Input dir="rtl" defaultValue={link.handleAr} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: link.platformAr || link.platform, handleEn: link.handleEn, handleAr: e.target.value, href: link.href, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="نبذة قصيرة · العربية" />
+                <Input defaultValue={link.href} onBlur={(e) => updateSocialLink.mutate({ id: link.id, data: { platformEn: link.platformEn || link.platform, platformAr: link.platformAr || link.platform, handleEn: link.handleEn, handleAr: link.handleAr, href: e.target.value, sortOrder: link.sortOrder, isPublished: link.isPublished } })} placeholder="URL" />
                 <span className="text-xs text-muted-foreground">{link.isPublished ? "Published" : "Hidden"}</span>
               </div>
             ))}
