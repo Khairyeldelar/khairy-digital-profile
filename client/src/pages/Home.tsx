@@ -76,7 +76,7 @@ const profiles: ProfileItem[] = [
   { name: "Facebook", handle: "A little more of the human side", handleAr: "جانب أكثر إنسانية", href: "https://www.facebook.com/", icon: Facebook },
   { name: "Instagram", handle: "Visual notes from the process", handleAr: "ملاحظات بصرية من الرحلة", href: "https://www.instagram.com/", icon: Instagram },
   { name: "YouTube", handle: "Ideas in motion", handleAr: "أفكار تتحرك", href: "https://www.youtube.com/", icon: Youtube },
-  { name: "Email", handle: "Say hello directly", handleAr: "راسلني مباشرة", href: "mailto:hello@khairy.dev", icon: Mail },
+  { name: "Email", handle: "Say hello directly", handleAr: "راسلني مباشرة", href: "mailto:khairy.eldelar5@gmail.com", icon: Mail },
 ];
 
 const navItems = [
@@ -352,7 +352,7 @@ export default function Home() {
             <div className="contact-icon"><Mail size={20} strokeWidth={1.7} /></div>
             <p className="section-kicker">{t.contactKicker}</p>
             <h2 id="contact-title">{t.contactTitle}<br /><em>{t.contactTitleEm}</em></h2>
-            <a className="contact-link" href="mailto:hello@khairy.dev">hello@khairy.dev <ArrowUpRight size={16} /></a>
+            <a className="contact-link" href="mailto:khairy.eldelar5@gmail.com">khairy.eldelar5@gmail.com <ArrowUpRight size={16} /></a>
           </section>
         </div>
       </main>
