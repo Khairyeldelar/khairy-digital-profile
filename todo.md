@@ -45,14 +45,14 @@
 
 ## External Full-Stack Hosting
 
-- [ ] Add Render-compatible service configuration for the Express Full-Stack app.
-- [ ] Commit and push the latest Full-Stack/storage version to the public GitHub repository.
-- [ ] Configure required production environment variables and storage/database dependencies.
-- [ ] Deploy the service on Render or pause for account authorization if required.
-- [ ] Verify the external URL and confirm the app loads without the Manus preview badge.
+- [x] Add Render-compatible service configuration for the Express Full-Stack app — cancelled by user in favor of GitHub-only.
+- [x] Commit and push the latest Full-Stack/storage version to the public GitHub repository.
+- [x] Configure required production environment variables and storage/database dependencies — not applicable to GitHub-only source hosting.
+- [x] Deploy the service on Render or pause for account authorization if required — cancelled by user.
+- [x] Verify the external URL and confirm the app loads without the Manus preview badge — not applicable because external hosting was cancelled.
 
 ## GitHub-Only Hosting Decision
 
-- [ ] Remove Render deployment configuration and documentation.
-- [ ] Push the clean Full-Stack source to the public GitHub repository.
-- [ ] Verify the repository contains the latest source and no Render deployment path is active.
+- [x] Remove Render deployment configuration and documentation.
+- [x] Push the clean Full-Stack source to the public GitHub repository.
+- [x] Verify the repository contains the latest source and no Render deployment path is active.
