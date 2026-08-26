@@ -113,10 +113,10 @@ const copy = {
     making: "Making",
     direction: "Direction",
     building: "Building from curiosity",
-    selectedWork: "02 / Selected work",
-    workTitle: "Small digital worlds,",
-    workTitleEm: "made with care.",
-    workAside: "A few things I have been shaping lately.",
+    selectedWork: "02 / My work",
+    workTitle: "My Work",
+    workTitleEm: "",
+    workAside: "",
     findMe: "03 / Find me around",
     profilesTitle: "My Profiles",
     aboutKicker: "A little context",
@@ -148,10 +148,10 @@ const copy = {
     making: "صناعة",
     direction: "التوجه",
     building: "أبني بدافع الفضول",
-    selectedWork: "02 / أعمال مختارة",
-    workTitle: "عوالم رقمية صغيرة،",
-    workTitleEm: "مصنوعة بعناية.",
-    workAside: "بعض الأشياء التي أعمل على تشكيلها مؤخرًا.",
+    selectedWork: "02 / أعمالي",
+    workTitle: "أعمالي",
+    workTitleEm: "",
+    workAside: "",
     findMe: "03 / تجدني هنا",
     profilesTitle: "حساباتي",
     aboutKicker: "نبذة قصيرة",
@@ -370,9 +370,8 @@ export default function Home() {
           <div className="section-heading">
             <div>
               <p className="section-kicker">{t.selectedWork}</p>
-              <h2 id="work-title">{t.workTitle}<br /><em>{t.workTitleEm}</em></h2>
+              <h2 id="work-title">{t.workTitle}</h2>
             </div>
-            <p className="section-aside">{t.workAside}</p>
           </div>
           <div className="work-rail" aria-label="Selected work projects">
             {displayedProjects.map((project, index) => (

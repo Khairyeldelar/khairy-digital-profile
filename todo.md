@@ -240,3 +240,8 @@
 - [ ] Ensure project uploads persist against the selected project id and invalidate public content queries.
 - [ ] Add regression coverage for upload-to-project binding and cache refresh.
 - [ ] Verify the uploaded project image appears in the public card and modal after a fresh load.
+
+## Simplify Work Section Heading
+
+- [x] Replace the long work-section headline and aside with the concise Arabic title «أعمالي».
+- [x] Verify the simplified heading visually on mobile and desktop and save a checkpoint.
