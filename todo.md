@@ -245,3 +245,8 @@
 
 - [x] Replace the long work-section headline and aside with the concise Arabic title «أعمالي».
 - [x] Verify the simplified heading visually on mobile and desktop and save a checkpoint.
+
+## Work Heading Card
+
+- [ ] Place «أعمالي» inside a thin white full-width card with minimal height and centered typography.
+- [ ] Match the profile-card radius, border, shadow, and responsive spacing, then verify and checkpoint.

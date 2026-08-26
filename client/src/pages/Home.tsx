@@ -367,11 +367,8 @@ export default function Home() {
         </section>
 
         <section id="work" className="content-section reveal reveal-delay-1" aria-labelledby="work-title">
-          <div className="section-heading">
-            <div>
-              <p className="section-kicker">{t.selectedWork}</p>
-              <h2 id="work-title">{t.workTitle}</h2>
-            </div>
+          <div className="work-heading-card" aria-label={t.workTitle}>
+            <h2 id="work-title">{t.workTitle}</h2>
           </div>
           <div className="work-rail" aria-label="Selected work projects">
             {displayedProjects.map((project, index) => (
