@@ -3,6 +3,7 @@
  * one owned Burnt Coral accent, compact content, tactile cards, and application-like navigation.
  */
 import { useEffect, useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -160,6 +161,13 @@ function scrollToId(id: string) {
 }
 
 export default function Home() {
+  // The useAuth hook provides authentication state.
+  // To implement login/logout, call logout(), or start login from an event
+  // handler: onClick={() => startLogin()} (imported from "@/const"). Never call
+  // startLogin() during render (no href={startLogin()}) — it mints a one-time
+  // nonce cookie and must run only at the moment of navigation.
+  let { user, loading, error, isAuthenticated, logout } = useAuth();
+
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem("khairy-language");
     return saved === "en" ? "en" : "ar";
@@ -231,7 +239,7 @@ export default function Home() {
       <main className="page-wrap">
         <section id="home" className="profile-card reveal" aria-labelledby="profile-name">
           <div className="profile-cover" aria-hidden="true">
-            <img src="/assets/khairy-profile-cover.png" alt="" />
+            <img src="/manus-storage/khairy-profile-cover_01195ff9.png" alt="" />
           </div>
           <div className="profile-topline">
             <span className="eyebrow"><span className="eyebrow-line" /> {t.personalCard}</span>
@@ -247,7 +255,7 @@ export default function Home() {
             <div className="portrait-wrap">
               <img
                 className="portrait"
-                src="/assets/khairy-profile-portrait.png"
+                src="/manus-storage/khairy-profile-portrait_8e111237.png"
                 alt="Portrait of Khairy Eid Aly"
               />
               <span className="portrait-status" aria-label="Available" />
