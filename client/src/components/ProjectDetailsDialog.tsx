@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ProjectImage } from "@/components/ProjectImage";
 import { ArrowUpRight } from "lucide-react";
 
 export type ProjectDetails = {
@@ -17,6 +18,7 @@ export type ProjectDetails = {
   type: string;
   typeAr: string;
   image: string;
+  imageFallback?: string;
   href: string;
 };
 
@@ -46,7 +48,7 @@ export function ProjectDetailsDialog({ project, projectIndex, language, visitLab
             <div className="project-dialog-image-wrap">
               <div className={`project-image-wrap project-art-${(projectIndex % 3) + 1}`}>
                 <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
-                {project.image && <img className="project-image" src={project.image} alt={`${project.title} project preview`} onError={(event) => { event.currentTarget.style.display = "none"; }} />}
+                <ProjectImage src={project.image} fallbackSrc={project.imageFallback} className="project-image" alt={`${project.title} project preview`} />
               </div>
             </div>
             <DialogHeader>

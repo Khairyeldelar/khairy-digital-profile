@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { ProjectCardTrigger } from "@/components/ProjectCardTrigger";
+import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
 import { resolveProjectImage } from "@/lib/projectImage";
@@ -41,6 +42,7 @@ type Project = {
   type: string;
   typeAr: string;
   image: string;
+  imageFallback?: string;
   href: string;
 };
 
@@ -214,6 +216,7 @@ export default function Home() {
         type: project.typeEn,
         typeAr: project.typeAr,
         image: resolveProjectImage(project.imageKey, project.imageUrl),
+        imageFallback: resolveProjectImage(project.imageKey),
         href: project.href,
       }))
     : projects;
@@ -380,7 +383,7 @@ export default function Home() {
                 >
                   <div className={`project-image-wrap project-art-${index + 1}`}>
                     <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
-                    {project.image && <img className="project-image" src={project.image} alt={`${project.title} project preview`} onError={(event) => { event.currentTarget.style.display = "none"; }} />}
+                    <ProjectImage src={project.image} fallbackSrc={project.imageFallback} className="project-image" alt={`${project.title} project preview`} />
                     <span className="project-view"><ArrowUpRight size={17} /></span>
                   </div>
                   <div className="project-body">

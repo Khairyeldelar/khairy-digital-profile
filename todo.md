@@ -223,7 +223,7 @@
 - [x] Add a tested social-link presentation mapper for Arabic/English names and fallback icons.
 - [x] Add a protected successful-create test using a mocked database boundary without persistent records.
 
-- [ ] Save the final checkpoint for custom bilingual social links after migration and verification.
+- [x] Save the final checkpoint for custom bilingual social links after migration and verification.
 
 ## Project Image Visibility Follow-up
 
@@ -233,3 +233,10 @@
 - [x] Verify the uploaded image on the public domain and save a checkpoint.
 
 - [x] Add focused coverage for signed project-image URL mapping and fallback behavior.
+
+## Project Image Binding Investigation
+
+- [ ] Inspect actual project imageKey values and upload mutation response without exposing private file URLs.
+- [ ] Ensure project uploads persist against the selected project id and invalidate public content queries.
+- [ ] Add regression coverage for upload-to-project binding and cache refresh.
+- [ ] Verify the uploaded project image appears in the public card and modal after a fresh load.
