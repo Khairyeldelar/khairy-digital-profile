@@ -160,3 +160,10 @@
 - [x] Add an integration-style assertion that the stored handoff token is forwarded as Authorization.
 
 - [x] Exercise the real tRPC HTTP header builder and verify stored mobile session is sent as Authorization.
+
+## OAuth Screen Recording Investigation
+
+- [x] Analyze the supplied mobile recording and correlate its navigation with server/browser logs.
+- [x] Identify the exact post-callback failure point and replace the fragile session handoff if needed.
+- [x] Add regression coverage for the discovered failure path.
+- [ ] Publish the final fix and obtain a successful mobile verification.

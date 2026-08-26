@@ -256,18 +256,21 @@ class SDKServer {
   }
 
   async authenticateRequest(req: Request): Promise<AuthenticatedUser> {
-    // 1. Prefer the session cookie (regular OAuth login).
-    const cookies = this.parseCookies(req.headers.cookie);
-    let sessionToken = cookies.get(COOKIE_NAME);
+    // Prefer an explicit Bearer handoff when present. On mobile browsers an
+    // older invalid HttpOnly cookie can survive a prior attempt; preferring the
+    // freshly issued Authorization token prevents that stale cookie from
+    // shadowing the successful OAuth session.
+    const authHeader = req.headers.authorization;
+    let sessionToken =
+      typeof authHeader === "string" && authHeader.startsWith("Bearer ")
+        ? authHeader.slice(7)
+        : undefined;
 
-    // 2. Fallback to the Authorization header (Preview auto-login via
-    //    sessionStorage), used when the browser blocks iframe cookies such as
-    //    Safari ITP, private browsing, or iOS/Android WebView.
+    // Regular OAuth browsers use the HttpOnly cookie when no handoff header is
+    // available.
     if (!sessionToken) {
-      const authHeader = req.headers.authorization;
-      if (typeof authHeader === "string" && authHeader.startsWith("Bearer ")) {
-        sessionToken = authHeader.slice(7);
-      }
+      const cookies = this.parseCookies(req.headers.cookie);
+      sessionToken = cookies.get(COOKIE_NAME);
     }
 
     const session = await this.verifySession(sessionToken);

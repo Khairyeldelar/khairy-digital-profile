@@ -96,7 +96,10 @@ describe("OAuth callback session persistence", () => {
 
     const sessionToken = res.cookie.mock.calls[0][1] as string;
     const authenticated = await sdk.authenticateRequest({
-      headers: { cookie: `app_session_id=${sessionToken}` },
+      headers: {
+        cookie: "app_session_id=stale-invalid-session",
+        authorization: `Bearer ${sessionToken}`,
+      },
     } as never);
 
     expect(authenticated.openId).toBe(ENV.ownerOpenId);
