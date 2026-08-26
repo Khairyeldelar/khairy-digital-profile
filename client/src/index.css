@@ -2264,3 +2264,53 @@ html[dir="rtl"] .about-card p {
     justify-content: flex-start;
   }
 }
+
+.meta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 10px;
+}
+
+.meta-item + .meta-item {
+  border-left: 0;
+}
+
+.meta-divider {
+  color: var(--coral);
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .meta-strip {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    padding: 0 3px;
+  }
+
+  .meta-item {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 11px 2px;
+  }
+
+  .meta-item strong {
+    font-size: clamp(0.58rem, 2.15vw, 0.72rem);
+    white-space: nowrap;
+  }
+
+  .meta-divider {
+    flex: 0 0 auto;
+    font-size: 0.7rem;
+  }
+}

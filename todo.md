@@ -309,3 +309,8 @@
 
 - [x] Keep the top profile card horizontal on mobile, with portrait beside identity content and no horizontal overflow.
 - [x] Verify Arabic RTL, light mode, and dark mode mobile rendering, then run tests and save a checkpoint.
+
+## Compact Identity Labels
+
+- [x] Replace numbered identity items below the profile card with one horizontal separator-based row in Arabic and English.
+- [x] Verify the shorter profile card on mobile and desktop, run tests, and save a checkpoint.

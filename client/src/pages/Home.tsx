@@ -441,18 +441,11 @@ export default function Home() {
           </div>
 
           <div className="meta-strip" aria-label="Focus areas">
-            <div className="meta-item">
-              <span className="meta-index">01</span>
-              <strong>{t.role}</strong>
-            </div>
-            <div className="meta-item">
-              <span className="meta-index">02</span>
-              <strong>{t.creator}</strong>
-            </div>
-            <div className="meta-item">
-              <span className="meta-index">03</span>
-              <strong>{t.projects}</strong>
-            </div>
+            <span className="meta-item"><strong>{t.role}</strong></span>
+            <span className="meta-divider" aria-hidden="true">—</span>
+            <span className="meta-item"><strong>{t.creator}</strong></span>
+            <span className="meta-divider" aria-hidden="true">—</span>
+            <span className="meta-item"><strong>{t.projects}</strong></span>
           </div>
         </section>
 
