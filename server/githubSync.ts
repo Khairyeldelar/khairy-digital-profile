@@ -1,8 +1,11 @@
+import { createHash } from "node:crypto";
 import { getArticleComments, getProjectMedia, getProjects, getSiteProfile, getSocialLinks } from "./db";
+import { storageGetSignedUrl } from "./storage";
 
 const GITHUB_API = "https://api.github.com";
 const DEFAULT_REPOSITORY = "Khairyeldelar/khairy-digital-profile";
 const SYNC_PATH = "content-sync/site-content.json";
+const STATIC_ASSET_DIRECTORY = "content-sync/assets";
 const BRANCH = "main";
 
 type GithubFile = {
@@ -16,6 +19,12 @@ type GithubCommit = {
   commit?: {
     html_url?: string;
   };
+};
+
+type GithubAsset = {
+  key: string;
+  path: string;
+  bytes: Buffer;
 };
 
 function githubHeaders(token: string) {
@@ -37,7 +46,34 @@ type SnapshotProject = Awaited<ReturnType<typeof getProjects>>[number] & {
   comments?: Awaited<ReturnType<typeof getArticleComments>>;
 };
 
-export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteProfile>>, projects: SnapshotProject[], socialLinks: Awaited<ReturnType<typeof getSocialLinks>>) {
+function extractStorageKey(value?: string | null) {
+  if (!value?.startsWith("/manus-storage/")) return null;
+  const rawKey = value.slice("/manus-storage/".length).split(/[?#]/, 1)[0];
+
+  try {
+    return decodeURIComponent(rawKey);
+  } catch {
+    return rawKey;
+  }
+}
+
+function getStaticAssetPath(key: string, contentType: string) {
+  const originalExtension = key.match(/\.([a-z0-9]{1,8})$/i)?.[1];
+  const mime = contentType.split(";", 1)[0];
+  const mimeExtension = mime === "image/png" ? "png" : mime === "image/webp" ? "webp" : mime === "image/gif" ? "gif" : "jpg";
+  const hash = createHash("sha256").update(key).digest("hex").slice(0, 20);
+  return `${STATIC_ASSET_DIRECTORY}/${hash}.${originalExtension ?? mimeExtension}`;
+}
+
+function replaceStorageImages(html: string, assetUrls: Map<string, string>) {
+  return html.replace(/(\bsrc\s*=\s*["'])\/manus-storage\/([^"']+)(["'])/gi, (match, prefix, encodedKey, suffix) => {
+    const key = extractStorageKey(`/manus-storage/${encodedKey}`);
+    const staticUrl = key ? assetUrls.get(key) : null;
+    return staticUrl ? `${prefix}${staticUrl}${suffix}` : match;
+  });
+}
+
+export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteProfile>>, projects: SnapshotProject[], socialLinks: Awaited<ReturnType<typeof getSocialLinks>>, assetUrls = new Map<string, string>()) {
   return `${JSON.stringify({
     version: 1,
     generatedAt: new Date().toISOString(),
@@ -49,6 +85,8 @@ export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteP
       bioAr: profile.bioAr,
       locationEn: profile.locationEn,
       locationAr: profile.locationAr,
+      portraitUrl: profile.portraitKey ? assetUrls.get(profile.portraitKey) ?? null : null,
+      coverUrl: profile.coverKey ? assetUrls.get(profile.coverKey) ?? null : null,
     } : null,
     projects: projects.map((project) => ({
       id: project.id,
@@ -56,18 +94,20 @@ export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteP
       titleAr: project.titleAr,
       descriptionEn: project.descriptionEn,
       descriptionAr: project.descriptionAr,
-      articleBodyEn: project.articleBodyEn,
-      articleBodyAr: project.articleBodyAr,
+      articleBodyEn: replaceStorageImages(project.articleBodyEn, assetUrls),
+      articleBodyAr: replaceStorageImages(project.articleBodyAr, assetUrls),
       typeEn: project.typeEn,
       typeAr: project.typeAr,
       category: project.category,
       href: project.href,
       sortOrder: project.sortOrder,
       isPublished: project.isPublished,
+      imageUrl: project.imageKey ? assetUrls.get(project.imageKey) ?? null : null,
       media: (project.media ?? []).map((item) => ({
         id: item.id,
         kind: item.kind,
         source: item.source,
+        sourceUrl: assetUrls.get(extractStorageKey(item.source) ?? "") ?? null,
         placement: item.placement,
         captionEn: item.captionEn,
         captionAr: item.captionAr,
@@ -94,13 +134,63 @@ export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteP
   }, null, 2)}\n`;
 }
 
-async function readExistingFile(token: string, repository: string) {
-  const response = await fetch(`${GITHUB_API}/repos/${repository}/contents/${SYNC_PATH}?ref=${BRANCH}`, {
+async function readExistingFile(token: string, repository: string, path = SYNC_PATH) {
+  const response = await fetch(`${GITHUB_API}/repos/${repository}/contents/${path}?ref=${BRANCH}`, {
     headers: githubHeaders(token),
   });
   if (response.status === 404) return null;
   if (!response.ok) throw new Error(`GitHub content lookup failed (${response.status}).`);
   return response.json() as Promise<GithubFile>;
+}
+
+async function writeGithubFile(token: string, repository: string, path: string, content: Buffer | string, message: string) {
+  const existing = await readExistingFile(token, repository, path);
+  const response = await fetch(`${GITHUB_API}/repos/${repository}/contents/${path}`, {
+    method: "PUT",
+    headers: githubHeaders(token),
+    body: JSON.stringify({
+      message,
+      content: Buffer.isBuffer(content) ? content.toString("base64") : Buffer.from(content, "utf8").toString("base64"),
+      branch: BRANCH,
+      ...(existing?.sha ? { sha: existing.sha } : {}),
+    }),
+  });
+
+  if (!response.ok) throw new Error(`GitHub file upload failed (${response.status}).`);
+  return response.json() as Promise<GithubCommit>;
+}
+
+async function fetchStaticAsset(key: string): Promise<GithubAsset> {
+  const sourceUrl = await storageGetSignedUrl(key);
+  const response = await fetch(sourceUrl);
+  if (!response.ok) throw new Error(`Storage image download failed (${response.status}).`);
+  const contentType = response.headers.get("content-type") || "image/jpeg";
+  return { key, path: getStaticAssetPath(key, contentType), bytes: Buffer.from(await response.arrayBuffer()) };
+}
+
+async function exportStaticAssets(token: string, repository: string, profile: Awaited<ReturnType<typeof getSiteProfile>>, projects: SnapshotProject[]) {
+  const keys = new Set<string>();
+  if (profile?.portraitKey) keys.add(profile.portraitKey);
+  if (profile?.coverKey) keys.add(profile.coverKey);
+  for (const project of projects) {
+    if (project.imageKey) keys.add(project.imageKey);
+    for (const media of project.media ?? []) {
+      const key = extractStorageKey(media.source);
+      if (key) keys.add(key);
+    }
+    for (const body of [project.articleBodyEn, project.articleBodyAr]) {
+      for (const match of Array.from(body.matchAll(/\bsrc\s*=\s*["'](\/manus-storage\/[^"']+)["']/gi))) {
+        const key = extractStorageKey(match[1]);
+        if (key) keys.add(key);
+      }
+    }
+  }
+
+  const assets = await Promise.all(Array.from(keys).map(fetchStaticAsset));
+  for (const asset of assets) {
+    await writeGithubFile(token, repository, asset.path, asset.bytes, "Sync public site image from admin dashboard");
+  }
+  return new Map(assets.map((asset) => [asset.key, asset.path]));
 }
 
 export async function syncGithubContent() {
@@ -120,21 +210,9 @@ export async function syncGithubContent() {
     media: await getProjectMedia(project.id),
     comments: await getArticleComments(project.id),
   })));
-  const snapshot = buildContentSnapshot(profile, snapshotProjects, socialLinks);
-  const existing = await readExistingFile(token, repository);
-  const response = await fetch(`${GITHUB_API}/repos/${repository}/contents/${SYNC_PATH}`, {
-    method: "PUT",
-    headers: githubHeaders(token),
-    body: JSON.stringify({
-      message: "Sync site content from admin dashboard",
-      content: Buffer.from(snapshot, "utf8").toString("base64"),
-      branch: BRANCH,
-      ...(existing?.sha ? { sha: existing.sha } : {}),
-    }),
-  });
-
-  if (!response.ok) throw new Error(`GitHub sync failed (${response.status}).`);
-  const result = await response.json() as GithubCommit;
+  const assetUrls = await exportStaticAssets(token, repository, profile, snapshotProjects);
+  const snapshot = buildContentSnapshot(profile, snapshotProjects, socialLinks, assetUrls);
+  const result = await writeGithubFile(token, repository, SYNC_PATH, snapshot, "Sync site content from admin dashboard");
   return {
     repository,
     path: SYNC_PATH,

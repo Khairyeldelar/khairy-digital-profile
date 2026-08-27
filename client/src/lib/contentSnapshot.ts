@@ -11,6 +11,8 @@ export type ContentSnapshot = {
     bioAr: string;
     locationEn: string;
     locationAr: string;
+    portraitUrl?: string | null;
+    coverUrl?: string | null;
   } | null;
   projects: Array<{
     id: number;
@@ -26,10 +28,12 @@ export type ContentSnapshot = {
     href: string;
     sortOrder: number;
     isPublished: boolean;
+    imageUrl?: string | null;
     media?: Array<{
       id: number;
       kind: string;
       source: string;
+      sourceUrl?: string | null;
       placement: string;
       captionEn: string;
       captionAr: string;

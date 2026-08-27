@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { publicAssetPath, resolveProjectImage } from "./projectImage";
+import { publicAssetPath, resolveProjectImage, rewriteStaticArticleImageUrls } from "./projectImage";
 
 describe("resolveProjectImage", () => {
   it("prefers the signed URL returned by the server", () => {
@@ -16,5 +16,10 @@ describe("resolveProjectImage", () => {
   it("prefixes local assets with the GitHub Pages base path", () => {
     expect(publicAssetPath("assets/khairy-profile-cover.webp", "/khairy-digital-profile/")).toBe("/khairy-digital-profile/assets/khairy-profile-cover.webp");
     expect(publicAssetPath("/assets/khairy-mark.svg", "/")).toBe("/assets/khairy-mark.svg");
+  });
+
+  it("resolves snapshot assets and rich article images under the GitHub Pages base", () => {
+    expect(resolveProjectImage(null, "content-sync/assets/card.webp", "/khairy-digital-profile/")).toBe("/khairy-digital-profile/content-sync/assets/card.webp");
+    expect(rewriteStaticArticleImageUrls('<p><img src="content-sync/assets/inline.webp" /></p>', "/khairy-digital-profile/")).toContain('src="/khairy-digital-profile/content-sync/assets/inline.webp"');
   });
 });

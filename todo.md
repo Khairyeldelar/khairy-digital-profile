@@ -419,3 +419,9 @@
 - [x] Diagnose the 404 error when opening an article URL directly on GitHub Pages.
 - [x] Add a GitHub Pages fallback that serves the single-page application for article paths while preserving the path and slug.
 - [x] Verify a direct article URL on GitHub Pages, add regression coverage, and publish the fix.
+
+## GitHub Pages Image Delivery
+
+- [x] Trace missing managed-storage images in static article HTML and project cards.
+- [x] Export public image copies with the GitHub Pages content snapshot and rewrite static image URLs safely.
+- [ ] Add coverage, verify cover and inline article images on GitHub Pages, and publish the fix.

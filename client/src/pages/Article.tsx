@@ -7,7 +7,7 @@ import { RelatedArticles } from "@/components/RelatedArticles";
 import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { returnToPreviousPage } from "@/lib/articleNavigation";
-import { resolveProjectImage } from "@/lib/projectImage";
+import { resolveProjectImage, rewriteStaticArticleImageUrls } from "@/lib/projectImage";
 import { hasRichMarkup, sanitizeArticleHtml } from "@/lib/richArticleHtml";
 import { trpc } from "@/lib/trpc";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -77,7 +77,7 @@ export default function Article() {
         href: remote.href,
         media: (remote.media ?? []).map((item) => {
           const sourceUrl = "sourceUrl" in item && typeof item.sourceUrl === "string" ? item.sourceUrl : null;
-          return { id: item.id, kind: item.kind, source: sourceUrl ?? resolveProjectImage(item.source), placement: item.placement, captionEn: item.captionEn, captionAr: item.captionAr, sortOrder: item.sortOrder };
+          return { id: item.id, kind: item.kind, source: resolveProjectImage(null, sourceUrl ?? item.source), placement: item.placement, captionEn: item.captionEn, captionAr: item.captionAr, sortOrder: item.sortOrder };
         }),
         comments: remote.comments,
       } as Project;
@@ -118,7 +118,7 @@ export default function Article() {
       <article className="article-card" dir={language}>
         <div className="article-kicker">{project.category === "applications" ? (language === "ar" ? "تطبيق أو لعبة" : "Application or game") : project.category === "videos" ? (language === "ar" ? "فيديو" : "Video") : copy.article}</div><h1>{title}</h1><div className="article-meta"><span>{language === "ar" ? project.typeAr : project.type}</span><span>•</span><span>Khairy Eid Aly</span></div>
         {placedMedia("start")}
-        <div className="article-body">{articleBody ? hasRichMarkup(articleBody) ? <div className="article-rich-body rich-article-render" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(articleBody) }} /> : <div className="article-rich-body">{articleBody}</div> : <p className="article-body-empty">{language === "ar" ? "لا توجد تفاصيل مكتوبة لهذه الصفحة بعد. افتح «تحرير محتوى الصفحة الكاملة» من لوحة التحكم وأضف النص والصور والروابط ثم احفظ." : "No full content has been written for this page yet. Use the full-content editor in the control panel, then save."}</p>}</div>
+        <div className="article-body">{articleBody ? hasRichMarkup(articleBody) ? <div className="article-rich-body rich-article-render" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(rewriteStaticArticleImageUrls(articleBody)) }} /> : <div className="article-rich-body">{articleBody}</div> : <p className="article-body-empty">{language === "ar" ? "لا توجد تفاصيل مكتوبة لهذه الصفحة بعد. افتح «تحرير محتوى الصفحة الكاملة» من لوحة التحكم وأضف النص والصور والروابط ثم احفظ." : "No full content has been written for this page yet. Use the full-content editor in the control panel, then save."}</p>}</div>
         {placedMedia("middle")}{placedMedia("end")}
       </article>
       <ArticleRating articleKey={ratingKey} language={language} />

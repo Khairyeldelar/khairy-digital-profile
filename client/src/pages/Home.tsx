@@ -340,7 +340,7 @@ export default function Home() {
           return {
             id: item.id,
             kind: item.kind,
-            source: sourceUrl ?? resolveProjectImage(item.source),
+            source: resolveProjectImage(null, sourceUrl ?? item.source),
             placement: item.placement,
             captionEn: item.captionEn,
             captionAr: item.captionAr,
@@ -360,8 +360,10 @@ export default function Home() {
   const displayLocation = language === "ar" ? contentProfile?.locationAr : contentProfile?.locationEn;
   const portraitKey = contentProfile && "portraitKey" in contentProfile ? contentProfile.portraitKey : null;
   const coverKey = contentProfile && "coverKey" in contentProfile ? contentProfile.coverKey : null;
-  const portraitSrc = resolveProjectImage(portraitKey) || publicAssetPath("assets/khairy-profile-portrait.webp");
-  const coverSrc = resolveProjectImage(coverKey) || publicAssetPath("assets/khairy-profile-cover.webp");
+  const portraitUrl = contentProfile && "portraitUrl" in contentProfile ? contentProfile.portraitUrl : null;
+  const coverUrl = contentProfile && "coverUrl" in contentProfile ? contentProfile.coverUrl : null;
+  const portraitSrc = resolveProjectImage(portraitKey, portraitUrl) || publicAssetPath("assets/khairy-profile-portrait.webp");
+  const coverSrc = resolveProjectImage(coverKey, coverUrl) || publicAssetPath("assets/khairy-profile-cover.webp");
   const emailSubject = language === "ar" ? "تواصل بخصوص مشروع رقمي" : "Hello Khairy — Digital Project";
   const emailBody = language === "ar"
     ? "مرحبًا خيري،\n\nأرغب في مناقشة مشروع رقمي معك.\n\nالاسم:\nفكرة المشروع:\nالميزانية أو الإطار الزمني:\n\nشكرًا لك."

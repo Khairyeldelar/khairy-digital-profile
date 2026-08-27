@@ -9,7 +9,12 @@ const dbMocks = vi.hoisted(() => ({
   getAutoGithubSync: vi.fn(),
 }));
 
+const storageMocks = vi.hoisted(() => ({
+  storageGetSignedUrl: vi.fn(),
+}));
+
 vi.mock("./db", () => dbMocks);
+vi.mock("./storage", () => storageMocks);
 
 import { buildContentSnapshot, syncGithubContent } from "./githubSync";
 
@@ -50,6 +55,7 @@ describe("GitHub content sync", () => {
     dbMocks.getSocialLinks.mockResolvedValue([]);
     dbMocks.getProjectMedia.mockResolvedValue([]);
     dbMocks.getArticleComments.mockResolvedValue([]);
+    storageMocks.storageGetSignedUrl.mockImplementation(async (key: string) => `https://storage.example/${encodeURIComponent(key)}`);
   });
 
   afterEach(() => {
@@ -68,16 +74,20 @@ describe("GitHub content sync", () => {
     expect(snapshot).not.toContain("portraitKey");
     expect(snapshot).toContain("Full tutorial");
 
-    global.fetch = vi.fn()
-      .mockResolvedValueOnce(new Response(null, { status: 404 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ commit: { html_url: "https://github.com/Khairyeldelar/khairy-digital-profile/commit/abc" } }), { status: 201 }));
+    global.fetch = vi.fn(async (input, init) => {
+      const url = String(input);
+      if (url.startsWith("https://storage.example/")) return new Response(new Uint8Array([1, 2, 3]), { status: 200, headers: { "content-type": "image/png" } });
+      if (url.includes("?ref=")) return new Response(null, { status: 404 });
+      if (init?.method === "PUT") return new Response(JSON.stringify({ commit: { html_url: "https://github.com/Khairyeldelar/khairy-digital-profile/commit/abc" } }), { status: 201 });
+      return new Response(null, { status: 500 });
+    });
 
     const result = await syncGithubContent();
 
     expect(result.repository).toBe("Khairyeldelar/khairy-digital-profile");
     expect(result.path).toBe("content-sync/site-content.json");
-    expect(global.fetch).toHaveBeenCalledTimes(2);
-    const putRequest = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[1][1];
+    expect(storageMocks.storageGetSignedUrl).toHaveBeenCalledTimes(3);
+    const putRequest = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.find(([url, request]) => String(url).endsWith("/content-sync/site-content.json") && request?.method === "PUT")?.[1];
     expect(putRequest.method).toBe("PUT");
     expect(String(putRequest.body)).toContain("Sync site content from admin dashboard");
   });
@@ -92,6 +102,21 @@ describe("GitHub content sync", () => {
     expect(snapshot).toContain("https://youtu.be/example");
     expect(snapshot).toContain("Helpful guide");
     expect(snapshot).not.toContain("portraitKey");
+  });
+
+  it("uses public static paths for cover and inline storage images without exposing their keys", async () => {
+    const assetUrls = new Map([["private/project.png", "content-sync/assets/project.webp"], ["private/inline.png", "content-sync/assets/inline.webp"]]);
+    const snapshot = buildContentSnapshot(
+      { ...(await dbMocks.getSiteProfile()), portraitKey: null, coverKey: null },
+      [{ ...(await dbMocks.getProjects(false))[0], articleBodyAr: '<p><img src="/manus-storage/private/inline.png" /></p>' }],
+      await dbMocks.getSocialLinks(false),
+      assetUrls,
+    );
+
+    expect(snapshot).toContain("content-sync/assets/project.webp");
+    expect(snapshot).toContain("content-sync/assets/inline.webp");
+    expect(snapshot).not.toContain("private/project.png");
+    expect(snapshot).not.toContain("private/inline.png");
   });
 
   it("fails clearly when the server token is missing", async () => {
