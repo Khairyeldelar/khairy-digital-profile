@@ -437,4 +437,4 @@
 - [x] Store an optional administrator-selected default cover image key with the site profile.
 - [x] Add an admin upload, preview, replace, and reset control for the default cover.
 - [x] Use the saved cover in public cards and the GitHub Pages snapshot, with the built-in cover as a safe fallback.
-- [ ] Add tests, migrate the database, verify the admin and public views, sync GitHub, and publish.
+- [x] Add tests, migrate the database, verify the admin and public views, sync GitHub, and publish.
