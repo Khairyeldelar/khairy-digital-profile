@@ -424,4 +424,4 @@
 
 - [x] Trace missing managed-storage images in static article HTML and project cards.
 - [x] Export public image copies with the GitHub Pages content snapshot and rewrite static image URLs safely.
-- [ ] Add coverage, verify cover and inline article images on GitHub Pages, and publish the fix.
+- [x] Add coverage, verify cover and inline article images on GitHub Pages, and publish the fix.
