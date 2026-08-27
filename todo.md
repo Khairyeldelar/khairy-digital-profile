@@ -444,4 +444,4 @@
 - [x] Remove public Applications, Tutorials, and Videos sections and show all published content in one Posts / المشاركات section.
 - [x] Remove category selection from the content editor and save new items to the unified Posts experience.
 - [x] Audit current published items and ensure each dedicated page renders its stored full rich article body rather than only its summary.
-- [ ] Add regression coverage, verify the responsive public and article views, sync GitHub Pages, and publish.
+- [x] Add regression coverage, verify the responsive public and article views, sync GitHub Pages, and publish.
