@@ -1,5 +1,9 @@
 const REDIRECT_PARAM = "gh-pages-route";
 
+export function getRouterBase(basePath: string) {
+  return basePath === "/" ? "" : basePath.replace(/\/+$/, "");
+}
+
 export function restoreGithubPagesRoute(search: string, basePath: string) {
   if (basePath === "/") return null;
 

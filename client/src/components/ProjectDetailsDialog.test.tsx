@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { Router as WouterRouter } from "wouter";
 import { ProjectCardTrigger } from "./ProjectCardTrigger";
 import { ProjectDetailsDialog, type ProjectDetails } from "./ProjectDetailsDialog";
+import { getRouterBase } from "@/lib/githubPagesRedirect";
 
 const project: ProjectDetails = {
   title: "Nova Notes",
@@ -41,7 +42,7 @@ describe("ProjectDetailsDialog keyboard flow", () => {
 
   it("keeps the article link inside the GitHub Pages repository base path", () => {
     const returnFocusRef = { current: null };
-    render(<WouterRouter base="/khairy-digital-profile"><ProjectDetailsDialog project={project} projectIndex={0} language="ar" visitLabel="الذهاب إلى المشروع" open onOpenChange={() => undefined} returnFocusRef={returnFocusRef} /></WouterRouter>);
+    render(<WouterRouter base={getRouterBase("/khairy-digital-profile/")}><ProjectDetailsDialog project={project} projectIndex={0} language="ar" visitLabel="الذهاب إلى المشروع" open onOpenChange={() => undefined} returnFocusRef={returnFocusRef} /></WouterRouter>);
 
     expect(screen.getByRole("link", { name: /دخول إلى الصفحة/i }).getAttribute("href")).toBe("/khairy-digital-profile/article/Nova%20Notes");
   });

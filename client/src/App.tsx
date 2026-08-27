@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Router as WouterRouter, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { getRouterBase } from "./lib/githubPagesRedirect";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Article from "./pages/Article";
@@ -11,7 +12,7 @@ import Article from "./pages/Article";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
-    <WouterRouter base={import.meta.env.BASE_URL}>
+    <WouterRouter base={getRouterBase(import.meta.env.BASE_URL)}>
       <Switch>
         <Route path={"/"} component={Home} />
         <Route path={"/admin"} component={Admin} />

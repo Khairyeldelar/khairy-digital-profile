@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { restoreGithubPagesRoute } from "./githubPagesRedirect";
+import { getRouterBase, restoreGithubPagesRoute } from "./githubPagesRedirect";
 
 describe("restoreGithubPagesRoute", () => {
+  it("normalizes the repository base before router links are generated", () => {
+    expect(getRouterBase("/khairy-digital-profile/")).toBe("/khairy-digital-profile");
+    expect(getRouterBase("/")).toBe("");
+  });
+
   it("restores an encoded article route below the repository base path", () => {
     expect(restoreGithubPagesRoute("?gh-pages-route=%2Farticle%2FCan%2520You%2520Survive", "/khairy-digital-profile/")).toBe("/khairy-digital-profile/article/Can%20You%20Survive");
   });
