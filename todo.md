@@ -430,4 +430,4 @@
 
 - [x] Create an elegant default cover asset aligned with the Khairy Eid Aly digital-profile palette.
 - [x] Use the default cover for project and article cards when no uploaded cover image is available.
-- [ ] Add regression coverage, verify mobile and GitHub Pages rendering, then publish the update.
+- [x] Add regression coverage, verify mobile and GitHub Pages rendering, then publish the update.
