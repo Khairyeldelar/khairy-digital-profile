@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { defaultArticleCover } from "@/lib/defaultArticleCover";
 
 type ProjectImageProps = {
   src?: string | null;
@@ -8,7 +9,7 @@ type ProjectImageProps = {
 };
 
 export function ProjectImage({ src, fallbackSrc, alt, className }: ProjectImageProps) {
-  const sources = useMemo(() => [src, fallbackSrc].filter((value): value is string => Boolean(value)), [src, fallbackSrc]);
+  const sources = useMemo(() => [src, fallbackSrc, defaultArticleCover].filter((value, index, values): value is string => Boolean(value) && values.indexOf(value) === index), [src, fallbackSrc]);
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => setAttempt(0), [src, fallbackSrc]);

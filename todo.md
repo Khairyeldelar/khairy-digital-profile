@@ -425,3 +425,9 @@
 - [x] Trace missing managed-storage images in static article HTML and project cards.
 - [x] Export public image copies with the GitHub Pages content snapshot and rewrite static image URLs safely.
 - [x] Add coverage, verify cover and inline article images on GitHub Pages, and publish the fix.
+
+## Default Article Cover
+
+- [x] Create an elegant default cover asset aligned with the Khairy Eid Aly digital-profile palette.
+- [x] Use the default cover for project and article cards when no uploaded cover image is available.
+- [ ] Add regression coverage, verify mobile and GitHub Pages rendering, then publish the update.
