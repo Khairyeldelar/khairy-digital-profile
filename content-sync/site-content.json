@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-08-27T10:19:10.686Z",
+  "generatedAt": "2026-08-27T12:22:09.549Z",
   "profile": {
     "name": "Khairy Eid Aly",
     "roleEn": "Developer • Creator • Influencer",
@@ -10,7 +10,8 @@
     "locationEn": "Cairo · Remote · 2026",
     "locationAr": "القاهرة · عن بُعد · 2026",
     "portraitUrl": "content-sync/assets/c6bb89620b8a61090819.png",
-    "coverUrl": "content-sync/assets/eba88c7bfb8737644746.png"
+    "coverUrl": "content-sync/assets/eba88c7bfb8737644746.png",
+    "defaultCoverUrl": null
   },
   "projects": [
     {
@@ -46,6 +47,24 @@
       "sortOrder": 0,
       "isPublished": true,
       "imageUrl": "content-sync/assets/f5fd9c89c6f9bc44e535.png",
+      "media": [],
+      "comments": []
+    },
+    {
+      "id": 60001,
+      "titleEn": "اعرف التطبيق الآمن من المشبوه",
+      "titleAr": "اعرف التطبيق الآمن من المشبوه",
+      "descriptionEn": "🔐 قبل ما تثبّت أي تطبيق… اعرف إزاي تكتشف التطبيق المشبوه وتحمي بياناتك!",
+      "descriptionAr": "🔐 قبل ما تثبّت أي تطبيق… اعرف إزاي تكتشف التطبيق المشبوه وتحمي بياناتك!",
+      "articleBodyEn": "",
+      "articleBodyAr": "",
+      "typeEn": "Content",
+      "typeAr": "محتوى",
+      "category": "applications",
+      "href": "https://khairyeldelar.github.io/khairy-digital-profile/",
+      "sortOrder": 0,
+      "isPublished": true,
+      "imageUrl": "content-sync/assets/d56b45b4478c143b7db4.png",
       "media": [],
       "comments": []
     }
