@@ -361,3 +361,11 @@
 - [x] Make every work card open the same details dialog with details and a button to open its dedicated content page.
 - [x] Use a single content-page pattern for tutorials, games/applications, and videos while preserving GitHub synchronization.
 - [x] Add regression tests, verify mobile and desktop behavior, and publish the simplified version.
+
+## Publish Failure and Cursor-Based Article Image Upload
+
+- [x] Diagnose and fix the validation or database cause of the content publish failure shown in the admin dashboard.
+- [x] Replace URL-based article image insertion with a direct managed file-upload control in the rich editor.
+- [x] Preserve the current cursor/selection and insert each uploaded image exactly at that location in the article body.
+- [x] Add success and error feedback plus regression tests for publishing and cursor-based image insertion.
+- [x] Verify the Full-Stack and GitHub Pages builds, maintain GitHub sync, and publish the correction.

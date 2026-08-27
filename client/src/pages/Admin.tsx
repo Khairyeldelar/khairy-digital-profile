@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getAdminNotice } from "@/lib/adminNotifications";
 import { bindUploadedProjectImage } from "@/lib/projectUploadSync";
+import { publicContentUrl } from "@/lib/publicContentUrl";
 import { trpc } from "@/lib/trpc";
 import { Github, ImagePlus, Loader2, Save, Trash2, Upload, Youtube } from "lucide-react";
 import { toast } from "sonner";
@@ -29,7 +30,7 @@ const emptyProject = {
   category: "applications" as "applications" | "tutorials" | "videos",
   articleBodyEn: "",
   articleBodyAr: "",
-  href: "https://",
+  href: "",
   imageKey: null as string | null,
   sortOrder: 0,
   isPublished: true,
@@ -104,6 +105,23 @@ export default function Admin() {
     reader.onerror = () => showNotice("The selected image could not be read.", "error");
     reader.readAsDataURL(file);
   };
+
+  const uploadInlineArticleImage = (file: File) => new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const data = String(reader.result).split(",")[1];
+        if (!data) throw new Error("Image could not be read");
+        const result = await uploadAsset.mutateAsync({ fileName: file.name, mimeType: file.type || "application/octet-stream", data, target: "article" });
+        resolve(result.url || `/manus-storage/${result.key}`);
+      } catch (error) {
+        showNotice("تعذر رفع الصورة داخل المقال. حاول مرة أخرى.", "error");
+        reject(error);
+      }
+    };
+    reader.onerror = () => reject(new Error("Image could not be read"));
+    reader.readAsDataURL(file);
+  });
 
   useEffect(() => {
     if (!contentQuery.data?.profile) return;
@@ -350,10 +368,10 @@ export default function Admin() {
               <div className="grid gap-3 md:grid-cols-2"><label className="grid gap-1.5 text-sm font-medium">عنوان المحتوى<input className="h-10 rounded-md border bg-background px-3" dir="rtl" value={newProject.titleAr} onChange={(event) => setNewProject({ ...newProject, titleAr: event.target.value })} placeholder="عنوان المقال أو اللعبة أو الفيديو" /></label><label className="grid gap-1.5 text-sm font-medium">English title <Input value={newProject.titleEn} onChange={(event) => setNewProject({ ...newProject, titleEn: event.target.value })} placeholder="Optional English title" /></label></div>
               <label className="grid gap-1.5 text-sm font-medium">وصف مختصر للبطاقة والنافذة العائمة<Textarea dir="rtl" rows={3} value={newProject.descriptionAr} onChange={(event) => setNewProject({ ...newProject, descriptionAr: event.target.value })} placeholder="وصف قصير يظهر في البطاقة ثم في نافذة التفاصيل" /></label>
               <label className="grid gap-1.5 text-sm font-medium">Short description · English<Textarea rows={3} value={newProject.descriptionEn} onChange={(event) => setNewProject({ ...newProject, descriptionEn: event.target.value })} placeholder="Optional English summary" /></label>
-              <label className="grid gap-1.5 text-sm font-medium">نص المقال والمحتوى الكامل<RichTextEditor value={newProject.articleBodyAr} onChange={(articleBodyAr) => setNewProject({ ...newProject, articleBodyAr })} placeholder="اكتب المحتوى هنا… استخدم شريط الأدوات للعناوين والتنسيق والقوائم والروابط والصور والفيديو." dir="rtl" /></label>
-              <label className="grid gap-1.5 text-sm font-medium">Full content · English<RichTextEditor value={newProject.articleBodyEn} onChange={(articleBodyEn) => setNewProject({ ...newProject, articleBodyEn })} placeholder="Optional English content…" dir="ltr" /></label>
-              <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground"><strong className="text-foreground">صورة الغلاف:</strong> انشر المقال أولًا، ثم استخدم زر <em>Upload cover</em> بجواره في قائمة المنشورات أدناه. الصور والفيديوهات داخل النص تُضاف من شريط المحرر.</div>
-              <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]"><label className="grid gap-1.5 text-sm font-medium">القسم عند النشر<select className="h-10 rounded-md border bg-background px-3 text-sm" value={newProject.category} onChange={(event) => setNewProject({ ...newProject, category: event.target.value as ProjectDraft["category"] })}>{workCategoryOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label><label className="grid gap-1.5 text-sm font-medium">رابط إضافي أو مصدر (اختياري)<Input value={newProject.href} onChange={(event) => setNewProject({ ...newProject, href: event.target.value })} placeholder="https://…" /></label><Button className="self-end" onClick={() => createProject.mutate({ ...newProject, titleEn: newProject.titleEn || newProject.titleAr, descriptionEn: newProject.descriptionEn || newProject.descriptionAr, typeEn: "Content", typeAr: "محتوى", href: newProject.href.startsWith("http") ? newProject.href : "https://khairyeldelar.github.io/khairy-digital-profile/" })} disabled={createProject.isPending || !newProject.titleAr.trim() || !newProject.descriptionAr.trim()}>{createProject.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}Publish</Button></div>
+              <label className="grid gap-1.5 text-sm font-medium">نص المقال والمحتوى الكامل<RichTextEditor value={newProject.articleBodyAr} onChange={(articleBodyAr) => setNewProject({ ...newProject, articleBodyAr })} onUploadImage={uploadInlineArticleImage} placeholder="اكتب المحتوى هنا… استخدم شريط الأدوات للعناوين والتنسيق والقوائم والروابط ورفع الصور والفيديو." dir="rtl" /></label>
+              <label className="grid gap-1.5 text-sm font-medium">Full content · English<RichTextEditor value={newProject.articleBodyEn} onChange={(articleBodyEn) => setNewProject({ ...newProject, articleBodyEn })} onUploadImage={uploadInlineArticleImage} placeholder="Optional English content…" dir="ltr" /></label>
+              <div className="rounded-lg border border-dashed p-3 text-sm text-muted-foreground"><strong className="text-foreground">صورة الغلاف:</strong> انشر المقال أولًا، ثم استخدم زر <em>Upload cover</em> بجواره في قائمة المنشورات أدناه. صور النص تُرفع مباشرة من زر الصورة في شريط المحرر وتُدرج عند موضع المؤشر.</div>
+              <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto]"><label className="grid gap-1.5 text-sm font-medium">القسم عند النشر<select className="h-10 rounded-md border bg-background px-3 text-sm" value={newProject.category} onChange={(event) => setNewProject({ ...newProject, category: event.target.value as ProjectDraft["category"] })}>{workCategoryOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label><label className="grid gap-1.5 text-sm font-medium">رابط إضافي أو مصدر (اختياري)<Input value={newProject.href} onChange={(event) => setNewProject({ ...newProject, href: event.target.value })} placeholder="https://…" /></label><Button className="self-end" onClick={() => createProject.mutate({ ...newProject, titleEn: newProject.titleEn || newProject.titleAr, descriptionEn: newProject.descriptionEn || newProject.descriptionAr, typeEn: "Content", typeAr: "محتوى", href: publicContentUrl(newProject.href) })} disabled={createProject.isPending || !newProject.titleAr.trim() || !newProject.descriptionAr.trim()}>{createProject.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}Publish</Button></div>
             </CardContent>
           </Card>
           <Card><CardHeader><CardTitle className="text-base">Published content</CardTitle></CardHeader><CardContent className="divide-y">{data.projects.map((project) => <div key={project.id} className="flex flex-wrap items-center justify-between gap-3 py-3"><div><p className="font-medium">{project.titleAr || project.titleEn}</p><p className="text-xs text-muted-foreground">{workCategoryOptions.find((option) => option.value === project.category)?.label}</p></div><div className="flex flex-wrap gap-2"><label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-xs"><Upload className="h-3.5 w-3.5" />Upload cover<input className="sr-only" type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) handleProjectUpload(file, project.id); }} /></label><Button type="button" variant="outline" size="sm" onClick={() => updateProject.mutate({ id: project.id, data: { isPublished: !project.isPublished } })}>{project.isPublished ? "Hide" : "Publish"}</Button><Button type="button" variant="ghost" size="sm" className="text-destructive" onClick={() => deleteProject.mutate({ id: project.id })}><Trash2 className="mr-1 h-3.5 w-3.5" />Delete</Button></div></div>)}</CardContent></Card>
