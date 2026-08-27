@@ -418,4 +418,4 @@
 
 - [x] Diagnose the 404 error when opening an article URL directly on GitHub Pages.
 - [x] Add a GitHub Pages fallback that serves the single-page application for article paths while preserving the path and slug.
-- [ ] Verify a direct article URL on GitHub Pages, add regression coverage, and publish the fix.
+- [x] Verify a direct article URL on GitHub Pages, add regression coverage, and publish the fix.
