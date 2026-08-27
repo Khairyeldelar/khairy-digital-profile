@@ -8,6 +8,7 @@ import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSna
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { returnToPreviousPage } from "@/lib/articleNavigation";
 import { resolveProjectImage, rewriteStaticArticleImageUrls } from "@/lib/projectImage";
+import { defaultArticleCover } from "@/lib/defaultArticleCover";
 import { hasRichMarkup, sanitizeArticleHtml } from "@/lib/richArticleHtml";
 import { trpc } from "@/lib/trpc";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -56,6 +57,10 @@ export default function Article() {
   const standaloneContent = useStandaloneContentSnapshot();
   const contentQuery = trpc.content.useQuery(undefined, { enabled: !isStandaloneSite() });
   const contentData = standaloneContent ?? contentQuery.data;
+  const profile = contentData?.profile;
+  const defaultCoverKey = profile && "defaultCoverKey" in profile ? profile.defaultCoverKey : null;
+  const defaultCoverUrl = profile && "defaultCoverUrl" in profile ? profile.defaultCoverUrl : null;
+  const defaultProjectCover = resolveProjectImage(defaultCoverKey, defaultCoverUrl) || defaultArticleCover;
   const availableArticles = useMemo<Project[]>(() => {
     if (contentData?.projects?.length) {
       return contentData.projects.map((remote) => {
@@ -73,7 +78,7 @@ export default function Article() {
         typeAr: remote.typeAr,
         category: remote.category,
         image: resolveProjectImage(imageKey, imageUrl),
-        imageFallback: resolveProjectImage(imageKey),
+        imageFallback: defaultProjectCover,
         href: remote.href,
         media: (remote.media ?? []).map((item) => {
           const sourceUrl = "sourceUrl" in item && typeof item.sourceUrl === "string" ? item.sourceUrl : null;
@@ -84,9 +89,8 @@ export default function Article() {
       });
     }
     return fallbackProjects;
-  }, [contentData?.projects]);
+  }, [contentData?.projects, defaultProjectCover]);
   const project = useMemo(() => availableArticles.find((item) => item.title === articleTitle) ?? findFallbackProject(slug), [availableArticles, articleTitle, slug]);
-  const profile = contentData?.profile;
   const copy = labels[language];
 
   useEffect(() => {

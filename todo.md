@@ -431,3 +431,10 @@
 - [x] Create an elegant default cover asset aligned with the Khairy Eid Aly digital-profile palette.
 - [x] Use the default cover for project and article cards when no uploaded cover image is available.
 - [x] Add regression coverage, verify mobile and GitHub Pages rendering, then publish the update.
+
+## Admin Default Cover Control
+
+- [x] Store an optional administrator-selected default cover image key with the site profile.
+- [x] Add an admin upload, preview, replace, and reset control for the default cover.
+- [x] Use the saved cover in public cards and the GitHub Pages snapshot, with the built-in cover as a safe fallback.
+- [ ] Add tests, migrate the database, verify the admin and public views, sync GitHub, and publish.

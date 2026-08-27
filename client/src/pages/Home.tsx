@@ -11,6 +11,7 @@ import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/l
 import { filterProjectsByCategory, workCategories, type WorkCategory } from "@/lib/workCategories";
 import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { publicAssetPath, resolveProjectImage } from "@/lib/projectImage";
+import { defaultArticleCover } from "@/lib/defaultArticleCover";
 import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -319,6 +320,9 @@ export default function Home() {
   const contentQuery = trpc.content.useQuery(undefined, { enabled: !isStandaloneSite() });
   const contentData = standaloneContent ?? contentQuery.data;
   const contentProfile = contentData?.profile;
+  const defaultCoverKey = contentProfile && "defaultCoverKey" in contentProfile ? contentProfile.defaultCoverKey : null;
+  const defaultCoverUrl = contentProfile && "defaultCoverUrl" in contentProfile ? contentProfile.defaultCoverUrl : null;
+  const defaultProjectCover = resolveProjectImage(defaultCoverKey, defaultCoverUrl) || defaultArticleCover;
   const displayedProjects: Project[] = contentData?.projects?.length
     ? contentData.projects.map((project) => {
         const imageKey = "imageKey" in project ? project.imageKey : null;
@@ -333,7 +337,7 @@ export default function Home() {
         typeAr: project.typeAr,
         category: project.category === "tutorials" || project.category === "videos" ? project.category : "applications",
         image: resolveProjectImage(imageKey, imageUrl),
-        imageFallback: resolveProjectImage(imageKey),
+        imageFallback: defaultProjectCover,
         href: project.href,
         media: (project.media ?? []).map((item) => {
           const sourceUrl = "sourceUrl" in item && typeof item.sourceUrl === "string" ? item.sourceUrl : null;

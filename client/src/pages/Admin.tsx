@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { getAdminNotice } from "@/lib/adminNotifications";
 import { bindUploadedProjectImage } from "@/lib/projectUploadSync";
 import { publicContentUrl } from "@/lib/publicContentUrl";
+import { defaultArticleCover } from "@/lib/defaultArticleCover";
 import { trpc } from "@/lib/trpc";
 import { Github, ImagePlus, Loader2, Save, Trash2, Upload, Youtube } from "lucide-react";
 import { toast } from "sonner";
@@ -61,6 +62,7 @@ type ProfileDraft = {
   locationAr: string;
   portraitKey: string;
   coverKey: string;
+  defaultCoverKey: string;
 };
 
 export default function Admin() {
@@ -69,6 +71,7 @@ export default function Admin() {
   const ownerCheck = trpc.ownerCheck.useQuery(undefined, { enabled: Boolean(user) });
   const contentQuery = trpc.admin.content.useQuery(undefined, { enabled: ownerCheck.data === true });
   const [profile, setProfile] = useState<ProfileDraft | null>(null);
+  const [defaultCoverPreview, setDefaultCoverPreview] = useState<string>(defaultArticleCover);
   const [newProject, setNewProject] = useState<ProjectDraft>(emptyProject);
   const [newSocial, setNewSocial] = useState<SocialDraft>(emptySocial);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -93,16 +96,20 @@ export default function Admin() {
   const uploadAsset = trpc.admin.uploadAsset.useMutation({
     onSuccess: (result, variables) => {
       setProfile((current) => current ? { ...current, [`${variables.target}Key`]: result.key } : current);
+      if (variables.target === "defaultCover") setDefaultCoverPreview(result.url || `/manus-storage/${result.key}`);
       showNotice(getAdminNotice("assetUpload", "success"));
     },
     onError: () => showNotice(getAdminNotice("assetUpload", "error"), "error"),
   });
 
-  const handleUpload = (file: File, target: "portrait" | "cover") => {
+  const handleUpload = (file: File, target: "portrait" | "cover" | "defaultCover") => {
     const reader = new FileReader();
     reader.onload = () => {
       const encoded = String(reader.result).split(",")[1];
-      if (encoded) uploadAsset.mutate({ fileName: file.name, mimeType: file.type || "application/octet-stream", data: encoded, target });
+      if (encoded) {
+        if (target === "defaultCover") setDefaultCoverPreview(String(reader.result));
+        uploadAsset.mutate({ fileName: file.name, mimeType: file.type || "application/octet-stream", data: encoded, target });
+      }
       else showNotice("The selected image could not be read.", "error");
     };
     reader.onerror = () => showNotice("The selected image could not be read.", "error");
@@ -146,7 +153,9 @@ export default function Admin() {
       locationAr: item.locationAr,
       portraitKey: item.portraitKey ?? "",
       coverKey: item.coverKey ?? "",
+      defaultCoverKey: item.defaultCoverKey ?? "",
     });
+    setDefaultCoverPreview(item.defaultCoverUrl ?? defaultArticleCover);
   }, [contentQuery.data?.profile, contentQuery.data?.autoGithubSync]);
 
   const saveProfile = trpc.admin.updateProfile.useMutation({
@@ -366,7 +375,13 @@ export default function Admin() {
                 </label>
               ))}
             </div>
-            <div className="md:col-span-2"><Button onClick={() => saveProfile.mutate({ ...profile, portraitKey: profile.portraitKey || null, coverKey: profile.coverKey || null })} disabled={saveProfile.isPending}><Save className="mr-2 h-4 w-4" />Save profile</Button></div>
+            <div className="md:col-span-2 rounded-xl border border-dashed border-primary/30 bg-muted/20 p-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <img src={defaultCoverPreview} alt="Default article cover preview" className="h-24 w-full rounded-lg border bg-background object-cover sm:w-40" />
+                <div className="min-w-0 flex-1"><p className="font-medium">Default article cover</p><p className="mt-1 text-sm text-muted-foreground">Used automatically on public cards when a project has no uploaded cover.</p><div className="mt-3 flex flex-wrap gap-2"><label className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md border bg-background px-3 text-sm font-medium hover:border-primary"><Upload className="h-4 w-4" />Choose or replace<input className="sr-only" type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) handleUpload(file, "defaultCover"); }} /></label><Button type="button" variant="outline" onClick={() => { setProfile({ ...profile, defaultCoverKey: "" }); setDefaultCoverPreview(defaultArticleCover); }}>Use built-in cover</Button></div></div>
+              </div>
+            </div>
+            <div className="md:col-span-2"><Button onClick={() => saveProfile.mutate({ ...profile, portraitKey: profile.portraitKey || null, coverKey: profile.coverKey || null, defaultCoverKey: profile.defaultCoverKey || null })} disabled={saveProfile.isPending}><Save className="mr-2 h-4 w-4" />Save profile</Button></div>
           </CardContent>
         </Card>
 

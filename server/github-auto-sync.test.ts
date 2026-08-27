@@ -66,6 +66,25 @@ describe("automatic GitHub sync after save", () => {
     expect(syncGithubContent).not.toHaveBeenCalled();
   });
 
+  it("saves an administrator-selected default cover with the site profile", async () => {
+    dbMocks.getAutoGithubSync.mockResolvedValue(false);
+    dbMocks.upsertSiteProfile.mockResolvedValue({ id: 1, defaultCoverKey: "admin/owner/defaultCover/editorial.png" });
+
+    const result = await appRouter.createCaller(ownerContext()).admin.updateProfile({
+      name: "Khairy Eid Aly",
+      roleEn: "Developer",
+      roleAr: "مطور",
+      bioEn: "Short bio",
+      bioAr: "نبذة",
+      locationEn: "Egypt",
+      locationAr: "مصر",
+      defaultCoverKey: "admin/owner/defaultCover/editorial.png",
+    });
+
+    expect(dbMocks.upsertSiteProfile).toHaveBeenCalledWith(expect.objectContaining({ defaultCoverKey: "admin/owner/defaultCover/editorial.png" }));
+    expect(result.autoGithubSync).toBe(false);
+  });
+
   it("syncs once after a successful content save when enabled", async () => {
     dbMocks.getAutoGithubSync.mockResolvedValue(true);
     dbMocks.updateProject.mockResolvedValue({ id: 7, titleEn: "Updated" });

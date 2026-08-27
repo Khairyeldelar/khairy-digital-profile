@@ -13,6 +13,7 @@ export type ContentSnapshot = {
     locationAr: string;
     portraitUrl?: string | null;
     coverUrl?: string | null;
+    defaultCoverUrl?: string | null;
   } | null;
   projects: Array<{
     id: number;

@@ -35,6 +35,7 @@ const profileInput = z.object({
   locationAr: z.string().min(1).max(160),
   portraitKey: z.string().nullable().optional(),
   coverKey: z.string().nullable().optional(),
+  defaultCoverKey: z.string().nullable().optional(),
 });
 
 export const projectInput = z.object({
@@ -113,6 +114,14 @@ async function projectsWithImageUrls(publishedOnly: boolean) {
   }));
 }
 
+async function profileWithImageUrls() {
+  const profile = await getSiteProfile();
+  return profile ? {
+    ...profile,
+    defaultCoverUrl: profile.defaultCoverKey ? await storageGetSignedUrl(profile.defaultCoverKey).catch(() => null) : null,
+  } : undefined;
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -125,7 +134,7 @@ export const appRouter = router({
   }),
   ownerCheck: publicProcedure.query(({ ctx }) => isDesignatedOwner(ctx.user)),
   content: publicProcedure.query(async () => ({
-    profile: await getSiteProfile(),
+    profile: await profileWithImageUrls(),
     projects: await projectsWithImageUrls(true),
     socialLinks: await getSocialLinks(true),
   })),
@@ -135,13 +144,13 @@ export const appRouter = router({
   }),
     admin: router({
     content: adminProcedure.query(async () => ({
-      profile: await getSiteProfile(),
+      profile: await profileWithImageUrls(),
       projects: await projectsWithImageUrls(false),
       socialLinks: await getSocialLinks(false),
       autoGithubSync: await getAutoGithubSync(),
     })),
     updateProfile: adminProcedure.input(profileInput).mutation(async ({ input }) => runAutoGithubSync(await upsertSiteProfile(input))),
-    uploadAsset: adminProcedure.input(z.object({ fileName: z.string().min(1).max(180), mimeType: z.string().min(1).max(120), data: z.string().min(1).max(12_000_000), target: z.enum(["portrait", "cover", "project", "article"]), projectId: z.number().int().optional() })).mutation(async ({ ctx, input }) => {
+    uploadAsset: adminProcedure.input(z.object({ fileName: z.string().min(1).max(180), mimeType: z.string().min(1).max(120), data: z.string().min(1).max(12_000_000), target: z.enum(["portrait", "cover", "defaultCover", "project", "article"]), projectId: z.number().int().optional() })).mutation(async ({ ctx, input }) => {
       const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
       return storagePut(`admin/${ctx.user.openId}/${input.target}/${safeName}`, Buffer.from(input.data, "base64"), input.mimeType);
     }),

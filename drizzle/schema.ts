@@ -36,6 +36,7 @@ export const siteProfile = mysqlTable("site_profile", {
   locationAr: varchar("locationAr", { length: 160 }).notNull(),
   portraitKey: text("portraitKey"),
   coverKey: text("coverKey"),
+  defaultCoverKey: text("defaultCoverKey"),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 

@@ -119,6 +119,18 @@ describe("GitHub content sync", () => {
     expect(snapshot).not.toContain("private/inline.png");
   });
 
+  it("publishes the selected default cover as a public snapshot path", async () => {
+    const snapshot = buildContentSnapshot(
+      { ...(await dbMocks.getSiteProfile()), portraitKey: null, coverKey: null, defaultCoverKey: "private/default-cover.png" },
+      await dbMocks.getProjects(false),
+      await dbMocks.getSocialLinks(false),
+      new Map([["private/default-cover.png", "content-sync/assets/default-cover.png"]]),
+    );
+
+    expect(snapshot).toContain('"defaultCoverUrl": "content-sync/assets/default-cover.png"');
+    expect(snapshot).not.toContain("private/default-cover.png");
+  });
+
   it("fails clearly when the server token is missing", async () => {
     delete process.env.GITHUB_TOKEN;
     await expect(syncGithubContent()).rejects.toThrow("GitHub sync is not configured");

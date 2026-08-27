@@ -87,6 +87,7 @@ export function buildContentSnapshot(profile: Awaited<ReturnType<typeof getSiteP
       locationAr: profile.locationAr,
       portraitUrl: profile.portraitKey ? assetUrls.get(profile.portraitKey) ?? null : null,
       coverUrl: profile.coverKey ? assetUrls.get(profile.coverKey) ?? null : null,
+      defaultCoverUrl: profile.defaultCoverKey ? assetUrls.get(profile.defaultCoverKey) ?? null : null,
     } : null,
     projects: projects.map((project) => ({
       id: project.id,
@@ -172,6 +173,7 @@ async function exportStaticAssets(token: string, repository: string, profile: Aw
   const keys = new Set<string>();
   if (profile?.portraitKey) keys.add(profile.portraitKey);
   if (profile?.coverKey) keys.add(profile.coverKey);
+  if (profile?.defaultCoverKey) keys.add(profile.defaultCoverKey);
   for (const project of projects) {
     if (project.imageKey) keys.add(project.imageKey);
     for (const media of project.media ?? []) {

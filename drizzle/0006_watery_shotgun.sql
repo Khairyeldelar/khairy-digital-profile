@@ -1,0 +1,1 @@
+ALTER TABLE `site_profile` ADD `defaultCoverKey` text;

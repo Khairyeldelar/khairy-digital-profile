@@ -10,4 +10,10 @@ describe("ProjectImage", () => {
     expect(html).toContain("data:image/svg+xml");
     expect(html).toContain('alt="غلاف المقال الافتراضي"');
   });
+
+  it("uses the administrator-selected fallback before the built-in cover", () => {
+    const html = renderToStaticMarkup(<ProjectImage src="" fallbackSrc="https://cdn.example/default-cover.png" alt="غلاف مختار" />);
+
+    expect(html).toContain('src="https://cdn.example/default-cover.png"');
+  });
 });
