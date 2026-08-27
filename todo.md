@@ -388,3 +388,9 @@
 - [x] Add a pre-publish button that opens a complete article preview without saving the draft.
 - [x] Render the draft title, summary, rich body, uploaded inline images, links, and embedded video in the preview.
 - [x] Add regression coverage, verify responsive behavior, sync GitHub, and publish the preview feature.
+
+## Remove Contact Callout and Footer Tagline
+
+- [x] Remove the dark contact callout card from the public profile page.
+- [x] Remove the small footer tagline beneath the copyright line while preserving navigation and profiles.
+- [x] Verify responsive layout, sync GitHub Pages, and publish the cleanup.

@@ -507,19 +507,10 @@ export default function Home() {
           </div>
         </section>
 
-        <div className="about-grid">
-          <section id="contact" className="contact-card reveal reveal-delay-3" aria-labelledby="contact-title">
-            <div className="contact-icon"><Mail size={20} strokeWidth={1.7} /></div>
-            <p className="section-kicker">{t.contactKicker}</p>
-            <h2 id="contact-title">{t.contactTitle}<br /><em>{t.contactTitleEm}</em></h2>
-            <a className="contact-link" href={emailHref}>khairy.eldelar5@gmail.com <ArrowUpRight size={16} /></a>
-          </section>
-        </div>
         </div>
       </main>
       <footer className="site-footer">
         <span>© 2026 Khairy Eid Aly</span>
-        <span>{t.footer} <span className="accent-dot">•</span></span>
       </footer>
 
       <nav className="mobile-nav" aria-label="Mobile navigation">
