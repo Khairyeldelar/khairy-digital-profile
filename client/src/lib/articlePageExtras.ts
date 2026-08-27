@@ -6,9 +6,7 @@ export type RelatedArticleCandidate = {
 
 export function selectRelatedArticles<T extends RelatedArticleCandidate>(articles: T[], current: T, limit = 3) {
   const otherArticles = articles.filter((article) => article.id !== undefined && current.id !== undefined ? article.id !== current.id : article.title !== current.title);
-  const sameCategory = otherArticles.filter((article) => article.category === current.category);
-
-  return (sameCategory.length ? sameCategory : otherArticles).slice(0, limit);
+  return otherArticles.slice(0, limit);
 }
 
 export function buildSocialShareLinks(articleUrl: string, title: string) {

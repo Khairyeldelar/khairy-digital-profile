@@ -54,6 +54,11 @@ export const projectInput = z.object({
   isPublished: z.boolean().default(true),
 });
 
+export const publishedPostInput = projectInput.refine(
+  (project) => project.articleBodyAr.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim().length > 0,
+  { message: "Full Arabic post content is required before publishing.", path: ["articleBodyAr"] },
+);
+
 export const socialInput = z.object({
   platform: z.string().min(1).max(40),
   platformEn: z.string().min(1).max(80),
@@ -155,7 +160,7 @@ export const appRouter = router({
       return storagePut(`admin/${ctx.user.openId}/${input.target}/${safeName}`, Buffer.from(input.data, "base64"), input.mimeType);
     }),
     setAutoGithubSync: adminProcedure.input(z.object({ enabled: z.boolean() })).mutation(({ input }) => setAutoGithubSync(input.enabled)),
-    createProject: adminProcedure.input(projectInput).mutation(async ({ input }) => runAutoGithubSync(await createProject(input))),
+    createProject: adminProcedure.input(publishedPostInput).mutation(async ({ input }) => runAutoGithubSync(await createProject(input))),
     updateProject: adminProcedure.input(z.object({ id: z.number().int(), data: projectInput.partial() })).mutation(async ({ input }) => runAutoGithubSync(await updateProject(input.id, input.data))),
     deleteProject: adminProcedure.input(z.object({ id: z.number().int() })).mutation(async ({ input }) => runAutoGithubSync(await deleteProject(input.id))),
     createProjectMedia: adminProcedure.input(projectMediaInput).mutation(async ({ input }) => runAutoGithubSync(await createProjectMedia(input))),

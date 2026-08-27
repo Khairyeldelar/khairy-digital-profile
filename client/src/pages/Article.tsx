@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowRight, BadgeCheck, Languages, Moon, Sun } from "lucide-react";
+import { ArrowLeft, ArrowRight, BadgeCheck, Languages, Loader2, Moon, Sun } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { ArticleRating } from "@/components/ArticleRating";
 import { ArticleShare } from "@/components/ArticleShare";
@@ -17,8 +17,8 @@ import { projects as fallbackProjects, type Project } from "./Home";
 type Language = "ar" | "en";
 
 const labels = {
-  ar: { back: "العودة", article: "شرح ومعلومة", missing: "لم يتم العثور على هذا الشرح.", language: "English" },
-  en: { back: "Back", article: "Tutorial & insight", missing: "This tutorial could not be found.", language: "العربية" },
+  ar: { back: "العودة", article: "مشاركة", missing: "لم يتم العثور على هذه المشاركة.", language: "English" },
+  en: { back: "Back", article: "Post", missing: "This post could not be found.", language: "العربية" },
 };
 
 function decodeArticleSlug(slug: string) {
@@ -99,6 +99,7 @@ export default function Article() {
     if (shouldPersistProfileLanguage(window.location.search)) localStorage.setItem("khairy-language", language);
   }, [language]);
 
+  if (!contentData && contentQuery.isLoading) return <main className="article-missing"><Loader2 className="animate-spin" aria-label={language === "ar" ? "جارٍ تحميل المشاركة" : "Loading post"} /></main>;
   if (!project) return <main className="article-missing"><p>{copy.missing}</p><button onClick={() => setLocation("/")}>{copy.back}</button></main>;
 
   const title = language === "ar" ? project.titleAr : project.title;
@@ -120,7 +121,7 @@ export default function Article() {
     <main className="article-content">
       <section className="article-profile-strip" dir={language} aria-label={language === "ar" ? "الملف التعريفي" : "Profile identity"}><div className="article-profile-avatar"><span>{name.slice(0, 1)}</span></div><div><strong>{name}</strong><p>{role ?? (language === "ar" ? "مطور وصانع محتوى" : "Developer and creator")}</p></div><BadgeCheck className="article-verified" size={21} /><p className="article-profile-bio">{bio}</p></section>
       <article className="article-card" dir={language}>
-        <div className="article-kicker">{project.category === "applications" ? (language === "ar" ? "تطبيق أو لعبة" : "Application or game") : project.category === "videos" ? (language === "ar" ? "فيديو" : "Video") : copy.article}</div><h1>{title}</h1><div className="article-meta"><span>{language === "ar" ? project.typeAr : project.type}</span><span>•</span><span>Khairy Eid Aly</span></div>
+        <div className="article-kicker">{copy.article}</div><h1>{title}</h1><div className="article-meta"><span>{language === "ar" ? "مشاركة" : "Post"}</span><span>•</span><span>Khairy Eid Aly</span></div>
         {placedMedia("start")}
         <div className="article-body">{articleBody ? hasRichMarkup(articleBody) ? <div className="article-rich-body rich-article-render" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(rewriteStaticArticleImageUrls(articleBody)) }} /> : <div className="article-rich-body">{articleBody}</div> : <p className="article-body-empty">{language === "ar" ? "لا توجد تفاصيل مكتوبة لهذه الصفحة بعد. افتح «تحرير محتوى الصفحة الكاملة» من لوحة التحكم وأضف النص والصور والروابط ثم احفظ." : "No full content has been written for this page yet. Use the full-content editor in the control panel, then save."}</p>}</div>
         {placedMedia("middle")}{placedMedia("end")}

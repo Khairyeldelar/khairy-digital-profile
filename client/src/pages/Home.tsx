@@ -8,7 +8,7 @@ import { ProjectImage } from "@/components/ProjectImage";
 import { ProjectDetailsDialog } from "@/components/ProjectDetailsDialog";
 import { presentSocialLink } from "@/lib/socialLinkPresentation";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
-import { filterProjectsByCategory, workCategories, type WorkCategory } from "@/lib/workCategories";
+import { type WorkCategory } from "@/lib/workCategories";
 import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { publicAssetPath, resolveProjectImage } from "@/lib/projectImage";
 import { defaultArticleCover } from "@/lib/defaultArticleCover";
@@ -116,7 +116,7 @@ const profiles: ProfileItem[] = [
 
 const navItems = [
   { id: "home", labelEn: "Home", labelAr: "الرئيسية" },
-  { id: "work", labelEn: "Work", labelAr: "أعمالي" },
+  { id: "work", labelEn: "Posts", labelAr: "المشاركات" },
   { id: "profiles", labelEn: "Profiles", labelAr: "حساباتي" },
   { id: "contact", labelEn: "Contact", labelAr: "تواصل" },
 ];
@@ -139,8 +139,8 @@ const copy = {
     making: "Making",
     direction: "Direction",
     building: "Building from curiosity",
-    selectedWork: "02 / My work",
-    workTitle: "My Work",
+    selectedWork: "02 / Posts",
+    workTitle: "Posts",
     workTitleEm: "",
     workAside: "",
     findMe: "03 / Find me around",
@@ -156,8 +156,8 @@ const copy = {
     visitProject: "Go to project",
     visitShort: "Visit",
     close: "Close",
-    workCategoryLabel: "Work category",
-    emptyCategory: "New work is coming soon.",
+    workCategoryLabel: "Posts",
+    emptyCategory: "New posts are coming soon.",
   },
   ar: {
     languageLabel: "التبديل إلى الإنجليزية",
@@ -176,8 +176,8 @@ const copy = {
     making: "صناعة",
     direction: "التوجه",
     building: "أبني بدافع الفضول",
-    selectedWork: "02 / أعمالي",
-    workTitle: "أعمالي",
+    selectedWork: "02 / المشاركات",
+    workTitle: "المشاركات",
     workTitleEm: "",
     workAside: "",
     findMe: "03 / تجدني هنا",
@@ -193,8 +193,8 @@ const copy = {
     visitProject: "الذهاب إلى المشروع",
     visitShort: "زيارة",
     close: "إغلاق",
-    workCategoryLabel: "فئة الأعمال",
-    emptyCategory: "أعمال جديدة قريبًا.",
+    workCategoryLabel: "المشاركات",
+    emptyCategory: "مشاركات جديدة قريبًا.",
   },
 };
 
@@ -211,40 +211,19 @@ type WorkShowcaseCopy = {
   visitShort: string;
 };
 
-export function WorkShowcase({ projects, language, copy, category, sectionId = "work" }: { projects: Project[]; language: Language; copy: WorkShowcaseCopy; category?: WorkCategory; sectionId?: string }) {
-  const [selectedCategory, setSelectedCategory] = useState<WorkCategory>(category ?? "applications");
+export function WorkShowcase({ projects, language, copy, sectionId = "work" }: { projects: Project[]; language: Language; copy: WorkShowcaseCopy; sectionId?: string }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const projectTriggerRef = useRef<HTMLButtonElement | null>(null);
   const [, setLocation] = useLocation();
-  const activeCategory = category ?? selectedCategory;
-  const categoryMeta = workCategories.find((item) => item.id === category);
-  const visibleProjects = filterProjectsByCategory(projects, activeCategory);
+  const visibleProjects = projects;
 
   return (
     <>
       <section id={sectionId} className="content-section reveal reveal-delay-1" aria-labelledby={`${sectionId}-title`}>
-        <div className="work-heading-card" aria-label={categoryMeta ? (language === "ar" ? categoryMeta.labelAr : categoryMeta.labelEn) : copy.workTitle}>
-          <h2 id={`${sectionId}-title`}>{categoryMeta ? (language === "ar" ? categoryMeta.labelAr : categoryMeta.labelEn) : copy.workTitle}</h2>
+        <div className="work-heading-card" aria-label={copy.workTitle}>
+          <h2 id={`${sectionId}-title`}>{copy.workTitle}</h2>
         </div>
-        {!categoryMeta && <div className="work-category-tabs" role="tablist" aria-label={copy.workCategoryLabel}>
-          {workCategories.map((category) => {
-            const isActive = selectedCategory === category.id;
-            return (
-              <button
-                key={category.id}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                className={isActive ? "work-category-tab active" : "work-category-tab"}
-                onClick={() => setSelectedCategory(category.id)}
-              >
-                <span>{language === "ar" ? category.labelAr : category.labelEn}</span>
-                <small>0{workCategories.findIndex((item) => item.id === category.id) + 1}</small>
-              </button>
-            );
-          })}
-        </div>}
-        <div className="work-rail" aria-label={language === "ar" ? "مشاريع الفئة المختارة" : "Selected work projects"}>
+        <div className="work-rail" aria-label={language === "ar" ? "المشاركات المنشورة" : "Published posts"}>
           {visibleProjects.length > 0 ? visibleProjects.map((project, index) => (
             <article className="project-card" key={project.title} style={{ animationDelay: `${index * 70 + 150}ms` }}>
               <ProjectCardTrigger
@@ -252,7 +231,7 @@ export function WorkShowcase({ projects, language, copy, category, sectionId = "
                   projectTriggerRef.current = button;
                   setSelectedProject(project);
                 }}
-                label={`${project.category === "tutorials" ? (language === "ar" ? "قراءة" : "Read") : copy.viewProject}: ${language === "ar" ? project.titleAr : project.title}`}
+                label={`${language === "ar" ? "فتح المشاركة" : "Open post"}: ${language === "ar" ? project.titleAr : project.title}`}
               >
                 <div className={`project-image-wrap project-art-${index + 1}`}>
                   <div className="project-art-fallback" aria-hidden="true"><span className="project-art-line line-a" /><span className="project-art-line line-b" /><span className="project-art-orb" /></div>
@@ -263,7 +242,7 @@ export function WorkShowcase({ projects, language, copy, category, sectionId = "
                   <div className="project-row">
                     <h3>{language === "ar" ? project.titleAr : project.title}</h3>
                   </div>
-                  <span className="project-open-label">{project.category === "tutorials" ? (language === "ar" ? "قراءة" : "Read") : project.href ? copy.visitShort : copy.viewProject}</span>
+                  <span className="project-open-label">{language === "ar" ? "فتح" : "Open"}</span>
                 </div>
               </ProjectCardTrigger>
             </article>
@@ -486,9 +465,7 @@ export default function Home() {
         </section>
 
         <div className="section-flow">
-          <WorkShowcase projects={displayedProjects} language={language} copy={t} category="applications" sectionId="work" />
-          <WorkShowcase projects={displayedProjects} language={language} copy={t} category="tutorials" sectionId="tutorials" />
-          <WorkShowcase projects={displayedProjects} language={language} copy={t} category="videos" sectionId="videos" />
+          <WorkShowcase projects={displayedProjects} language={language} copy={t} sectionId="work" />
 
         <section id="profiles" className="content-section reveal reveal-delay-2" aria-labelledby="profiles-title">
           <div className="section-heading compact">

@@ -56,7 +56,6 @@ export function ProjectDetailsDialog({ project, projectIndex, language, visitLab
               <DialogTitle>{language === "ar" ? project.titleAr : project.title}</DialogTitle>
               <DialogDescription>{language === "ar" ? project.descriptionAr : project.description}</DialogDescription>
             </DialogHeader>
-            <p className="project-dialog-type">{language === "ar" ? project.typeAr : project.type}</p>
             {project && (
               <DialogFooter>
                 <Link className="action action-primary project-dialog-link" href={`/article/${encodeURIComponent(project.title)}`}>

@@ -8,8 +8,8 @@ describe("article page extras", () => {
     { id: 3, title: "Notes app", category: "applications" },
   ];
 
-  it("selects other items from the same category and excludes the current article", () => {
-    expect(selectRelatedArticles(articles, articles[0]!)).toEqual([articles[1]]);
+  it("selects other posts in their published order and excludes the current article", () => {
+    expect(selectRelatedArticles(articles, articles[0]!)).toEqual([articles[1], articles[2]]);
   });
 
   it("builds encoded share URLs for supported social networks", () => {

@@ -438,3 +438,10 @@
 - [x] Add an admin upload, preview, replace, and reset control for the default cover.
 - [x] Use the saved cover in public cards and the GitHub Pages snapshot, with the built-in cover as a safe fallback.
 - [x] Add tests, migrate the database, verify the admin and public views, sync GitHub, and publish.
+
+## Unified Posts Experience
+
+- [x] Remove public Applications, Tutorials, and Videos sections and show all published content in one Posts / المشاركات section.
+- [x] Remove category selection from the content editor and save new items to the unified Posts experience.
+- [x] Audit current published items and ensure each dedicated page renders its stored full rich article body rather than only its summary.
+- [ ] Add regression coverage, verify the responsive public and article views, sync GitHub Pages, and publish.

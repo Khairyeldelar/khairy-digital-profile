@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { projectInput } from "./routers";
+import { projectInput, publishedPostInput } from "./routers";
 
 describe("rich project content input", () => {
   it("keeps a full Arabic editor body containing text, an image, and a link", () => {
@@ -18,5 +18,22 @@ describe("rich project content input", () => {
     });
 
     expect(parsed.articleBodyAr).toBe(body);
+  });
+
+  it("does not allow a new published post with only a short card description", () => {
+    const parsed = publishedPostInput.safeParse({
+      titleEn: "Safety app",
+      titleAr: "تطبيق آمن",
+      descriptionEn: "Summary",
+      descriptionAr: "ملخص",
+      articleBodyAr: "",
+      articleBodyEn: "",
+      typeEn: "Post",
+      typeAr: "مشاركة",
+      category: "applications",
+      href: "https://example.com",
+    });
+
+    expect(parsed.success).toBe(false);
   });
 });

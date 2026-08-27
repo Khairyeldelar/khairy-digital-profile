@@ -8,21 +8,14 @@ type ArticlePreviewDialogProps = {
   title: string;
   summary: string;
   body: string;
-  category: "applications" | "tutorials" | "videos";
 };
 
-const categoryLabel = {
-  applications: "تطبيق أو لعبة",
-  tutorials: "شرح أو معلومة",
-  videos: "فيديو",
-};
-
-export function ArticlePreviewDialog({ open, onOpenChange, title, summary, body, category }: ArticlePreviewDialogProps) {
+export function ArticlePreviewDialog({ open, onOpenChange, title, summary, body }: ArticlePreviewDialogProps) {
   const safeBody = sanitizeArticleHtml(body);
   return <Dialog open={open} onOpenChange={onOpenChange}>
     <DialogContent className="article-preview-dialog max-h-[90vh] max-w-3xl overflow-y-auto" dir="rtl">
       <DialogHeader className="border-b pb-4 text-right">
-        <p className="text-xs font-medium tracking-[0.14em] text-primary">معاينة قبل النشر · {categoryLabel[category]}</p>
+        <p className="text-xs font-medium tracking-[0.14em] text-primary">معاينة قبل النشر · مشاركة</p>
         <DialogTitle className="text-2xl leading-snug">{title || "عنوان المقال سيظهر هنا"}</DialogTitle>
         <DialogDescription>هذه معاينة للمحتوى كما سيظهر في صفحة المقال للزائر.</DialogDescription>
       </DialogHeader>
