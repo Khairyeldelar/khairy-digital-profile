@@ -375,3 +375,10 @@
 - [x] Show an accessible upload-progress indicator with percentage while a rich-editor image is being read and uploaded.
 - [x] Show a clear completion or error state without changing the selected cursor position.
 - [x] Add regression coverage, verify the responsive editor, sync GitHub, and publish the update.
+
+## Full Rich Article Rendering
+
+- [x] Diagnose why newly published content can show only its cover, title, and summary instead of the rich editor body.
+- [x] Persist the editor body reliably for the primary Arabic article and retain inline images, links, and embedded video markup.
+- [x] Render the complete rich body on every dedicated content page with a useful empty-state fallback.
+- [x] Add regression tests, verify a complete article path, sync GitHub, and publish the correction.

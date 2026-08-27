@@ -124,7 +124,7 @@ export default function Article() {
         <div className="article-kicker">{project.category === "applications" ? (language === "ar" ? "تطبيق أو لعبة" : "Application or game") : project.category === "videos" ? (language === "ar" ? "فيديو" : "Video") : copy.article}</div><h1>{title}</h1><div className="article-meta"><span>{language === "ar" ? project.typeAr : project.type}</span><span>•</span><span>Khairy Eid Aly</span></div>
         <ProjectImage src={project.image} fallbackSrc={project.imageFallback} className="article-image" alt={title} />
         {placedMedia("start")}
-        <div className="article-body"><p>{description}</p>{articleBody ? hasRichMarkup(articleBody) ? <div className="article-rich-body rich-article-render" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(articleBody) }} /> : <div className="article-rich-body">{articleBody}</div> : null}</div>
+        <div className="article-body"><p>{description}</p>{articleBody ? hasRichMarkup(articleBody) ? <div className="article-rich-body rich-article-render" dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(articleBody) }} /> : <div className="article-rich-body">{articleBody}</div> : <p className="article-body-empty">{language === "ar" ? "لا توجد تفاصيل مكتوبة لهذه الصفحة بعد. افتح «تحرير محتوى الصفحة الكاملة» من لوحة التحكم وأضف النص والصور والروابط ثم احفظ." : "No full content has been written for this page yet. Use the full-content editor in the control panel, then save."}</p>}</div>
         {placedMedia("middle")}{placedMedia("end")}
         {project.href && <a className="article-link" href={project.href} target="_blank" rel="noreferrer">{copy.readMore}<ArrowUpRight size={16} /></a>}
       </article>

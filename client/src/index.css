@@ -2215,6 +2215,7 @@ html[dir="rtl"] .about-card p {
 .rich-article-render a { color: var(--coral); text-decoration: underline; }
 .rich-article-render img { display: block; max-width: 100%; height: auto; margin: 24px auto; border-radius: 16px; }
 .rich-article-render iframe { width: 100%; min-height: 360px; border: 0; border-radius: 16px; }
+.article-body-empty { margin: 1.6rem 0 0; padding: 1rem; border: 1px dashed var(--line); border-radius: 12px; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.8; }
 :root.dark {
   --paper: #151918;
   --paper-deep: #202522;
