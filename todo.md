@@ -407,3 +407,9 @@
 - [x] Add simple, accessible social sharing actions directly below the article rating.
 - [x] Add a related-articles section at the end of the article page using other published items in the same category.
 - [x] Add tests for related-content selection and sharing links, then verify responsive layouts, sync GitHub, and publish.
+
+## Portrait Frame and Article Back Navigation
+
+- [x] Remove the off-center decorative portrait ring that extends beneath the profile photo on the public home card.
+- [x] Add a clear back button at the top of article pages that returns visitors to the previous page when available.
+- [x] Add regression coverage, verify the mobile and desktop views, sync GitHub, and publish the update.

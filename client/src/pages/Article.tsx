@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { BadgeCheck, Languages, Moon, Sun } from "lucide-react";
+import { ArrowLeft, ArrowRight, BadgeCheck, Languages, Moon, Sun } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { ArticleRating } from "@/components/ArticleRating";
 import { ArticleShare } from "@/components/ArticleShare";
 import { RelatedArticles } from "@/components/RelatedArticles";
 import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
+import { returnToPreviousPage } from "@/lib/articleNavigation";
 import { resolveProjectImage } from "@/lib/projectImage";
 import { hasRichMarkup, sanitizeArticleHtml } from "@/lib/richArticleHtml";
 import { trpc } from "@/lib/trpc";
@@ -15,8 +16,8 @@ import { projects as fallbackProjects, type Project } from "./Home";
 type Language = "ar" | "en";
 
 const labels = {
-  ar: { back: "العودة إلى الأعمال", article: "شرح ومعلومة", missing: "لم يتم العثور على هذا الشرح.", language: "English" },
-  en: { back: "Back to work", article: "Tutorial & insight", missing: "This tutorial could not be found.", language: "العربية" },
+  ar: { back: "العودة", article: "شرح ومعلومة", missing: "لم يتم العثور على هذا الشرح.", language: "English" },
+  en: { back: "Back", article: "Tutorial & insight", missing: "This tutorial could not be found.", language: "العربية" },
 };
 
 function decodeArticleSlug(slug: string) {
@@ -105,11 +106,12 @@ export default function Article() {
   const placedMedia = (placement: string) => media.filter((item) => item.placement === placement).map((item) => <ArticleMedia key={item.id} media={item} language={language} />);
   const ratingKey = project.id ? String(project.id) : articleTitle;
   const articleUrl = window.location.href;
+  const goBack = () => returnToPreviousPage(window.history.length, () => window.history.back(), () => setLocation("/"));
 
   return <div className={`article-page article-page-${language}`}>
     <header className="article-header">
       <button className="brand-lockup" onClick={() => setLocation("/")} aria-label={copy.back}><span className="brand-emblem"><span className="brand-glyph brand-glyph-header"><span className="glyph-stroke glyph-stroke-a" /><span className="glyph-stroke glyph-stroke-b" /><span className="glyph-cut" /></span></span><span className="brand-word">KHAIRY <span>EID ALY</span></span></button>
-      <div className="article-header-actions"><button className="theme-switch" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={16} strokeWidth={1.8} /> : <Moon size={16} strokeWidth={1.8} />}</button><button className="language-switch" onClick={() => setLanguage(language === "ar" ? "en" : "ar")}><Languages size={15} /><span>{copy.language}</span></button></div>
+      <div className="article-header-actions"><button className="article-back-button" type="button" onClick={goBack}>{language === "ar" ? <ArrowRight size={15} /> : <ArrowLeft size={15} />}<span>{copy.back}</span></button><button className="theme-switch" type="button" onClick={() => toggleTheme?.()} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>{theme === "dark" ? <Sun size={16} strokeWidth={1.8} /> : <Moon size={16} strokeWidth={1.8} />}</button><button className="language-switch" onClick={() => setLanguage(language === "ar" ? "en" : "ar")}><Languages size={15} /><span>{copy.language}</span></button></div>
     </header>
     <main className="article-content">
       <section className="article-profile-strip" dir={language} aria-label={language === "ar" ? "الملف التعريفي" : "Profile identity"}><div className="article-profile-avatar"><span>{name.slice(0, 1)}</span></div><div><strong>{name}</strong><p>{role ?? (language === "ar" ? "مطور وصانع محتوى" : "Developer and creator")}</p></div><BadgeCheck className="article-verified" size={21} /><p className="article-profile-bio">{bio}</p></section>
