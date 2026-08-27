@@ -382,3 +382,9 @@
 - [x] Persist the editor body reliably for the primary Arabic article and retain inline images, links, and embedded video markup.
 - [x] Render the complete rich body on every dedicated content page with a useful empty-state fallback.
 - [x] Add regression tests, verify a complete article path, sync GitHub, and publish the correction.
+
+## Pre-Publish Article Preview
+
+- [x] Add a pre-publish button that opens a complete article preview without saving the draft.
+- [x] Render the draft title, summary, rich body, uploaded inline images, links, and embedded video in the preview.
+- [x] Add regression coverage, verify responsive behavior, sync GitHub, and publish the preview feature.
