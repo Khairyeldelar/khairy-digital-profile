@@ -369,3 +369,9 @@
 - [x] Preserve the current cursor/selection and insert each uploaded image exactly at that location in the article body.
 - [x] Add success and error feedback plus regression tests for publishing and cursor-based image insertion.
 - [x] Verify the Full-Stack and GitHub Pages builds, maintain GitHub sync, and publish the correction.
+
+## Article Image Upload Progress
+
+- [x] Show an accessible upload-progress indicator with percentage while a rich-editor image is being read and uploaded.
+- [x] Show a clear completion or error state without changing the selected cursor position.
+- [x] Add regression coverage, verify the responsive editor, sync GitHub, and publish the update.

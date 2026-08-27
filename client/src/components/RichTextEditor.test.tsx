@@ -11,7 +11,11 @@ describe("RichTextEditor image upload", () => {
 
   it("uploads a selected file and inserts its managed URL into the editor", async () => {
     const onChange = vi.fn();
-    const onUploadImage = vi.fn().mockResolvedValue("/manus-storage/admin/article/example.png");
+    let finishUpload: ((url: string) => void) | undefined;
+    const onUploadImage = vi.fn((_file: File, reportProgress: (percentage: number) => void) => new Promise<string>((resolve) => {
+      reportProgress(62);
+      finishUpload = resolve;
+    }));
     const { container } = render(<RichTextEditor value="" onChange={onChange} onUploadImage={onUploadImage} placeholder="Write" />);
 
     fireEvent.click(screen.getByRole("button", { name: "Upload and insert image" }));
@@ -19,6 +23,9 @@ describe("RichTextEditor image upload", () => {
     fireEvent.change(fileInput, { target: { files: [new File(["image"], "example.png", { type: "image/png" })] } });
 
     await waitFor(() => expect(onUploadImage).toHaveBeenCalled());
+    expect(screen.getByRole("status").textContent).toContain("62%");
+    finishUpload?.("/manus-storage/admin/article/example.png");
     await waitFor(() => expect(document.execCommand).toHaveBeenCalledWith("insertImage", false, "/manus-storage/admin/article/example.png"));
+    expect(screen.getByRole("status").textContent).toContain("تم إدراج الصورة");
   });
 });

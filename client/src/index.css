@@ -2203,6 +2203,13 @@ html[dir="rtl"] .about-card p {
 .rich-editor-canvas h2 { margin: 1.1em 0 0.45em; font-size: 1.3em; }
 .rich-editor-canvas img { display: block; max-width: 100%; height: auto; margin: 16px auto; border-radius: 12px; }
 .rich-editor-canvas iframe { display: block; width: 100%; min-height: 280px; margin: 16px auto; border: 0; border-radius: 12px; }
+.rich-editor-upload-status { margin: 0 12px 12px; padding: 9px 10px; border: 1px solid var(--line-soft); border-radius: 10px; background: var(--card); color: var(--ink-soft); font-size: 0.78rem; }
+.rich-editor-upload-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+.rich-editor-upload-line strong { color: var(--coral); font-variant-numeric: tabular-nums; }
+.rich-editor-upload-track { overflow: hidden; height: 5px; border-radius: 999px; background: var(--line-soft); }
+.rich-editor-upload-track span { display: block; height: 100%; border-radius: inherit; background: var(--coral); transition: width 180ms var(--ease-out); }
+.rich-editor-upload-status-success .rich-editor-upload-track span { background: #4d8b69; }
+.rich-editor-upload-status-error .rich-editor-upload-track span { background: #c94d3b; }
 .rich-article-render h2 { margin: 1.4em 0 0.55em; color: var(--ink); font-size: 1.35em; }
 .rich-article-render ul, .rich-article-render ol { padding-inline-start: 1.5em; }
 .rich-article-render a { color: var(--coral); text-decoration: underline; }

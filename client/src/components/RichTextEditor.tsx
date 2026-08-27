@@ -7,7 +7,7 @@ type RichTextEditorProps = {
   onChange: (value: string) => void;
   placeholder: string;
   dir?: "rtl" | "ltr";
-  onUploadImage: (file: File) => Promise<string>;
+  onUploadImage: (file: File, reportProgress: (percentage: number) => void) => Promise<string>;
 };
 
 export function RichTextEditor({ value, onChange, placeholder, dir = "rtl", onUploadImage }: RichTextEditorProps) {
@@ -15,6 +15,8 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "rtl", onUp
   const imageInputRef = useRef<HTMLInputElement>(null);
   const rangeRef = useRef<Range | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
 
   useEffect(() => {
     if (editorRef.current && editorRef.current.innerHTML !== value) editorRef.current.innerHTML = value;
@@ -48,15 +50,20 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "rtl", onUp
     const file = event.target.files?.[0];
     if (!file) return;
     setIsUploadingImage(true);
+    setUploadProgress(2);
+    setUploadStatus("uploading");
     try {
-      const imageUrl = await onUploadImage(file);
+      const imageUrl = await onUploadImage(file, (percentage) => setUploadProgress(Math.max(2, Math.min(100, Math.round(percentage)))));
       editorRef.current?.focus();
       restoreSelection();
       document.execCommand("insertImage", false, imageUrl);
       saveSelection();
       onChange(editorRef.current?.innerHTML ?? "");
+      setUploadProgress(100);
+      setUploadStatus("success");
     } catch {
       // The owner-facing upload mutation is responsible for the visible error message.
+      setUploadStatus("error");
     } finally {
       setIsUploadingImage(false);
       event.target.value = "";
@@ -77,5 +84,6 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "rtl", onUp
     </div>
     <input ref={imageInputRef} className="sr-only" type="file" accept="image/*" onChange={handleImageFile} />
     <div ref={editorRef} className="rich-editor-canvas" contentEditable suppressContentEditableWarning data-placeholder={placeholder} onFocus={saveSelection} onKeyUp={saveSelection} onMouseUp={saveSelection} onInput={() => { saveSelection(); onChange(editorRef.current?.innerHTML ?? ""); }} />
+    {uploadStatus !== "idle" ? <div className={`rich-editor-upload-status rich-editor-upload-status-${uploadStatus}`} role="status" aria-live="polite"><div className="rich-editor-upload-line"><span>{uploadStatus === "uploading" ? "جارٍ رفع الصورة" : uploadStatus === "success" ? "تم إدراج الصورة" : "تعذر رفع الصورة"}</span><strong>{uploadStatus === "error" ? "!" : `${uploadProgress}%`}</strong></div><div className="rich-editor-upload-track" role="progressbar" aria-label="Image upload progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={uploadProgress}><span style={{ width: `${uploadStatus === "error" ? Math.max(uploadProgress, 8) : uploadProgress}%` }} /></div></div> : null}
   </div>;
 }

@@ -106,13 +106,19 @@ export default function Admin() {
     reader.readAsDataURL(file);
   };
 
-  const uploadInlineArticleImage = (file: File) => new Promise<string>((resolve, reject) => {
+  const uploadInlineArticleImage = (file: File, reportProgress: (percentage: number) => void) => new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
+    reportProgress(5);
+    reader.onprogress = (event) => {
+      if (event.lengthComputable) reportProgress(5 + (event.loaded / event.total) * 45);
+    };
     reader.onload = async () => {
       try {
         const data = String(reader.result).split(",")[1];
         if (!data) throw new Error("Image could not be read");
+        reportProgress(55);
         const result = await uploadAsset.mutateAsync({ fileName: file.name, mimeType: file.type || "application/octet-stream", data, target: "article" });
+        reportProgress(100);
         resolve(result.url || `/manus-storage/${result.key}`);
       } catch (error) {
         showNotice("تعذر رفع الصورة داخل المقال. حاول مرة أخرى.", "error");
