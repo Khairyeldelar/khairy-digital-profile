@@ -413,3 +413,9 @@
 - [x] Remove the off-center decorative portrait ring that extends beneath the profile photo on the public home card.
 - [x] Add a clear back button at the top of article pages that returns visitors to the previous page when available.
 - [x] Add regression coverage, verify the mobile and desktop views, sync GitHub, and publish the update.
+
+## GitHub Pages Direct Article URLs
+
+- [x] Diagnose the 404 error when opening an article URL directly on GitHub Pages.
+- [x] Add a GitHub Pages fallback that serves the single-page application for article paths while preserving the path and slug.
+- [ ] Verify a direct article URL on GitHub Pages, add regression coverage, and publish the fix.

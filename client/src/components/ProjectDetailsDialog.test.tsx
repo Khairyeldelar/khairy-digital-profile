@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { cleanup, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it } from "vitest";
+import { Router as WouterRouter } from "wouter";
 import { ProjectCardTrigger } from "./ProjectCardTrigger";
 import { ProjectDetailsDialog, type ProjectDetails } from "./ProjectDetailsDialog";
 
@@ -36,6 +37,13 @@ describe("ProjectDetailsDialog keyboard flow", () => {
     const returnFocusRef = { current: null };
     render(<ProjectDetailsDialog project={{ ...project, image: "https://cdn.example/uploaded.png" }} projectIndex={0} language="ar" visitLabel="الذهاب إلى المشروع" open onOpenChange={() => undefined} returnFocusRef={returnFocusRef} />);
     expect(screen.getByRole("img").getAttribute("src")).toBe("https://cdn.example/uploaded.png");
+  });
+
+  it("keeps the article link inside the GitHub Pages repository base path", () => {
+    const returnFocusRef = { current: null };
+    render(<WouterRouter base="/khairy-digital-profile"><ProjectDetailsDialog project={project} projectIndex={0} language="ar" visitLabel="الذهاب إلى المشروع" open onOpenChange={() => undefined} returnFocusRef={returnFocusRef} /></WouterRouter>);
+
+    expect(screen.getByRole("link", { name: /دخول إلى الصفحة/i }).getAttribute("href")).toBe("/khairy-digital-profile/article/Nova%20Notes");
   });
 
   it("opens from the card button and closes with Escape", async () => {

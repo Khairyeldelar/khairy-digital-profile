@@ -6,10 +6,14 @@ import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
 import { startLogin } from "./const";
+import { restoreGithubPagesRoute } from "./lib/githubPagesRedirect";
 import { consumeMobileSessionHandoff, getSessionHandoffAuthorization } from "./lib/sessionHandoff";
 import "./index.css";
 
 consumeMobileSessionHandoff();
+
+const restoredGithubPagesRoute = restoreGithubPagesRoute(window.location.search, import.meta.env.BASE_URL);
+if (restoredGithubPagesRoute) window.history.replaceState(null, "", restoredGithubPagesRoute);
 
 const queryClient = new QueryClient();
 

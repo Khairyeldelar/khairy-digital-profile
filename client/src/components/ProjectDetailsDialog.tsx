@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { ProjectImage } from "@/components/ProjectImage";
 import { ArrowUpRight } from "lucide-react";
+import { Link } from "wouter";
 
 export type ProjectDetails = {
   title: string;
@@ -58,9 +59,9 @@ export function ProjectDetailsDialog({ project, projectIndex, language, visitLab
             <p className="project-dialog-type">{language === "ar" ? project.typeAr : project.type}</p>
             {project && (
               <DialogFooter>
-                <a className="action action-primary project-dialog-link" href={`/article/${encodeURIComponent(project.title)}`}>
+                <Link className="action action-primary project-dialog-link" href={`/article/${encodeURIComponent(project.title)}`}>
                   {language === "ar" ? "دخول إلى الصفحة" : "Open content"} <ArrowUpRight size={16} strokeWidth={1.9} />
-                </a>
+                </Link>
               </DialogFooter>
             )}
           </>
