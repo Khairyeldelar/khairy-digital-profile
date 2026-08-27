@@ -401,3 +401,9 @@
 - [x] Center the article title and full rich content below the compact profile identity at the top of the page.
 - [x] Add an accessible 1–5 star rating control directly after the article content.
 - [x] Keep the basic footer identity, add tests, verify responsive layout, sync GitHub, and publish the update.
+
+## Article Sharing and Related Content
+
+- [x] Add simple, accessible social sharing actions directly below the article rating.
+- [x] Add a related-articles section at the end of the article page using other published items in the same category.
+- [x] Add tests for related-content selection and sharing links, then verify responsive layouts, sync GitHub, and publish.

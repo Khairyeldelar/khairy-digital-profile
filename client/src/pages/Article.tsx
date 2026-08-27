@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { BadgeCheck, Languages, Moon, Sun } from "lucide-react";
 import { useLocation, useRoute } from "wouter";
 import { ArticleRating } from "@/components/ArticleRating";
+import { ArticleShare } from "@/components/ArticleShare";
+import { RelatedArticles } from "@/components/RelatedArticles";
 import { isStandaloneSite, useStandaloneContentSnapshot } from "@/lib/contentSnapshot";
 import { getInitialProfileLanguage, shouldPersistProfileLanguage } from "@/lib/languagePreference";
 import { resolveProjectImage } from "@/lib/projectImage";
@@ -53,9 +55,9 @@ export default function Article() {
   const standaloneContent = useStandaloneContentSnapshot();
   const contentQuery = trpc.content.useQuery(undefined, { enabled: !isStandaloneSite() });
   const contentData = standaloneContent ?? contentQuery.data;
-  const project = useMemo(() => {
-    const remote = contentData?.projects?.find((item) => item.titleEn === articleTitle);
-    if (remote) {
+  const availableArticles = useMemo<Project[]>(() => {
+    if (contentData?.projects?.length) {
+      return contentData.projects.map((remote) => {
       const imageKey = "imageKey" in remote ? remote.imageKey : null;
       const imageUrl = "imageUrl" in remote ? remote.imageUrl : null;
       return {
@@ -78,9 +80,11 @@ export default function Article() {
         }),
         comments: remote.comments,
       } as Project;
+      });
     }
-    return findFallbackProject(slug);
-  }, [contentData?.projects, articleTitle, slug]);
+    return fallbackProjects;
+  }, [contentData?.projects]);
+  const project = useMemo(() => availableArticles.find((item) => item.title === articleTitle) ?? findFallbackProject(slug), [availableArticles, articleTitle, slug]);
   const profile = contentData?.profile;
   const copy = labels[language];
 
@@ -100,6 +104,7 @@ export default function Article() {
   const media = project.media ?? [];
   const placedMedia = (placement: string) => media.filter((item) => item.placement === placement).map((item) => <ArticleMedia key={item.id} media={item} language={language} />);
   const ratingKey = project.id ? String(project.id) : articleTitle;
+  const articleUrl = window.location.href;
 
   return <div className={`article-page article-page-${language}`}>
     <header className="article-header">
@@ -115,6 +120,8 @@ export default function Article() {
         {placedMedia("middle")}{placedMedia("end")}
       </article>
       <ArticleRating articleKey={ratingKey} language={language} />
+      <ArticleShare articleUrl={articleUrl} articleTitle={title} language={language} />
+      <RelatedArticles articles={availableArticles} currentArticle={project} language={language} />
     </main>
     <footer className="article-footer">{language === "ar" ? "بطاقة Khairy Eid Aly الرقمية" : "Khairy Eid Aly digital profile"}</footer>
   </div>;

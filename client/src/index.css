@@ -2147,6 +2147,31 @@ html[dir="rtl"] .about-card p {
 .article-rating-stars button:hover, .article-rating-stars button:focus-visible, .article-rating-stars button.is-selected { border-color: rgba(228, 103, 77, 0.48); color: var(--coral); background: var(--coral-wash); }
 .article-rating-stars button:focus-visible { outline: 2px solid var(--coral); outline-offset: 3px; }
 .article-rating-stars button:active { transform: scale(0.94); }
+.article-share { display: flex; min-height: 46px; align-items: center; justify-content: center; gap: 13px; width: min(100%, 720px); margin: 12px auto 0; color: var(--ink-faint); }
+.article-share-label { font-size: 0.7rem; font-weight: 700; }
+.article-share-actions { display: inline-flex; align-items: center; gap: 7px; }
+.article-share-actions a, .article-share-actions button { display: inline-grid; width: 32px; height: 32px; place-items: center; padding: 0; border: 1px solid var(--line-soft); border-radius: 50%; color: var(--ink-soft); background: var(--card); cursor: pointer; font-family: "DM Sans", sans-serif; font-size: 0.76rem; font-weight: 700; text-decoration: none; transition: color 160ms var(--ease-out), border-color 160ms var(--ease-out), background 160ms var(--ease-out), transform 160ms var(--ease-out); }
+.article-share-actions a:hover, .article-share-actions a:focus-visible, .article-share-actions button:hover, .article-share-actions button:focus-visible { border-color: rgba(228, 103, 77, 0.48); color: var(--coral); background: var(--coral-wash); outline: none; }
+.article-share-actions a:active, .article-share-actions button:active { transform: scale(0.94); }
+.article-share-status { width: 0; overflow: hidden; white-space: nowrap; font-size: 0.68rem; }
+.article-share-status:not(:empty) { width: auto; }
+.related-articles { width: min(100%, 920px); margin: 54px auto 0; padding-top: 28px; border-top: 1px solid var(--line-soft); }
+.related-articles-heading { margin-bottom: 18px; text-align: center; }
+.related-articles-heading h2 { margin: 8px 0 0; color: var(--ink); font-family: "DM Sans", "Noto Sans Arabic", sans-serif; font-size: clamp(1.45rem, 3vw, 2rem); letter-spacing: -0.045em; }
+.related-articles-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.related-article-card { display: flex; min-width: 0; min-height: 178px; flex-direction: column; padding: 18px; border: 1px solid var(--line-soft); border-radius: 18px; color: inherit; background: var(--card); box-shadow: 0 12px 28px rgba(45, 47, 43, 0.04); text-decoration: none; transition: border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out), transform 180ms var(--ease-out); }
+.related-article-card:hover, .related-article-card:focus-visible { border-color: rgba(228, 103, 77, 0.38); box-shadow: 0 16px 34px rgba(45, 47, 43, 0.08); outline: none; transform: translateY(-3px); }
+.related-article-card > span { color: var(--coral); font-family: "DM Sans", "Noto Sans Arabic", sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.05em; }
+.related-article-card strong { display: -webkit-box; overflow: hidden; margin-top: 10px; color: var(--ink); font-family: "DM Sans", "Noto Sans Arabic", sans-serif; font-size: 1rem; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.related-article-card p { display: -webkit-box; overflow: hidden; margin: 8px 0 13px; color: var(--ink-faint); font-size: 0.74rem; line-height: 1.6; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.related-article-card em { display: inline-flex; align-items: center; gap: 5px; margin-top: auto; color: var(--coral); font-size: 0.7rem; font-style: normal; font-weight: 700; }
+@media (max-width: 760px) {
+  .article-share { gap: 10px; }
+  .article-share-actions { gap: 5px; }
+  .related-articles { margin-top: 42px; }
+  .related-articles-grid { grid-template-columns: 1fr; }
+  .related-article-card { min-height: 148px; }
+}
 
 .rich-editor { overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
 .rich-editor-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid var(--line-soft); background: var(--card); }
