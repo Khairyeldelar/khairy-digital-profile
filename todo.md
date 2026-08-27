@@ -394,3 +394,10 @@
 - [x] Remove the dark contact callout card from the public profile page.
 - [x] Remove the small footer tagline beneath the copyright line while preserving navigation and profiles.
 - [x] Verify responsive layout, sync GitHub Pages, and publish the cleanup.
+
+## Simplified Article Page and Star Rating
+
+- [x] Remove the cover image, external source link, and visitor comment form from dedicated content pages.
+- [x] Center the article title and full rich content below the compact profile identity at the top of the page.
+- [x] Add an accessible 1–5 star rating control directly after the article content.
+- [x] Keep the basic footer identity, add tests, verify responsive layout, sync GitHub, and publish the update.
